@@ -36,7 +36,7 @@ services:
   user-service:
     image: user-service:latest
     build:
-      context: ./user-service/
+      context: ./services/user-service/
     env_file: "./env/user.env"
     depends_on:
       user-db:
@@ -63,7 +63,7 @@ services:
   post-service:
     image: post-service:latest
     build:
-      context: ./post-service/
+      context: ./services/post-service/
     env_file: "./env/post.env"
     depends_on:
       post-db:
@@ -90,7 +90,7 @@ services:
   storage-service:
     image: storage-service:latest
     build:
-      context: ./storage-service/
+      context: ./services/storage-service/
     networks:
         - picshare_network
 
