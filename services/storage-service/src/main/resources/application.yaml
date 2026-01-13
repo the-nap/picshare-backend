@@ -1,6 +1,12 @@
 spring:
   application:
     name: Storage Service
+
+minio:
+  url: http://localhost:9000
+  access:
+    name: minioadmin
+    secret: minioadmin
+  bucket:
+    name: data
     
-storage:
-  mediaroot: /data/media
