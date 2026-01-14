@@ -2,9 +2,7 @@ package com.example.storage_service.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -27,26 +25,37 @@ public class StorageController {
   private final StorageService service;
   
   @PostMapping
-  public Long store(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id){
+  public ResponseEntity<?> store(
+      @RequestParam("file") MultipartFile file, 
+      @RequestParam("id") Long id){
+
     try(InputStream is = file.getInputStream()){
       service.store(is, id.toString());
     } catch(IOException e) {
       throw new StorageException("Error while reading resource");
     }
-    return id;
+    return ResponseEntity
+      .ok(
+          Map.ofEntries(
+            Map.entry("imageId", id))
+         );
   }
   
-  @GetMapping("/image/{id}")
-  public Resource serveImage(@PathVariable Long id) {
-    return service.load(id.toString());
+  @GetMapping("/media/{id}")
+  public ResponseEntity<Resource> serveMedia(
+      @PathVariable Long id) {
+
+      Resource resource = service.serveMedia(id.toString());
+      return ResponseEntity.ok(resource);
+
   }
 
-  @GetMapping("/image/")
-  public List<Resource> serveAll(@RequestParam List<Long> ids){
-    List<String> stringIds = ids.stream()
-      .map(Object::toString)
-      .collect(Collectors.toList());
-    return service.loadThumbnail(stringIds)
-      .collect(Collectors.toList());
+  @GetMapping("/thumbnail/{id}")
+  public ResponseEntity<Resource> serveThumbnail
+  (@PathVariable Long id){
+
+    Resource resource = service.serveThumbnail(id.toString());
+    return ResponseEntity.ok(resource);
+
   }
 }
