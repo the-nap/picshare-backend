@@ -8,11 +8,11 @@ import org.springframework.core.io.Resource;
 
 public interface StorageService {
 
-  void store(InputStream file, String filename);
+  void store(InputStream file, String id);
 
-  Resource load(String filename);
+  Resource serveMedia(String id);
 
-  Stream<Resource> loadThumbnail(List<String> filenames);
+  Resource serveThumbnail(String id);
 
   void deleteAll();
   

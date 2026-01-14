@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -57,12 +59,24 @@ public class MinioService implements StorageService{
   public void store(InputStream file, String id) {
     Path[] temp = decodeToFile(file);
 
-    String basePath = "images/" + id + "/";
-    String mediaPath = basePath + "media";
-    String thumbPath = basePath + "thumb";
+    String basePath = getBasePath(id);
+    String mediaPath = getMediaPath(basePath);
+    String thumbPath = getThumbPath(basePath);
 
     storeMedia(mediaPath, temp[0]);
     storeThumbnail(thumbPath, temp[1]);
+  }
+
+  private String getBasePath(String id) {
+    return "images/" + id + "/";
+  }
+
+  private String getMediaPath(String id) {
+    return getBasePath(id) + "media";
+  }
+
+  private String getThumbPath(String id) {
+    return getBasePath(id) + "thumb";
   }
 
   private void storeMedia(String filename, Path temp) {
@@ -113,7 +127,7 @@ public class MinioService implements StorageService{
     } catch(IOException e){
       throw new RuntimeException("Cannot create file: " + e.getMessage());
     }
-    try(OutputStream out0 = Files.newOutputStream(temp[0]); OutputStream out1 = Files.newOutputStream(temp[1])){
+    try(OutputStream out0 = Files.newOutputStream(temp[0], StandardOpenOption.CREATE_NEW); OutputStream out1 = Files.newOutputStream(temp[1], StandardOpenOption.CREATE_NEW)){
       OutputStream[] outputs = new OutputStream[]{ out0, out1 };
       WebpManager.toWebp(file,outputs);
     } catch(IOException e){}
@@ -126,13 +140,18 @@ public class MinioService implements StorageService{
   }
 
   @Override
-  public Resource load(String filename) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'load'");
+  public Resource serveMedia(String id) {
+
+    try (InputStream stream = minioClient.getObject(GetObjectArgs.builder().object(getMediaPath(id)).build())) {
+      InputStreamResource resource = new InputStreamResource(stream);
+
+      } catch(Exception e){
+      }
+    return null;
   }
 
   @Override
-  public Stream<Resource> loadThumbnail(List<String> filenames) {
+  public Resource serveThumbnail(String id) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'loadThumbnail'");
   }
