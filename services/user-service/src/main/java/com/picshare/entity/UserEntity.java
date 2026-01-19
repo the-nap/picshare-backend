@@ -1,7 +1,9 @@
 package com.picshare.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,11 +13,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Data;
 
+@Table(name = "users")
 @Data
 @Entity
 public class UserEntity{
@@ -31,14 +33,11 @@ public class UserEntity{
   @Column(unique = true, nullable = false)
   private String email;
 
-  @ManyToMany
-  @JoinTable(name = "follows", 
-    joinColumns = @JoinColumn(name = "follower_id"),
-    inverseJoinColumns = @JoinColumn(name = "followed_id"))
-  private Set<UserEntity> following;
+  @OneToMany(mappedBy = "follower")
+  private Set<ConnectionEntity> following;
 
-  @ManyToMany(mappedBy = "following")
-  private Set<UserEntity> followers;
+  @OneToMany(mappedBy = "followed")
+  private Set<ConnectionEntity> followers;
 
   @CreationTimestamp
   @Column(updatable = false)
@@ -49,5 +48,17 @@ public class UserEntity{
 
   @Column(nullable = false)
   private Date lastAccess;
+
+  public List<UserEntity> getFollowers(){
+    return followers.stream()
+      .map(connection -> connection.getFollower())
+      .collect(Collectors.toList());
+  }
+  
+  public List<UserEntity> getFollowed(){
+    return following.stream()
+      .map(connection -> connection.getFollowed())
+      .collect(Collectors.toList());
+  }
 
 }
