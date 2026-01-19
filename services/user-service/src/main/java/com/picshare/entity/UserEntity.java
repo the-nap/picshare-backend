@@ -1,7 +1,7 @@
 package com.picshare.entity;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,16 +49,16 @@ public class UserEntity{
   @Column(nullable = false)
   private Date lastAccess;
 
-  public List<UserEntity> getFollowers(){
+  public Set<UserEntity> getFollowers(){
     return followers.stream()
       .map(connection -> connection.getFollower())
-      .collect(Collectors.toList());
+      .collect(Collectors.toSet());
   }
   
-  public List<UserEntity> getFollowed(){
+  public Set<UserEntity> getFollowed(){
     return following.stream()
       .map(connection -> connection.getFollowed())
-      .collect(Collectors.toList());
+      .collect(Collectors.toSet());
   }
 
 }
