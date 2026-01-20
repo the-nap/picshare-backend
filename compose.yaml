@@ -59,6 +59,31 @@ services:
     networks:
         - picshare_network
 
+  feed-service:
+    image: feed-service:latest
+    build:
+      context: ./services/feed-service/
+    env_file: "./env/feed.env"
+    depends_on:
+      feed-db:
+        condition: service_healthy
+    networks:
+        - picshare_network
+
+  feed-db:
+    image: postgres:latest
+    env_file: ./env/feed.env
+    volumes: 
+    - feed-service-data:/var/lib/postgresql
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+        - picshare_network
         
   post-service:
     image: post-service:latest
@@ -113,6 +138,7 @@ services:
 
 volumes:
   auth-service-data:
+  feed-service-data:
   user-service-data:
   post-service-data:
   minio-data:
