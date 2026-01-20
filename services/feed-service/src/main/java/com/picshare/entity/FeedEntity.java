@@ -1,6 +1,5 @@
 package com.picshare.entity;
 
-import java.security.Timestamp;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,14 +20,14 @@ public class FeedEntity {
   @GeneratedValue
   private Long id;
 
-  @Column(name = "user")
+  @Column(name = "user_id")
   private Long userId;
 
-  @Column(name = "post")
+  @Column(name = "post_id")
   private Long postId;
 
   @CreationTimestamp
   @Column(name = "timestamp")
-  private Date createdAt;
+  private Date timestamp;
 
 }
