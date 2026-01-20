@@ -10,9 +10,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Table(name = "feeds")
 @Data
+@NoArgsConstructor
 @Entity
 public class FeedEntity {
 
