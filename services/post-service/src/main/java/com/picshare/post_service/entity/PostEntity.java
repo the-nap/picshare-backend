@@ -1,6 +1,7 @@
 package com.picshare.post_service.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -30,8 +31,7 @@ public class PostEntity {
   private Long userId;
 
   @Column
-  @NonNull
-  private Boolean mediaPending = true;
+  private String imageUrl;
 
   @CreationTimestamp
   @Column(updatable = false)
@@ -39,6 +39,9 @@ public class PostEntity {
 
   @Column(length = 140)
   @NonNull
-  private String caption;
+  private String description;
+
+  @Column(name = "tags")
+  private List<String> tags;
   
 }
