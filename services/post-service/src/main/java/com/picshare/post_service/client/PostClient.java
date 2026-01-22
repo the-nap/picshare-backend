@@ -21,16 +21,21 @@ public class PostClient {
   private final RestClient restClient;
 
   public String upload(InputStream data, Long id) throws ExternalException, ClientErrorException{
-    MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-    parts.add("image", new InputStreamResource(data));
-    parts.add("id", id);
+    body.add("image", new InputStreamResource(data){
+      @Override
+      public String getFilename() {
+        return "uploaded-image";
+      }
+    });
+    body.add("id", id);
 
     ResponseEntity<String> response = restClient
       .post()
       .uri("http://storage-service:8080")
       .header("Content-Type", "multipart/form-data")
-      .body(parts)
+      .body(body)
       .retrieve()
       .toEntity(String.class);
 

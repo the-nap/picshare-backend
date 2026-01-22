@@ -9,6 +9,7 @@ import com.picshare.post_service.dto.ImageMetadataDTO;
 import com.picshare.post_service.dto.PostRequest;
 import com.picshare.post_service.dto.PostResponse;
 import com.picshare.post_service.entity.PostEntity;
+import com.picshare.post_service.entity.PostEntity.PostStatus;
 import com.picshare.post_service.mapper.PostRequestMapper;
 import com.picshare.post_service.mapper.PostResponseMapper;
 import com.picshare.post_service.repository.PostRepository;
@@ -34,11 +35,16 @@ public class PostService {
     try {
       url = client.upload(data, entity.getId());
       entity.setImageUrl(url);
+      entity.setStatus(PostStatus.PUBLISHED);
       repository.save(entity);
     } catch (ExternalException | ClientErrorException e) {
-      repository.delete(entity);
+      compensate(entity);
       throw e;
     }
+  }
+
+  private void compensate(PostEntity entity) {
+    entity.setStatus(PostStatus.FAILED);
   }
 
   public PostResponse serve(Long id){
