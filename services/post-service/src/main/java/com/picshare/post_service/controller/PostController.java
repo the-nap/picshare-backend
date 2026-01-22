@@ -2,6 +2,7 @@ package com.picshare.post_service.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.post_service.dto.PostRequest;
 import com.picshare.post_service.dto.PostResponse;
+import com.picshare.post_service.dto.UpdateDto;
 import com.picshare.post_service.service.PostService;
 
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -42,6 +43,12 @@ public class PostController {
     return ResponseEntity
       .ok()
       .body(this.service.serve(id));
+  }
 
+  @GetMapping("update/")
+  public ResponseEntity<List<UpdateDto>> getUpdates(){
+    return ResponseEntity
+      .ok()
+      .body(this.service.serveUpdates());
   }
 }
