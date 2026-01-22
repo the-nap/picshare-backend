@@ -5,14 +5,18 @@ import java.io.InputStream;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.post_service.dto.PostRequest;
+import com.picshare.post_service.dto.PostResponse;
 import com.picshare.post_service.service.PostService;
 
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -31,5 +35,13 @@ public class PostController {
       }catch(IOException e){}
 
       return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  @GetMapping("/post/{id}")
+  public ResponseEntity<PostResponse> servePost(@PathVariable Long id){
+    return ResponseEntity
+      .ok()
+      .body(this.service.serve(id));
+
   }
 }
