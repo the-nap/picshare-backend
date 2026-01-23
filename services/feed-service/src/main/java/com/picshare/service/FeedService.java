@@ -1,8 +1,10 @@
 package com.picshare.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import com.picshare.DTO.UpdateDto;
 import com.picshare.mapper.FeedMapper;
 import com.picshare.repository.FeedRepository;
 import com.picshare.client.FeedClient;
+import com.picshare.entity.FeedEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +34,13 @@ public class FeedService {
   }
   
   public void markAsSeen(Long userId, Long postId){
-    feedRepository.delete(feedRepository.findByUserIdAndPostId(userId, postId).getFirst());
+    Optional<FeedEntity> seen = feedRepository.findByUserIdAndPostId(userId, postId);
+    if(seen.isEmpty()){
+      // To Do
+    }
+    FeedEntity entity = seen.get();
+    entity.setSeenAt(new Date());
+    feedRepository.save(entity);
   }
 
   public void add(Long userId, Long postId){

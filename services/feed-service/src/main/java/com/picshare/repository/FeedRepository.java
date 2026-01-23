@@ -1,6 +1,7 @@
 package com.picshare.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,6 @@ public interface FeedRepository extends CrudRepository<FeedEntity, Long>{
 
   List<FeedEntity> findByUserIdOrderByTimestampDesc(Long id);
 
-  List<FeedEntity> findByUserIdAndPostId(Long userId, Long postId);
+  Optional<FeedEntity> findByUserIdAndPostId(Long userId, Long postId);
 
 }

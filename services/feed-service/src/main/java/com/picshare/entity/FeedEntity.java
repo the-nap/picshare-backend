@@ -3,6 +3,7 @@ package com.picshare.entity;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +28,10 @@ public class FeedEntity {
 
   @Column(name = "post_id")
   private Long postId;
+
+  @UpdateTimestamp
+  @Column(name = "seen_at", nullable = true)
+  private Date seenAt;
 
   @CreationTimestamp
   @Column(name = "timestamp")
