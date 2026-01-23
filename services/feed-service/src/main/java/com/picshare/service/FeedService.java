@@ -1,13 +1,17 @@
 package com.picshare.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.picshare.DTO.FeedDto;
+import com.picshare.DTO.UpdateDto;
 import com.picshare.mapper.FeedMapper;
 import com.picshare.repository.FeedRepository;
+import com.picshare.client.FeedClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +21,7 @@ public class FeedService {
 
   private final FeedRepository feedRepository;
   private final FeedMapper feedMapper;
+  private final FeedClient feedClient;
 
   public List<Long> getFeed(Long id){
     return feedRepository.findByUserIdOrderByTimestampDesc(id)
@@ -34,4 +39,35 @@ public class FeedService {
     feedRepository.save(feedMapper.toEntity(feed));
   }
 
+  public void update(){
+    List<UpdateDto> updates = this.feedClient.getUpdates();
+    if(updates.isEmpty())
+      return;
+    Map<Long,List<Long>> postsByUser = updates.stream()
+      .collect(Collectors.groupingBy(
+            UpdateDto::getUserId,
+            Collectors.mapping(UpdateDto::getPostId, Collectors.toList())
+            )
+          );
+    handleInsertion(postsByUser);
+  }
+
+  private void handleInsertion(Map<Long, List<Long>> postsByUser) {
+    for ( Map.Entry<Long,List<Long>> entry : postsByUser.entrySet() ){
+      Long posterId = entry.getKey();
+      List<Long> postIds = entry.getValue();
+      List<Long> followers = this.feedClient.getFollowers(posterId);
+
+      List<FeedDto> toSave = new ArrayList<>(followers.size() * postIds.size());
+      for( Long follower : followers )
+        for( Long postId : postIds) 
+          toSave.add(new FeedDto(follower, postId));
+
+      feedRepository.saveAll(toSave
+          .stream()
+          .map(dto -> feedMapper.toEntity(dto))
+          .collect(Collectors.toList())
+          );
+    }
+  }
 }
