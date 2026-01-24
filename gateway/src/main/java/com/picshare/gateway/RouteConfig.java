@@ -1,5 +1,6 @@
 package com.picshare.gateway;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties(ServiceConfiguration.class)
 public class RouteConfig {
 
   private final ServiceConfiguration serviceConfig;
@@ -20,7 +22,7 @@ public class RouteConfig {
 
     serviceConfig.getServices().forEach((key,value) -> {
       routes
-        .route(route -> route
+        .route(key, route -> route
             .path(value.getPath())
             .filters(filter -> filter
               .circuitBreaker(config -> config

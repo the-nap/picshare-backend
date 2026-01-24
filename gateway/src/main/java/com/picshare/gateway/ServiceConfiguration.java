@@ -3,13 +3,11 @@ package com.picshare.gateway;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import lombok.Data;
 
 @Data
-@Configuration
-@ConfigurationProperties(prefix = "spring.services")
+@ConfigurationProperties(prefix = "spring")
 public class ServiceConfiguration {
 
   private Map<String,ServiceDetails> services;
@@ -24,6 +22,4 @@ public class ServiceConfiguration {
     private String fallback;
     private String path;
   }
-
-  
 }
