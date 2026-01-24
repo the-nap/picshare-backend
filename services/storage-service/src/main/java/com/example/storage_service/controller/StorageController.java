@@ -24,7 +24,7 @@ public class StorageController {
 
   private final StorageService service;
   
-  @PostMapping
+  @PostMapping("/store")
   public ResponseEntity<?> store(
       @RequestParam("file") MultipartFile file, 
       @RequestParam("id") Long id){
