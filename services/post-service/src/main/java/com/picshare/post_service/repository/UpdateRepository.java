@@ -12,6 +12,6 @@ import com.picshare.post_service.entity.UpdateEntity.UpdateStatus;
 @Repository
 public interface UpdateRepository extends JpaRepository<UpdateEntity, UpdateId>{
 
-  List<UpdateEntity> findTop100ByUpdateStatusOrderByIdUserId(UpdateStatus status);
+  List<UpdateEntity> findTop100ByStatusOrderByIdUserId(UpdateStatus status);
 
 }

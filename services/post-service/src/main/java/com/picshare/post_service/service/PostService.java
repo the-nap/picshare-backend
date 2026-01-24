@@ -65,7 +65,7 @@ public class PostService {
 
   public List<UpdateDto> serveUpdates(){
     
-    return updateRepository.findTop100ByUpdateStatusOrderByIdUserId(UpdateStatus.PENDING)
+    return updateRepository.findTop100ByStatusOrderByIdUserId(UpdateStatus.PENDING)
       .stream()
       .map(entity -> updateMapper.toDto(entity))
       .collect(Collectors.toList());
