@@ -1,12 +1,16 @@
 package com.picshare.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.picshare.DTO.FeedDto;
@@ -48,6 +52,14 @@ public class FeedService {
     feedRepository.save(feedMapper.toEntity(feed));
   }
 
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+  public void removeOld(){
+    LocalDate now = LocalDate.now();
+    Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    feedRepository.deleteAllBySeenAtAfter(yesterday);
+  }
+
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
   public void update(){
     List<UpdateDto> updates = this.feedClient.getUpdates();
     if(updates.isEmpty())
