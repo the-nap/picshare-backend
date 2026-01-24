@@ -18,6 +18,8 @@ public interface ConnectionRepository extends CrudRepository<ConnectionEntity, C
   // Find all users this follows
   List<ConnectionEntity> findByFollowed(UserEntity followed);
 
+  ConnectionEntity findByFollowerAndFollowed(UserEntity follower, UserEntity followed);
+
   // Check if follower follows followed
   boolean existsByFollowerAndFollowed(UserEntity follower, UserEntity followed);
 
