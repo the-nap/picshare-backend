@@ -25,6 +25,7 @@ public class RouteConfig {
         .route(key, route -> route
             .path(value.getPath())
             .filters(filter -> filter
+              .stripPrefix(1)
               .circuitBreaker(config -> config
                 .setName(key)
                 .setFallbackUri(value.getFallback())))

@@ -3,14 +3,14 @@ spring:
     name: Gateway
   services:
     post-service:
-      uri: http://post-service:8080
+      uri: http://post-service:8080/
       fallback: placeholder
-      path: images/**
+      path: post/**
     user-service:
-      uri: http://user-service:8080
+      uri: http://user-service:8080/
       fallback: placeholder
       path: user/*
     feed-service:
-      uri: http://feed-service:8080
+      uri: http://feed-service:8080/
       fallback: placeholder
       path: feed/*
