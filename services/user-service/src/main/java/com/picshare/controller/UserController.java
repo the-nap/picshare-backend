@@ -37,6 +37,13 @@ public class UserController {
 
     return null;
   }
+
+  @PostMapping("/user/create")
+  public ResponseEntity<Void> addUser(@RequestParam String userId, @RequestParam String email, @RequestParam String username){
+    this.userService.createUser(userId, email, username);
+    return ResponseEntity.ok().build();
+
+  }
 }
 
 

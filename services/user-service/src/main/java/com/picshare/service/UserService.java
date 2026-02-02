@@ -63,4 +63,8 @@ public class UserService {
     connectionRepository.delete(connectionRepository.findByFollowerAndFollowed(user, toFollow));
   }
 
+  public void createUser(String userId, String username, String email){
+    UserDTO dto = new UserDTO(userId, email, username);
+    userRepository.save(userMapper.toEntity(dto));
+  }
 }
