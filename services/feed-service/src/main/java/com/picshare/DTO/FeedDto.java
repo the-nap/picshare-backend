@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class FeedDto {
-  private Long userId,postId;
+  private String userId;
+  private Long postId;
 }

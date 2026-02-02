@@ -1,6 +1,5 @@
 package com.picshare.service;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,28 +21,28 @@ public class UserService {
   private final ConnectionRepository connectionRepository;
   private final UserMapper userMapper;
 
-  public Set<UserDTO> getFollowers(Long id){
+  public Set<UserDTO> getFollowers(String id){
     return connectionRepository.findByFollowed(userRepository.findById(id).get())
       .stream()
       .map(connection -> userMapper.toDto(connection.getFollower()))
       .collect(Collectors.toSet());
   }
 
-  public Set<UserDTO> getFollowed(Long id){
+  public Set<UserDTO> getFollowed(String id){
     return connectionRepository.findByFollower(userRepository.findById(id).get())
       .stream()
       .map(connection -> userMapper.toDto(connection.getFollowed()))
       .collect(Collectors.toSet());
   }
 
-  private boolean exist(Long userId, Long toFollowId){
+  private boolean exist(String userId, String toFollowId){
     if(!userRepository.existsById(userId) || !userRepository.existsById(toFollowId))
       return false;
     return true;
 
   }
 
-  public void follow(Long userId, Long toFollowId){
+  public void follow(String userId, String toFollowId){
     if(!exist(userId, toFollowId))
       return; //ToDo throw exception
 
@@ -52,7 +51,7 @@ public class UserService {
     connectionRepository.save(new ConnectionEntity(user, toFollow));
   }
 
-  public void removeFollow(Long userId, Long toFollowId){
+  public void removeFollow(String userId, String toFollowId){
     if(!exist(userId, toFollowId))
       return; //ToDo throw exception
 
@@ -63,4 +62,5 @@ public class UserService {
 
     connectionRepository.delete(connectionRepository.findByFollowerAndFollowed(user, toFollow));
   }
+
 }

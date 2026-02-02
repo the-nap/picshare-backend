@@ -21,8 +21,8 @@ public class UserController {
   private final UserService userService;
 
   @GetMapping("followers/{id}")
-  public ResponseEntity<List<Long>> getFollowers(@PathVariable Long id){
-    List<Long> followers = userService.getFollowers(id)
+  public ResponseEntity<List<String>> getFollowers(@PathVariable String id){
+    List<String> followers = userService.getFollowers(id)
       .stream()
       .map(user -> user.getId())
       .collect(Collectors.toList());
@@ -33,13 +33,10 @@ public class UserController {
   }
   
   @PostMapping("/user/follow")
-  public ResponseEntity<Void> addFollower(@RequestParam Long userId, @RequestParam Long toFollowId){
+  public ResponseEntity<Void> addFollower(@RequestParam String userId, @RequestParam String toFollowId){
 
     return null;
   }
-
-
-  
 }
 
 

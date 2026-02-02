@@ -30,7 +30,7 @@ public class PostEntity {
 
   @Column(nullable = false, updatable = false)
   @NonNull
-  private Long userId;
+  private String userId;
 
   @Column
   private String imageUrl;

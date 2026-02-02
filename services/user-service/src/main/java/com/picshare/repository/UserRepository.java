@@ -8,14 +8,14 @@ import org.springframework.stereotype.Repository;
 import com.picshare.entity.UserEntity;
 
 @Repository
-public interface UserRepository extends CrudRepository<UserEntity, Long> {
+public interface UserRepository extends CrudRepository<UserEntity, String> {
 
-  Optional<UserEntity> findById(Long id);
+  Optional<UserEntity> findById(String id);
 
   Optional<UserEntity> findByUsername(String username);
 
   Optional<UserEntity> findByEmail(String email);
 
-  void deleteById(Long id);
+  void deleteById(String id);
 
 }

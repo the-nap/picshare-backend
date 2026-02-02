@@ -13,6 +13,6 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
   Optional<PostEntity> findById(Long id);
 
-  List<PostEntity> findByUserId(Long id);
+  List<PostEntity> findByUserId(String id);
 
 }

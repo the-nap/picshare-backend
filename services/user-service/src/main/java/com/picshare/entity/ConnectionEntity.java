@@ -40,7 +40,7 @@ public class ConnectionEntity {
   @NoArgsConstructor(force = true)
   @RequiredArgsConstructor
   public static class ConnectionId implements Serializable {
-    private final Long followerId;
-    private final Long followedId;
+    private final String followerId;
+    private final String followedId;
   }
 }

@@ -30,14 +30,14 @@ public class FeedService {
   private final FeedMapper feedMapper;
   private final FeedClient feedClient;
 
-  public List<Long> getFeed(Long id){
+  public List<Long> getFeed(String id){
     return feedRepository.findByUserIdOrderByTimestampDesc(id)
       .stream()
       .map(entity -> entity.getPostId())
       .collect(Collectors.toList());
   }
   
-  public void markAsSeen(Long userId, Long postId){
+  public void markAsSeen(String userId, Long postId){
     Optional<FeedEntity> seen = feedRepository.findByUserIdAndPostId(userId, postId);
     if(seen.isEmpty()){
       // To Do
@@ -47,7 +47,7 @@ public class FeedService {
     feedRepository.save(entity);
   }
 
-  public void add(Long userId, Long postId){
+  public void add(String userId, Long postId){
     FeedDto feed = new FeedDto(userId, postId);
     feedRepository.save(feedMapper.toEntity(feed));
   }
@@ -64,7 +64,7 @@ public class FeedService {
     List<UpdateDto> updates = this.feedClient.getUpdates();
     if(updates.isEmpty())
       return;
-    Map<Long,List<Long>> postsByUser = updates.stream()
+    Map<String,List<Long>> postsByUser = updates.stream()
       .collect(Collectors.groupingBy(
             UpdateDto::getUserId,
             Collectors.mapping(UpdateDto::getPostId, Collectors.toList())
@@ -73,14 +73,14 @@ public class FeedService {
     handleInsertion(postsByUser);
   }
 
-  private void handleInsertion(Map<Long, List<Long>> postsByUser) {
-    for ( Map.Entry<Long,List<Long>> entry : postsByUser.entrySet() ){
-      Long posterId = entry.getKey();
+  private void handleInsertion(Map<String, List<Long>> postsByUser) {
+    for ( Map.Entry<String,List<Long>> entry : postsByUser.entrySet() ){
+      String posterId = entry.getKey();
       List<Long> postIds = entry.getValue();
-      List<Long> followers = this.feedClient.getFollowers(posterId);
+      List<String> followers = this.feedClient.getFollowers(posterId);
 
       List<FeedDto> toSave = new ArrayList<>(followers.size() * postIds.size());
-      for( Long follower : followers )
+      for( String follower : followers )
         for( Long postId : postIds) 
           toSave.add(new FeedDto(follower, postId));
 
