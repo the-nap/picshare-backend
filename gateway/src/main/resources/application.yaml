@@ -1,6 +1,14 @@
 spring:
   application:
     name: Gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://pic-share.eu.auth0.com/
+          audience: http://localhost:8080/api
+
   services:
     post-service:
       uri: http://post-service:8080/

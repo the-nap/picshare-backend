@@ -17,7 +17,7 @@ public class RouteConfig {
   private final RouteLocatorBuilder builder;
 
   @Bean
-  public RouteLocator dynamicRoutes() {
+  public RouteLocator gatewayRoutes() {
     RouteLocatorBuilder.Builder routes = builder.routes();
 
     serviceConfig.getServices().forEach((key,value) -> {
