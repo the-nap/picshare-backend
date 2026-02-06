@@ -1,11 +1,11 @@
-package com.picshare.repository;
+package com.picshare.userservice.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.picshare.entity.UserEntity;
+import com.picshare.userservice.entity.UserEntity;
 
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, String> {

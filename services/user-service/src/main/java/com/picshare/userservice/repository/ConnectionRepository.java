@@ -1,13 +1,13 @@
-package com.picshare.repository;
+package com.picshare.userservice.repository;
 
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.picshare.entity.ConnectionEntity;
-import com.picshare.entity.UserEntity;
-import com.picshare.entity.ConnectionEntity.ConnectionId;
+import com.picshare.userservice.entity.ConnectionEntity;
+import com.picshare.userservice.entity.ConnectionEntity.ConnectionId;
+import com.picshare.userservice.entity.UserEntity;
 
 @Repository
 public interface ConnectionRepository extends CrudRepository<ConnectionEntity, ConnectionId>{

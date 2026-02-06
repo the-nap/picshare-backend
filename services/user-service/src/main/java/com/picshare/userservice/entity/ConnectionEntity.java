@@ -1,4 +1,4 @@
-package com.picshare.entity;
+package com.picshare.userservice.entity;
 
 import java.io.Serializable;
 

@@ -1,3 +1,7 @@
 spring:
   application:
     name: User Service
+
+logging:
+  level:
+    org.springframework.web: DEBUG

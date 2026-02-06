@@ -1,16 +1,16 @@
-package com.picshare.service;
+package com.picshare.userservice.service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.picshare.dto.UserDTO;
-import com.picshare.entity.ConnectionEntity;
-import com.picshare.entity.UserEntity;
-import com.picshare.mapper.UserMapper;
-import com.picshare.repository.ConnectionRepository;
-import com.picshare.repository.UserRepository;
+import com.picshare.userservice.dto.UserDTO;
+import com.picshare.userservice.entity.ConnectionEntity;
+import com.picshare.userservice.entity.UserEntity;
+import com.picshare.userservice.mapper.UserMapper;
+import com.picshare.userservice.repository.ConnectionRepository;
+import com.picshare.userservice.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
