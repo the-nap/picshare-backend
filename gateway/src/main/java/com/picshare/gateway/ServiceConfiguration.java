@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import lombok.Data;
 
 @Data
-@ConfigurationProperties(prefix = "spring")
+@ConfigurationProperties(prefix = "gateway")
 public class ServiceConfiguration {
 
   private Map<String,ServiceDetails> services;
