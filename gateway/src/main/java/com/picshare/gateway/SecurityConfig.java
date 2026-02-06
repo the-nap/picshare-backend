@@ -19,7 +19,8 @@ public class SecurityConfig {
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
     return http
       .authorizeExchange((auth) -> auth
-          .anyExchange().permitAll()
+          .pathMatchers("/api/user/create").hasAuthority("SCOPE_create:users")
+          .anyExchange().authenticated()
           )
       .cors(withDefaults())
       .oauth2ResourceServer(oauth2 -> oauth2
