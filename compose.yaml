@@ -8,39 +8,6 @@ services:
     networks: 
       - picshare_network
 
-  auth-service:
-    image: quay.io/keycloak/keycloak:latest
-    env_file: "./env/auth.env"
-    depends_on:
-      auth-db:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7080/health/ready"]
-      interval: 15s
-      timeout: 2s
-      retries: 15
-    command: ["start-dev", "--http-port", "7080", "--https-port", "7443"]
-    ports:
-      - "7080:7080"
-      - "7443:7443"
-    networks:
-        - picshare_network
-
-  auth-db:
-    image: postgres:latest
-    volumes:
-      - auth-service-data:/var/lib/postgresql # good for postgres 18+
-    env_file: "./env/auth.env"
-    expose:
-      - "5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-        - picshare_network
-
   user-service:
     image: user-service:latest
     build:
@@ -131,9 +98,8 @@ services:
   minio:
     image: minio/minio
     container_name: minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
+    expose:
+      - "9000"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin

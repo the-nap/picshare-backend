@@ -29,7 +29,7 @@ public class UpdateEntity {
   @Data
   public static class UpdateId implements Serializable{
     private Long postId;
-    private Long userId;
+    private String userId;
   }
 
   public enum UpdateStatus {

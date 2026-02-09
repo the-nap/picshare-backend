@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class UpdateDto {
 
-  private final Long userId;
+  private final String userId;
   private final Long postId;
 }

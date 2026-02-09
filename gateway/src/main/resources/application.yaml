@@ -1,16 +1,30 @@
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+
 spring:
   application:
     name: Gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://pic-share.eu.auth0.com/
+          audience: http://localhost:8080/api
+
+gateway:
   services:
     post-service:
       uri: http://post-service:8080/
       fallback: placeholder
-      path: post/**
+      path: /api/post/**
     user-service:
       uri: http://user-service:8080/
       fallback: placeholder
-      path: user/*
+      path: /api/user/**
     feed-service:
       uri: http://feed-service:8080/
       fallback: placeholder
-      path: feed/*
+      path: /api/feed/*

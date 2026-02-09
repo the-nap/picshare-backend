@@ -24,19 +24,19 @@ public class FeedController {
   private final FeedService feedService;
 
   @GetMapping("/{id}")
-  public ResponseEntity<List<Long>> getFeed(@PathVariable Long id){
+  public ResponseEntity<List<Long>> getFeed(@PathVariable String id){
     List<Long> ret = feedService.getFeed(id);
     return ResponseEntity.ok(ret);
   }
 
   @PutMapping("/see")
-  public ResponseEntity<Void> markAsSeen(@RequestParam Long userId, @RequestParam List<Long> postIds){
+  public ResponseEntity<Void> markAsSeen(@RequestParam String userId, @RequestParam List<Long> postIds){
     postIds.forEach(postId -> feedService.markAsSeen(userId, postId));
     return ResponseEntity.ok().build();
   }
   
   @PostMapping("/add")
-  public ResponseEntity<Void> addToFeed(@RequestParam Long userId, @RequestParam Long postId){
+  public ResponseEntity<Void> addToFeed(@RequestParam String userId, @RequestParam Long postId){
     feedService.add(userId, postId);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }

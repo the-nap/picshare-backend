@@ -24,11 +24,11 @@ public class FeedClient {
       .body(new ParameterizedTypeReference<List<UpdateDto>>(){});
   }
 
-  public List<Long> getFollowers(Long id){
+  public List<String> getFollowers(String id){
     return this.restClient
       .get()
       .uri("http://user-service/followers/{id}", id)
       .retrieve()
-      .body(new ParameterizedTypeReference<List<Long>>() {});
+      .body(new ParameterizedTypeReference<List<String>>() {});
   }
 }
