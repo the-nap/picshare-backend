@@ -16,10 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.storage_service.service.StorageService;
 import com.example.storage_service.service.exceptions.StorageException;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StorageController {
 
   private final StorageService service;

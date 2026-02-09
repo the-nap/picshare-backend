@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.storage_service.service.util.WebpManager;
 
+import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -39,14 +40,21 @@ public class MinioService implements StorageService{
       this.bucketName = bucketName;
 
       try {
-        this.minioClient.makeBucket(MakeBucketArgs.builder()
-            .bucket(bucketName)
-            .build()
-            );
+        boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+
+        if (!found){
+          this.minioClient.makeBucket(MakeBucketArgs.builder()
+              .bucket(bucketName)
+              .build()
+              );
+        }
+        else {
+          System.out.println("Bucket " + bucketName + " already exits");
+        }
       } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
           | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
           | IllegalArgumentException | IOException e) {
-        throw new RuntimeException("Error in creating bucket: " + e.getMessage());
+        throw new RuntimeException("Error in creating bucket: " + e.getMessage() + "exceptionType: " + e.getCause());
           }
   }
 
@@ -96,22 +104,22 @@ public class MinioService implements StorageService{
 
   private void storeThumbnail(String filename, Path temp) {
     try(InputStream input = Files.newInputStream(temp)) {
-        minioClient.putObject(
-            PutObjectArgs.builder()
-            .bucket(bucketName)
-            .object(filename)
-            .stream(input, Files.size(temp), -1)
-            .contentType("image/webp")
-            .build());
-      } catch(Exception e) {
+      minioClient.putObject(
+          PutObjectArgs.builder()
+          .bucket(bucketName)
+          .object(filename)
+          .stream(input, Files.size(temp), -1)
+          .contentType("image/webp")
+          .build());
+    } catch(Exception e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        Files.deleteIfExists(temp);
+      } catch (IOException e) {
         e.printStackTrace();
-      } finally {
-        try {
-          Files.deleteIfExists(temp);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
       }
+    }
   }
 
   private Path[] decodeToFile(InputStream file) {
@@ -140,8 +148,8 @@ public class MinioService implements StorageService{
     try (InputStream stream = minioClient.getObject(GetObjectArgs.builder().object(getMediaPath(id)).build())) {
       InputStreamResource resource = new InputStreamResource(stream);
 
-      } catch(Exception e){
-      }
+    } catch(Exception e){
+    }
     return null;
   }
 
