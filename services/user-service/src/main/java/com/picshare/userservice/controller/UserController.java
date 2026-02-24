@@ -48,9 +48,6 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @GetMapping("/this")
-  public ResponseEntity<String> getCurrent(Principal principal){
-    String username = principal.getName();
 }
 
 
