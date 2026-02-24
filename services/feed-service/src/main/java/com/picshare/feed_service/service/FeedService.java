@@ -1,4 +1,4 @@
-package com.picshare.service;
+package com.picshare.feed_service.service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.picshare.DTO.FeedDto;
-import com.picshare.DTO.UpdateDto;
-import com.picshare.mapper.FeedMapper;
-import com.picshare.repository.FeedRepository;
-import com.picshare.client.FeedClient;
-import com.picshare.entity.FeedEntity;
+import com.picshare.feed_service.DTO.FeedDto;
+import com.picshare.feed_service.DTO.UpdateDto;
+import com.picshare.feed_service.client.FeedClient;
+import com.picshare.feed_service.entity.FeedEntity;
+import com.picshare.feed_service.mapper.FeedMapper;
+import com.picshare.feed_service.repository.FeedRepository;
 
 import lombok.RequiredArgsConstructor;
 

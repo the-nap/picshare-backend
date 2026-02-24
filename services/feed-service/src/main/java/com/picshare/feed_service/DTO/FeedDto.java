@@ -1,4 +1,4 @@
-package com.picshare.DTO;
+package com.picshare.feed_service.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

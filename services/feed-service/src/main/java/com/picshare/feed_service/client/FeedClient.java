@@ -1,4 +1,4 @@
-package com.picshare.client;
+package com.picshare.feed_service.client;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import com.picshare.DTO.UpdateDto;
+import com.picshare.feed_service.DTO.UpdateDto;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.picshare.entity;
+package com.picshare.feed_service.entity;
 
 import java.util.Date;
 

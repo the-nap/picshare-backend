@@ -1,4 +1,4 @@
-package com.picshare.client;
+package com.picshare.feed_service.client;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
