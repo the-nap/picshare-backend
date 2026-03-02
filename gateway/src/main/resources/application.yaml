@@ -11,8 +11,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://pic-share.eu.auth0.com/
-          audience: http://localhost:8080/api
+          issuer-uri: http://localhost:8090/
+          jwk-set-uri: http://localhost:8090/realms/picshare-realm/protocol/openid-connect/certs
 
 gateway:
   services:
