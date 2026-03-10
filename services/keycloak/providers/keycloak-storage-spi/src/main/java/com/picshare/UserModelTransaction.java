@@ -30,5 +30,9 @@ public class UserModelTransaction extends AbstractKeycloakTransaction{
     throw new UnsupportedOperationException("Unimplemented method 'rollbackImpl'");
   }
 
+  public void addUser(UserModel adapted) {
+    this.loadedUsers.add(adapted);
+  }
+
   
 }

@@ -30,20 +30,11 @@ public class PicshareUserStorageProvider implements
   public void close() {
   }
 
-  private UserModel findUser(RealmModel realm, String value, Function<String, PicshareUser> fnFindUser){
-    UserModel adapted = null;
-    PicshareUser user = fnFindUser.apply(value);
-    if(user != null) {
-
-    }
-    return adapted;
-  }
-
   @Override
   public UserModel getUserById(RealmModel realm, String id) {
     UserModel adapted = transaction.findUser(id);
     if (adapted == null){
-      // TODO look in api
+      adapted = findUser(realm, id, apiClient::getUserById);
     }
     return adapted;
   }
@@ -52,7 +43,7 @@ public class PicshareUserStorageProvider implements
   public UserModel getUserByUsername(RealmModel realm, String username) {
     UserModel adapted = transaction.findUser(username);
     if (adapted == null){
-      // TODO look in api
+      adapted = findUser(realm, username, apiClient::getUserByUsername);
     }
     return adapted;
 
@@ -62,10 +53,19 @@ public class PicshareUserStorageProvider implements
   public UserModel getUserByEmail(RealmModel realm, String email) {
     UserModel adapted = transaction.findUser(email);
     if (adapted == null){
-      // TODO look in api
+      adapted = findUser(realm, email, apiClient::getUserByEmail);
     }
     return adapted;
   }
 
+  private UserModel findUser(RealmModel realm, String value, Function<String, PicshareUser> fnFindUser){
+    UserModel adapted = null;
+    PicshareUser user = fnFindUser.apply(value);
+    if(user != null) {
+      adapted = new PicshareUserAdapter(session, realm, model, user);
+      transaction.addUser(adapted);
+    }
+    return adapted;
+  }
   
 }
