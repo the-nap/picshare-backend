@@ -31,6 +31,17 @@ public class ApiClient {
     return searchUsersRequest(url, key, toSearch);
   }
 
+  public PicshareUser getUserById(String id){
+    return searchUsers("id", id);
+  }
+
+  public PicshareUser getUserByUsername(String username){
+    return searchUsers("username", username);
+  }
+  public PicshareUser getUserByEmail(String email){
+    return searchUsers("email", email);
+  }
+
   private PicshareUser searchUsersRequest(String url, String key, String toSearch) {
     SimpleHttpRequest request = prepareGetRequest(url);
     if(key != null){
