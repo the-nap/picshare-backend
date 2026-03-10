@@ -24,15 +24,21 @@ public class UserAuthService {
   }
 
   public UserDTO getByUsername(String username){
-    return repository.findById(username)
+    return repository.findByUsername(username)
       .map(mapper::toDto)
       .orElseThrow(() -> new UserNotFoundException(String.format("User not found with username: %s", username)));
   }
 
   public UserDTO getByEmail(String email){
-    return repository.findById(email)
+    return repository.findByEmail(email)
       .map(mapper::toDto)
       .orElseThrow(() -> new UserNotFoundException(String.format("User not found with email: %s", email)));
+  }
+
+  public boolean checkPassword(String id, String password){
+    return repository.findById(id)
+      .orElseThrow(() -> new UserNotFoundException(String.format("User not found with id: %s", id)))
+      .getPassword().equals(password);
   }
   
 }

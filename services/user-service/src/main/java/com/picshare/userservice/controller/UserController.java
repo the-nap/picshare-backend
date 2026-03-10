@@ -24,7 +24,7 @@ public class UserController {
 
   private final UserService userService;
 
-  @GetMapping("followers/{id}")
+  @GetMapping("/followers/{id}")
   public ResponseEntity<List<String>> getFollowers(@PathVariable String id){
     List<String> followers = userService.getFollowers(id)
       .stream()
