@@ -1,6 +1,7 @@
 package com.picshare;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.keycloak.component.ComponentModel;
@@ -42,6 +43,13 @@ public class ApiClient {
     return searchUsers("email", email);
   }
 
+  public boolean verifyCredentials(String externalId, String challengeResponse) {
+    String url = String.format("%s/users/auth/%s/credentials/verify", this.baseUrl, externalId);
+    //TODO use body to send password
+    SimpleHttpRequest request = simpleHttp.doPost(url).param("credential", challengeResponse);
+    return handleRequestNoContentResponse(request);
+  }
+
   private PicshareUser searchUsersRequest(String url, String key, String toSearch) {
     SimpleHttpRequest request = prepareGetRequest(url);
     if(key != null){
@@ -50,16 +58,16 @@ public class ApiClient {
     if (toSearch != null){
       request.param("value", toSearch);
     }
-    return handleRequest(request);
+    return handleRequest(request, response -> objectMapper.readValue(response.asString(), PicshareUser.class));
   }
 
-  private PicshareUser handleRequest(SimpleHttpRequest request){
-    AtomicReference<PicshareUser> result = new AtomicReference<>();
+  private <T> T handleRequest(SimpleHttpRequest request, ThrowingFunction<SimpleHttpResponse, T, IOException> responseFunction){
+    AtomicReference<T> result = new AtomicReference<>();
     try (SimpleHttpResponse response = request.asResponse()) {
       if (response.getStatus() >= 300) {
         log.error("Error response from server: {}, error: {}, url: {}", response.getStatus(), response.asString(), request.getUrl());
       } else {
-        result.set(objectMapper.readValue(response.asString(), PicshareUser.class));
+        result.set(responseFunction.apply(response));
       }
     } catch (IOException e){
       log.error("Exception during calling url %s: %s".formatted(request.getUrl(), e.getMessage()));
@@ -69,6 +77,12 @@ public class ApiClient {
 
   private SimpleHttpRequest prepareGetRequest(String url) {
     return simpleHttp.doGet(url).acceptJson();
+  }
+
+
+  private boolean handleRequestNoContentResponse(SimpleHttpRequest request){
+    return Optional.ofNullable(handleRequest(request, response -> response.getStatus() == 204))
+      .orElse(false);
   }
 
 }
