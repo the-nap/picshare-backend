@@ -39,7 +39,6 @@ public class UserService {
     if(!userRepository.existsById(userId) || !userRepository.existsById(toFollowId))
       return false;
     return true;
-
   }
 
   public void follow(String userId, String toFollowId){
