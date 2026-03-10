@@ -19,7 +19,8 @@ public class PicshareUserStorageProviderFactory implements UserStorageProviderFa
 
   @Override
   public PicshareUserStorageProvider create(KeycloakSession session, ComponentModel model) {
-    return new PicshareUserStorageProvider(session, model);
+    ApiClient apiClient = new ApiClient(session, model);
+    return new PicshareUserStorageProvider(session, model, apiClient);
   }
 
   @Override
