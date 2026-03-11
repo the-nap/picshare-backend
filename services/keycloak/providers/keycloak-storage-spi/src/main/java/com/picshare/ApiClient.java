@@ -1,6 +1,8 @@
 package com.picshare;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,20 +31,25 @@ public class ApiClient {
     this.objectMapper = new ObjectMapper();
   }
 
-  public PicshareUser searchUsers(String key, String toSearch){
-    String url = String.format("%s/users/auth/", baseUrl);
-    return searchUsersRequest(url, key, toSearch);
+  public List<PicshareUser> searchUsers(String key, String toSearch, Integer first, Integer max, boolean exactMatch){
+    String url;
+    if(exactMatch)
+      url = String.format("%s/users/auth/", baseUrl);
+    else 
+      url = String.format("%s/users/auth/search", baseUrl);
+    return searchUsersRequest(url, key, toSearch, first, max);
   }
 
   public PicshareUser getUserById(String id){
-    return searchUsers("id", id);
+    return searchUsers("id", id, 0, 1, true).getFirst();
   }
 
   public PicshareUser getUserByUsername(String username){
-    return searchUsers("username", username);
+    return searchUsers("username", username, 0, 1, true).getFirst();
   }
+
   public PicshareUser getUserByEmail(String email){
-    return searchUsers("email", email);
+    return searchUsers("email", email, 0, 1, true).getFirst();
   }
 
   public boolean verifyCredentials(String externalId, Credential credential) {
@@ -69,15 +76,25 @@ public class ApiClient {
     return handleRequestNoContentResponse(request);
   }
 
-  private PicshareUser searchUsersRequest(String url, String key, String toSearch) {
+  public List<PicshareUser> searchByUsername(String username, Integer first, Integer max){
+    return searchUsers("username", username, first, max, false);
+  }
+
+  public List<PicshareUser> searchByEmail(String email, Integer first, Integer max){
+    return searchUsers("email", email, first, max, false);
+  }
+
+  private List<PicshareUser> searchUsersRequest(String url, String key, String toSearch, Integer first, Integer max) {
     SimpleHttpRequest request = prepareGetRequest(url);
-    if(key != null){
+    if(key != null)
       request.param("key", key);
-    }
-    if (toSearch != null){
+    if (toSearch != null)
       request.param("value", toSearch);
-    }
-    return handleRequest(request, response -> objectMapper.readValue(response.asString(), PicshareUser.class));
+    if (first != null)
+      request.param("first", String.valueOf(first));
+    if (max != null)
+      request.param("max", String.valueOf(max));
+    return handleRequest(request, response -> Arrays.asList(objectMapper.readValue(response.asString(), PicshareUser.class)));
   }
 
   private <T> T handleRequest(SimpleHttpRequest request, ThrowingFunction<SimpleHttpResponse, T, IOException> responseFunction){
@@ -97,7 +114,6 @@ public class ApiClient {
   private SimpleHttpRequest prepareGetRequest(String url) {
     return simpleHttp.doGet(url).acceptJson();
   }
-
 
   private boolean handleRequestNoContentResponse(SimpleHttpRequest request){
     return Optional.ofNullable(handleRequest(request, response -> response.getStatus() == 204))
