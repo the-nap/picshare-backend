@@ -107,14 +107,11 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public void disableCredentialType(RealmModel realm, UserModel user, String credentialType) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'disableCredentialType'");
   }
 
   @Override
   public Stream<String> getDisableableCredentialTypesStream(RealmModel realm, UserModel user) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getDisableableCredentialTypesStream'");
+    return Stream.empty();
   }
   
 }
