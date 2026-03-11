@@ -156,14 +156,12 @@ public class PicshareUserStorageProvider implements
   @Override
   public Stream<UserModel> getGroupMembersStream(RealmModel realm, GroupModel group, Integer firstResult,
       Integer maxResults) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getGroupMembersStream'");
+    return Stream.empty();
   }
 
   @Override
   public Stream<UserModel> searchForUserByUserAttributeStream(RealmModel realm, String attrName, String attrValue) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'searchForUserByUserAttributeStream'");
+    return Stream.empty();
   }
   
 }
