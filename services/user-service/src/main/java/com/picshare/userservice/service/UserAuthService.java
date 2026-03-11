@@ -4,10 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.picshare.userservice.dto.UserDTO;
-import com.picshare.userservice.entity.UserEntity;
 import com.picshare.userservice.mapper.UserMapper;
 import com.picshare.userservice.repository.UserRepository;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
+import com.picshare.userservice.service.exceptions.UsernameExistsException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,4 +50,14 @@ public class UserAuthService {
     return true;
   }
   
+  @Transactional
+  public UserDTO createUser(UserDTO user){
+    if(repository.existsByUsername(user.getUsername()))
+      throw new UsernameExistsException(String.format("User already exists with username: %s", user.getUsername()));
+    repository.save(mapper.toEntity(user));
+
+    return mapper.toDto(
+        repository.findByUsername(user.getUsername())
+          .orElseThrow(() -> new UserNotFoundException(String.format("User not found with username: %s", user.getUsername()))));
+  }
 }

@@ -17,12 +17,15 @@ import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserLookupProvider;
+import org.keycloak.storage.user.UserRegistrationProvider;
 
 public class PicshareUserStorageProvider implements 
   UserStorageProvider,
   UserLookupProvider,
   CredentialInputValidator,
-  CredentialInputUpdater{
+  CredentialInputUpdater,
+  UserRegistrationProvider
+{
 
   private final KeycloakSession session;
   private final ComponentModel model;
@@ -112,6 +115,24 @@ public class PicshareUserStorageProvider implements
   @Override
   public Stream<String> getDisableableCredentialTypesStream(RealmModel realm, UserModel user) {
     return Stream.empty();
+  }
+
+  @Override
+  public UserModel addUser(RealmModel realm, String username) {
+    PicshareUser user = new PicshareUser();
+    user.setUsername(username);
+    user = apiClient.addUser(user);
+    if (user == null)
+      return null;
+    PicshareUserAdapter userAdapted = new PicshareUserAdapter(session, realm, model, user);
+    transaction.addUser(userAdapted);
+    return userAdapted;
+  }
+
+  @Override
+  public boolean removeUser(RealmModel realm, UserModel user) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'removeUser'");
   }
   
 }

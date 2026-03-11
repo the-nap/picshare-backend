@@ -42,12 +42,6 @@ public class UserController {
     return null;
   }
 
-  @PostMapping("/create")
-  public ResponseEntity<Void> addUser(@RequestBody Map<String, String> body){
-    //this.userService.createUser(body.get("userId"), body.get("email"), body.get("username"));
-    return ResponseEntity.ok().build();
-  }
-
 }
 
 

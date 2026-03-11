@@ -51,4 +51,9 @@ public class UserAuthController {
       return ResponseEntity.badRequest().build();
     return ResponseEntity.noContent().build();
   }
+
+  @PostMapping("/create")
+  ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user){
+    return ResponseEntity.ok(service.createUser(user));
+  }
 }

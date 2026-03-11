@@ -47,7 +47,6 @@ public class ApiClient {
 
   public boolean verifyCredentials(String externalId, Credential credential) {
     String url = String.format("%s/users/auth/%s/credentials/verify", this.baseUrl, externalId);
-    //TODO use body to send password
     SimpleHttpRequest request = simpleHttp.doPost(url).json(credential);
     return handleRequestNoContentResponse(request);
   }
@@ -56,6 +55,12 @@ public class ApiClient {
     String url = String.format("%s/users/auth/%s/credentials/update", this.baseUrl, externalId);
     SimpleHttpRequest request = simpleHttp.doPost(url).json(credential);
     return handleRequestNoContentResponse(request);
+  }
+
+  public PicshareUser addUser(PicshareUser user){
+    String url = String.format("%s/users/auth/create", this.baseUrl);
+    SimpleHttpRequest request = simpleHttp.doPost(url).json(user);
+    return handleRequest(request, response -> objectMapper.readValue(response.asString(), PicshareUser.class));
   }
 
   private PicshareUser searchUsersRequest(String url, String key, String toSearch) {
