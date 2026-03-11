@@ -43,4 +43,12 @@ public class UserAuthController {
       return ResponseEntity.badRequest().build();
   }
   
+  @PostMapping("/{id}/credentials/update")
+  ResponseEntity<Void> updateCredentials(@PathVariable String id, @RequestBody CredentialDTO credential){
+    if(credential.getType().equals("password") && service.checkPassword(id, credential.getValue()))
+      service.updateCredential(id, credential.getValue());
+    else
+      return ResponseEntity.badRequest().build();
+    return ResponseEntity.noContent().build();
+  }
 }

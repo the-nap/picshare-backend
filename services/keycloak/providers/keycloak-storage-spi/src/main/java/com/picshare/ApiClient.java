@@ -52,6 +52,12 @@ public class ApiClient {
     return handleRequestNoContentResponse(request);
   }
 
+  public boolean updateCredentials(String externalId, Credential credential) {
+    String url = String.format("%s/users/auth/%s/credentials/update", this.baseUrl, externalId);
+    SimpleHttpRequest request = simpleHttp.doPost(url).json(credential);
+    return handleRequestNoContentResponse(request);
+  }
+
   private PicshareUser searchUsersRequest(String url, String key, String toSearch) {
     SimpleHttpRequest request = prepareGetRequest(url);
     if(key != null){

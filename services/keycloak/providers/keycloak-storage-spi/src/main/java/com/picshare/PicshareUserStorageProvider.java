@@ -1,10 +1,13 @@
 package com.picshare;
 
 import java.util.function.Function;
+import java.util.stream.Stream;
+
 import com.picshare.util.Credential;
 
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
+import org.keycloak.credential.CredentialInputUpdater;
 import org.keycloak.credential.CredentialInputValidator;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
@@ -18,7 +21,8 @@ import org.keycloak.storage.user.UserLookupProvider;
 public class PicshareUserStorageProvider implements 
   UserStorageProvider,
   UserLookupProvider,
-  CredentialInputValidator{
+  CredentialInputValidator,
+  CredentialInputUpdater{
 
   private final KeycloakSession session;
   private final ComponentModel model;
@@ -86,13 +90,31 @@ public class PicshareUserStorageProvider implements
   }
 
   @Override
-  public boolean isValid(RealmModel realm, UserModel user, CredentialInput credentialInput) {
-    if (!supportsCredentialType(credentialInput.getType()) || !(credentialInput instanceof UserCredentialModel cred)){
+  public boolean isValid(RealmModel realm, UserModel user, CredentialInput input) {
+    if (!supportsCredentialType(input.getType()) || !(input instanceof UserCredentialModel cred)){
       return false;
     }
+    return apiClient.verifyCredentials(StorageId.externalId(user.getId()), new Credential("password", cred.getChallengeResponse()));
+  }
 
-    return apiClient.verifyCredentials(user.getId(), new Credential(StorageId.externalId(user.getId()), cred.getChallengeResponse()));
+  @Override
+  public boolean updateCredential(RealmModel realm, UserModel user, CredentialInput input) {
+    if(!supportsCredentialType(input.getType()) || !(input instanceof UserCredentialModel cred))
+      return false;
 
+    return apiClient.updateCredentials(user.getId(), new Credential("password", cred.getChallengeResponse()));
+  }
+
+  @Override
+  public void disableCredentialType(RealmModel realm, UserModel user, String credentialType) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'disableCredentialType'");
+  }
+
+  @Override
+  public Stream<String> getDisableableCredentialTypesStream(RealmModel realm, UserModel user) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getDisableableCredentialTypesStream'");
   }
   
 }

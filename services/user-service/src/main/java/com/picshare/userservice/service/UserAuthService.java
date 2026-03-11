@@ -1,8 +1,10 @@
 package com.picshare.userservice.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.picshare.userservice.dto.UserDTO;
+import com.picshare.userservice.entity.UserEntity;
 import com.picshare.userservice.mapper.UserMapper;
 import com.picshare.userservice.repository.UserRepository;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
@@ -15,7 +17,6 @@ public class UserAuthService {
 
   private final UserRepository repository;
   private final UserMapper mapper;
-
 
   public UserDTO getById(String id){
     return repository.findById(id)
@@ -39,6 +40,14 @@ public class UserAuthService {
     return repository.findById(id)
       .orElseThrow(() -> new UserNotFoundException(String.format("User not found with id: %s", id)))
       .getPassword().equals(password);
+  }
+
+  @Transactional
+  public boolean updateCredential(String id, String password){
+    repository.findById(id)
+      .orElseThrow(() -> new UserNotFoundException(String.format("User not found with id: %s", id)))
+      .setPassword(password);
+    return true;
   }
   
 }
