@@ -24,7 +24,7 @@ public class UserAuthController {
   private final UserAuthService service;
 
   @GetMapping
-  ResponseEntity<UserDTO> searchUsers(@RequestParam String key, @RequestParam String value){
+  ResponseEntity<UserDTO> getUsers(@RequestParam String key, @RequestParam String value){
     UserDTO result = switch (key) {
       case "id" -> service.getById(value);
       case "username" -> service.getByUsername(value);
@@ -32,6 +32,18 @@ public class UserAuthController {
       default -> null;
     };
     return result != null 
+      ? ResponseEntity.ok(result)
+      : ResponseEntity.notFound().build();
+  }
+  
+  @GetMapping("/search")
+  ResponseEntity<UserDTO[]> searchUsers(@RequestParam String key, @RequestParam String value, @RequestParam String first, @RequestParam String max){
+    UserDTO[] result = switch (key) {
+      case "email" -> service.searchByEmail(value, Integer.valueOf(first), Integer.valueOf(max));
+      case "username" -> service.searchByUsername(value, Integer.valueOf(first), Integer.valueOf(max));
+      default -> null;
+    };
+    return result != null
       ? ResponseEntity.ok(result)
       : ResponseEntity.notFound().build();
   }

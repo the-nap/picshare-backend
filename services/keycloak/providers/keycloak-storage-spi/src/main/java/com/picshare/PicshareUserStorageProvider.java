@@ -1,5 +1,7 @@
 package com.picshare;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -9,6 +11,7 @@ import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputUpdater;
 import org.keycloak.credential.CredentialInputValidator;
+import org.keycloak.models.GroupModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserCredentialModel;
@@ -17,6 +20,7 @@ import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserLookupProvider;
+import org.keycloak.storage.user.UserQueryProvider;
 import org.keycloak.storage.user.UserRegistrationProvider;
 
 public class PicshareUserStorageProvider implements 
@@ -24,8 +28,8 @@ public class PicshareUserStorageProvider implements
   UserLookupProvider,
   CredentialInputValidator,
   CredentialInputUpdater,
-  UserRegistrationProvider
-{
+  UserRegistrationProvider,
+  UserQueryProvider{
 
   private final KeycloakSession session;
   private final ComponentModel model;
@@ -132,6 +136,34 @@ public class PicshareUserStorageProvider implements
   @Override
   public boolean removeUser(RealmModel realm, UserModel user) {
     return apiClient.removeUser(StorageId.externalId(user.getId()));
+  }
+
+  @Override
+  public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String, String> params, Integer firstResult,
+      Integer maxResults) {
+    List<PicshareUser> result;
+    if (params.containsKey(UserModel.USERNAME))
+      result = apiClient.searchByUsername(params.get(UserModel.USERNAME), firstResult, maxResults);
+    if (params.containsKey(UserModel.EMAIL))
+      result = apiClient.searchByEmail(params.get(UserModel.EMAIL), firstResult, maxResults);
+    else
+      return Stream.empty();
+    return result
+      .stream()
+      .map(user -> new PicshareUserAdapter(this.session, realm, this.model, user));
+  }
+
+  @Override
+  public Stream<UserModel> getGroupMembersStream(RealmModel realm, GroupModel group, Integer firstResult,
+      Integer maxResults) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getGroupMembersStream'");
+  }
+
+  @Override
+  public Stream<UserModel> searchForUserByUserAttributeStream(RealmModel realm, String attrName, String attrValue) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'searchForUserByUserAttributeStream'");
   }
   
 }

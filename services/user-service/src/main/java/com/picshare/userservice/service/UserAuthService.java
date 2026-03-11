@@ -1,5 +1,9 @@
 package com.picshare.userservice.service;
 
+import java.util.Collections;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,20 @@ public class UserAuthService {
       .orElseThrow(() -> new UserNotFoundException("email", email));
   }
 
+  public UserDTO[] searchByEmail(String email, Integer first, Integer max){
+    return repository.searchByEmail(email, first, max)
+      .stream()
+      .map(entity -> mapper.toDto(entity))
+      .toArray(UserDTO[]::new);
+  }
+
+  public UserDTO[] searchByUsername(String username, Integer first, Integer max){
+    return repository.searchByUsername(username, first, max)
+      .stream()
+      .map(entity -> mapper.toDto(entity))
+      .toArray(UserDTO[]::new);
+  }
+
   public boolean checkPassword(String id, String password){
     return repository.findById(id)
       .orElseThrow(() -> new UserNotFoundException("id", id))
@@ -68,4 +86,5 @@ public class UserAuthService {
     repository.deleteById(id);
     return true;
   }
+
 }
