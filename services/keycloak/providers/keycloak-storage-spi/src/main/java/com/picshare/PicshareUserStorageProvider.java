@@ -1,6 +1,7 @@
 package com.picshare;
 
 import java.util.function.Function;
+import com.picshare.util.Credential;
 
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
@@ -10,7 +11,6 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserCredentialModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.credential.PasswordCredentialModel;
-import org.keycloak.protocol.oid4vc.model.CredentialResponse.Credential;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserLookupProvider;
@@ -91,7 +91,7 @@ public class PicshareUserStorageProvider implements
       return false;
     }
 
-    return apiClient.verifyCredentials(StorageId.externalId(user.getId()), cred.getChallengeResponse());
+    return apiClient.verifyCredentials(user.getId(), new Credential(StorageId.externalId(user.getId()), cred.getChallengeResponse()));
 
   }
   

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.picshare.userservice.dto.CredentialDTO;
 import com.picshare.userservice.dto.UserDTO;
 import com.picshare.userservice.service.UserAuthService;
 
@@ -35,8 +36,8 @@ public class UserAuthController {
   }
 
   @PostMapping("/{id}/credentials/verify")
-  ResponseEntity<Void> verifyCredentials(@PathVariable String id, @RequestParam String password){
-    if(service.checkPassword(id, password))
+  ResponseEntity<Void> verifyCredentials(@PathVariable String id, @RequestBody CredentialDTO credential){
+    if(credential.getType().equals("password") && service.checkPassword(id, credential.getValue()))
       return ResponseEntity.noContent().build();
     else
       return ResponseEntity.badRequest().build();

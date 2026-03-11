@@ -11,6 +11,7 @@ import org.keycloak.http.simple.SimpleHttpResponse;
 import org.keycloak.models.KeycloakSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.picshare.util.Credential;
 import com.picshare.util.ThrowingFunction;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +45,10 @@ public class ApiClient {
     return searchUsers("email", email);
   }
 
-  public boolean verifyCredentials(String externalId, String challengeResponse) {
+  public boolean verifyCredentials(String externalId, Credential credential) {
     String url = String.format("%s/users/auth/%s/credentials/verify", this.baseUrl, externalId);
     //TODO use body to send password
-    SimpleHttpRequest request = simpleHttp.doPost(url).param("credential", challengeResponse);
+    SimpleHttpRequest request = simpleHttp.doPost(url).json(credential);
     return handleRequestNoContentResponse(request);
   }
 
