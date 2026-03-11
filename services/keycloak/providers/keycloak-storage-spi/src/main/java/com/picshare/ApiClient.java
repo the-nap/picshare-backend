@@ -63,6 +63,12 @@ public class ApiClient {
     return handleRequest(request, response -> objectMapper.readValue(response.asString(), PicshareUser.class));
   }
 
+  public boolean removeUser(String id){
+    String url = String.format("%s/users/auth/remove", this.baseUrl);
+    SimpleHttpRequest request = simpleHttp.doDelete(url).param("id", id);
+    return handleRequestNoContentResponse(request);
+  }
+
   private PicshareUser searchUsersRequest(String url, String key, String toSearch) {
     SimpleHttpRequest request = prepareGetRequest(url);
     if(key != null){

@@ -60,4 +60,12 @@ public class UserAuthService {
         repository.findByUsername(user.getUsername())
           .orElseThrow(() -> new UserNotFoundException("username", user.getUsername())));
   }
+
+  @Transactional
+  public boolean deleteUser(String id){
+    if(!repository.existsById(id))
+      throw new UserNotFoundException("id", id);
+    repository.deleteById(id);
+    return true;
+  }
 }

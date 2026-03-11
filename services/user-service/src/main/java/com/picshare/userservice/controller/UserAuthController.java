@@ -1,6 +1,7 @@
 package com.picshare.userservice.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,11 @@ public class UserAuthController {
   @PostMapping("/create")
   ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user){
     return ResponseEntity.ok(service.createUser(user));
+  }
+
+  @DeleteMapping("/delete")
+  ResponseEntity<Void> deleteUser(@RequestParam String id){
+    service.deleteUser(id);
+    return ResponseEntity.noContent().build();
   }
 }

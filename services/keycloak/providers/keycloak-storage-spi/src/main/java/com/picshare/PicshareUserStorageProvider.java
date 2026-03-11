@@ -131,8 +131,7 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public boolean removeUser(RealmModel realm, UserModel user) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'removeUser'");
+    return apiClient.removeUser(StorageId.externalId(user.getId()));
   }
   
 }
