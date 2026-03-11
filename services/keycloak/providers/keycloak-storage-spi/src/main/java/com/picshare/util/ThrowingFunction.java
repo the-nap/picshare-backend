@@ -1,4 +1,4 @@
-package com.picshare;
+package com.picshare.util;
 
 @FunctionalInterface
 public interface ThrowingFunction<T, R, E extends Exception> {

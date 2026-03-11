@@ -11,6 +11,7 @@ import org.keycloak.http.simple.SimpleHttpResponse;
 import org.keycloak.models.KeycloakSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.picshare.util.ThrowingFunction;
 
 import lombok.extern.slf4j.Slf4j;
 
