@@ -21,31 +21,31 @@ public class UserAuthService {
   public UserDTO getById(String id){
     return repository.findById(id)
       .map(mapper::toDto)
-      .orElseThrow(() -> new UserNotFoundException(String.format("User not found with id: %s", id)));
+      .orElseThrow(() -> new UserNotFoundException("id", id));
   }
 
   public UserDTO getByUsername(String username){
     return repository.findByUsername(username)
       .map(mapper::toDto)
-      .orElseThrow(() -> new UserNotFoundException(String.format("User not found with username: %s", username)));
+      .orElseThrow(() -> new UserNotFoundException("username", username));
   }
 
   public UserDTO getByEmail(String email){
     return repository.findByEmail(email)
       .map(mapper::toDto)
-      .orElseThrow(() -> new UserNotFoundException(String.format("User not found with email: %s", email)));
+      .orElseThrow(() -> new UserNotFoundException("email", email));
   }
 
   public boolean checkPassword(String id, String password){
     return repository.findById(id)
-      .orElseThrow(() -> new UserNotFoundException(String.format("User not found with id: %s", id)))
+      .orElseThrow(() -> new UserNotFoundException("id", id))
       .getPassword().equals(password);
   }
 
   @Transactional
   public boolean updateCredential(String id, String password){
     repository.findById(id)
-      .orElseThrow(() -> new UserNotFoundException(String.format("User not found with id: %s", id)))
+      .orElseThrow(() -> new UserNotFoundException("id", id))
       .setPassword(password);
     return true;
   }
@@ -58,6 +58,6 @@ public class UserAuthService {
 
     return mapper.toDto(
         repository.findByUsername(user.getUsername())
-          .orElseThrow(() -> new UserNotFoundException(String.format("User not found with username: %s", user.getUsername()))));
+          .orElseThrow(() -> new UserNotFoundException("username", user.getUsername())));
   }
 }
