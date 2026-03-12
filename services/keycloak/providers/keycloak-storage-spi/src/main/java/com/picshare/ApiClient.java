@@ -95,10 +95,10 @@ public class ApiClient {
       request.param("key", key);
     if (toSearch != null)
       request.param("value", toSearch);
-    if (first != null && first != 0)
-      request.param("first", String.valueOf(first));
-    if (max != null && max > 1)
+    if (max != null && max > 1 && first != null){
       request.param("max", String.valueOf(max));
+      request.param("first", String.valueOf(first));
+    }
     return handleRequest(request, response -> response.asJson(new TypeReference<>() {}));
   }
 
