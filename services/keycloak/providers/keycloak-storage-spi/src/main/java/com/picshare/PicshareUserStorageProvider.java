@@ -1,11 +1,14 @@
 package com.picshare;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.picshare.util.Credential;
+
+import lombok.NonNull;
 
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
@@ -35,13 +38,12 @@ public class PicshareUserStorageProvider implements
   private final ComponentModel model;
   private final ApiClient apiClient;
   
-  private final UserModelTransaction transaction = new UserModelTransaction();
+  private final List<UserModel> loadedUsers = new ArrayList<>();
 
   public PicshareUserStorageProvider(KeycloakSession session, ComponentModel model, ApiClient apiClient){
     this.session = session;
     this.model = model;
     this.apiClient = apiClient;
-    session.getTransactionManager().enlist(transaction);
   }
 
   @Override
@@ -50,7 +52,7 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public UserModel getUserById(RealmModel realm, String id) {
-    UserModel adapted = transaction.findUser(id);
+    UserModel adapted = findUser(id);
     if (adapted == null){
       String externalId = StorageId.externalId(id);
       adapted = findUser(realm, externalId, apiClient::getUserById);
@@ -60,7 +62,7 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public UserModel getUserByUsername(RealmModel realm, String username) {
-    UserModel adapted = transaction.findUser(username);
+    UserModel adapted = findUser(username);
     if (adapted == null){
       adapted = findUser(realm, username, apiClient::getUserByUsername);
     }
@@ -70,7 +72,7 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public UserModel getUserByEmail(RealmModel realm, String email) {
-    UserModel adapted = transaction.findUser(email);
+    UserModel adapted = findUser(email);
     if (adapted == null){
       adapted = findUser(realm, email, apiClient::getUserByEmail);
     }
@@ -82,7 +84,7 @@ public class PicshareUserStorageProvider implements
     PicshareUser user = fnFindUser.apply(value);
     if(user != null) {
       adapted = new PicshareUserAdapter(session, realm, model, user);
-      transaction.addUser(adapted);
+      loadedUsers.add(adapted);
     }
     return adapted;
   }
@@ -130,7 +132,7 @@ public class PicshareUserStorageProvider implements
     if (user == null)
       return null;
     PicshareUserAdapter userAdapted = new PicshareUserAdapter(session, realm, model, user);
-    transaction.addUser(userAdapted);
+    loadedUsers.add(userAdapted);
     return userAdapted;
   }
 
@@ -165,4 +167,9 @@ public class PicshareUserStorageProvider implements
     return Stream.empty();
   }
   
+  private UserModel findUser(@NonNull String value){
+    return loadedUsers.stream()
+      .filter(user -> user.getId().equals(value) || user.getUsername().equals(value) || user.getEmail().equalsIgnoreCase(value))
+      .findFirst().orElse(null);
+  }
 }
