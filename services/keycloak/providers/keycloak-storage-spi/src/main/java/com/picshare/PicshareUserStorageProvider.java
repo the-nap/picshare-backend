@@ -52,7 +52,8 @@ public class PicshareUserStorageProvider implements
   public UserModel getUserById(RealmModel realm, String id) {
     UserModel adapted = transaction.findUser(id);
     if (adapted == null){
-      adapted = findUser(realm, id, apiClient::getUserById);
+      String externalId = StorageId.externalId(id);
+      adapted = findUser(realm, externalId, apiClient::getUserById);
     }
     return adapted;
   }

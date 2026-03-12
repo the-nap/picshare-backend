@@ -1,9 +1,7 @@
 package com.picshare.userservice.service;
 
-import java.util.Collections;
+import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,33 +23,33 @@ public class UserAuthService {
   public UserDTO getById(String id){
     return repository.findById(id)
       .map(mapper::toDto)
-      .orElseThrow(() -> new UserNotFoundException("id", id));
+      .orElse(null);
   }
 
   public UserDTO getByUsername(String username){
     return repository.findByUsername(username)
       .map(mapper::toDto)
-      .orElseThrow(() -> new UserNotFoundException("username", username));
+      .orElse(null);
   }
 
   public UserDTO getByEmail(String email){
     return repository.findByEmail(email)
       .map(mapper::toDto)
-      .orElseThrow(() -> new UserNotFoundException("email", email));
+      .orElse(null);
   }
 
-  public UserDTO[] searchByEmail(String email, Integer first, Integer max){
+  public List<UserDTO> searchByEmail(String email, Integer first, Integer max){
     return repository.searchByEmail(email, first, max)
       .stream()
       .map(entity -> mapper.toDto(entity))
-      .toArray(UserDTO[]::new);
+      .toList();
   }
 
-  public UserDTO[] searchByUsername(String username, Integer first, Integer max){
+  public List<UserDTO> searchByUsername(String username, Integer first, Integer max){
     return repository.searchByUsername(username, first, max)
       .stream()
       .map(entity -> mapper.toDto(entity))
-      .toArray(UserDTO[]::new);
+      .toList();
   }
 
   public boolean checkPassword(String id, String password){
@@ -72,11 +70,8 @@ public class UserAuthService {
   public UserDTO createUser(UserDTO user){
     if(repository.existsByUsername(user.getUsername()))
       throw new UsernameExistsException(String.format("User already exists with username: %s", user.getUsername()));
-    repository.save(mapper.toEntity(user));
+    return mapper.toDto(repository.save(mapper.toEntity(user)));
 
-    return mapper.toDto(
-        repository.findByUsername(user.getUsername())
-          .orElseThrow(() -> new UserNotFoundException("username", user.getUsername())));
   }
 
   @Transactional

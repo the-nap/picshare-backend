@@ -12,6 +12,7 @@ import org.keycloak.http.simple.SimpleHttpRequest;
 import org.keycloak.http.simple.SimpleHttpResponse;
 import org.keycloak.models.KeycloakSession;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.picshare.util.Credential;
 import com.picshare.util.ThrowingFunction;
@@ -31,25 +32,20 @@ public class ApiClient {
     this.objectMapper = new ObjectMapper();
   }
 
-  public List<PicshareUser> searchUsers(String key, String toSearch, Integer first, Integer max, boolean exactMatch){
-    String url;
-    if(exactMatch)
-      url = String.format("%s/users/auth/", baseUrl);
-    else 
-      url = String.format("%s/users/auth/search", baseUrl);
-    return searchUsersRequest(url, key, toSearch, first, max);
-  }
 
   public PicshareUser getUserById(String id){
-    return searchUsers("id", id, 0, 1, true).getFirst();
+    List<PicshareUser> users = searchUsers("id", id, 0, 1, true);
+    return users.isEmpty() ? null : users.getFirst();
   }
 
   public PicshareUser getUserByUsername(String username){
-    return searchUsers("username", username, 0, 1, true).getFirst();
+    List<PicshareUser> users = searchUsers("username", username, 0, 1, true);
+    return users.isEmpty() ? null : users.getFirst();
   }
 
   public PicshareUser getUserByEmail(String email){
-    return searchUsers("email", email, 0, 1, true).getFirst();
+    List<PicshareUser> users = searchUsers("email", email, 0, 1, true);
+    return users.isEmpty() ? null : users.getFirst();
   }
 
   public boolean verifyCredentials(String externalId, Credential credential) {
@@ -84,17 +80,26 @@ public class ApiClient {
     return searchUsers("email", email, first, max, false);
   }
 
+  public List<PicshareUser> searchUsers(String key, String toSearch, Integer first, Integer max, boolean exactMatch){
+    String url;
+    if(exactMatch)
+      url = String.format("%s/users/auth", baseUrl);
+    else 
+      url = String.format("%s/users/auth/search", baseUrl);
+    return searchUsersRequest(url, key, toSearch, first, max);
+  }
+
   private List<PicshareUser> searchUsersRequest(String url, String key, String toSearch, Integer first, Integer max) {
     SimpleHttpRequest request = prepareGetRequest(url);
     if(key != null)
       request.param("key", key);
     if (toSearch != null)
       request.param("value", toSearch);
-    if (first != null)
+    if (first != null && first != 0)
       request.param("first", String.valueOf(first));
-    if (max != null)
+    if (max != null && max > 1)
       request.param("max", String.valueOf(max));
-    return handleRequest(request, response -> Arrays.asList(objectMapper.readValue(response.asString(), PicshareUser.class)));
+    return handleRequest(request, response -> response.asJson(new TypeReference<>() {}));
   }
 
   private <T> T handleRequest(SimpleHttpRequest request, ThrowingFunction<SimpleHttpResponse, T, IOException> responseFunction){
