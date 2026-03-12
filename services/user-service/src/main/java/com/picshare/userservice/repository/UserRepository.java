@@ -23,12 +23,12 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
   void deleteById(String id);
 
   @Query(
-    value = "SELECT u FROM UserEntity u WHERE u.username LIKE %?1% ORDER BY creationDate OFFSET ?2 LIMIT ?3",
+    value = "SELECT * FROM users u WHERE u.username LIKE %?1% ORDER BY creation_date OFFSET ?2 LIMIT ?3",
     nativeQuery = true)
   List<UserEntity> searchByUsername(String username, Integer offset, Integer max);
 
   @Query(
-    value = "SELECT u FROM UserEntity u WHERE u.email LIKE %?1% ORDER BY creationDate OFFSET ?2 LIMIT ?3",
+    value = "SELECT * FROM users u WHERE u.email LIKE %?1% ORDER BY creation_date OFFSET ?2 LIMIT ?3",
     nativeQuery = true)
   List<UserEntity> searchByEmail(String email, Integer offset, Integer max);
 
