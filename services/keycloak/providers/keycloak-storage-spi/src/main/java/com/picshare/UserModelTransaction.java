@@ -30,6 +30,7 @@ public class UserModelTransaction extends AbstractKeycloakTransaction{
 
   @Override
   protected void rollbackImpl() {
+    //TODO implement better rollback
     loadedUsers.clear();
   }
 

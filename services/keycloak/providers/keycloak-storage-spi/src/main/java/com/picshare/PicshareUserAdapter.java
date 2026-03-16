@@ -8,7 +8,6 @@ import org.keycloak.common.util.MultivaluedHashMap;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
-import org.keycloak.models.SubjectCredentialManager;
 import org.keycloak.models.UserModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage;
@@ -64,30 +63,12 @@ public class PicshareUserAdapter extends AbstractUserAdapterFederatedStorage{
   }
 
   @Override
-  public void setFirstName(String name){
-    //TODO not yet requested
-  }
-
-  @Override
-  public void setLastName(String name){
-    //TODO not yet requested
-  }
-
-  @Override
-  public SubjectCredentialManager credentialManager() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'credentialManager'");
-  }
-
-  @Override
   public void setAttribute(String name, List<String> values){
     log.info("setAttribute called with name: {}, values: {}", name, values);
     String value = values != null && !values.isEmpty() ? values.getFirst() : null;
     switch (name) {
       case UserModel.USERNAME -> setUsername(value);
       case UserModel.EMAIL -> setEmail(value);
-      case UserModel.FIRST_NAME -> setFirstName(value);
-      case UserModel.LAST_NAME -> setLastName(value);
       default -> super.setAttribute(name, values);
     }
   }
