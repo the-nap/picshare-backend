@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import com.picshare.util.Credential;
 
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputUpdater;
@@ -23,6 +24,7 @@ import org.keycloak.storage.user.UserLookupProvider;
 import org.keycloak.storage.user.UserQueryProvider;
 import org.keycloak.storage.user.UserRegistrationProvider;
 
+@Slf4j
 public class PicshareUserStorageProvider implements 
   UserStorageProvider,
   UserLookupProvider,
@@ -114,6 +116,10 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public boolean updateCredential(RealmModel realm, UserModel user, CredentialInput input) {
+    if(!isWritable()){
+      log.debug("Edit mode is read-only. Skipping credential update");
+        return false;
+    }
     if(!supportsCredentialType(input.getType()) || !(input instanceof UserCredentialModel cred))
       return false;
 
@@ -131,6 +137,10 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public UserModel addUser(RealmModel realm, String username) {
+    if(!isWritable()){
+      log.debug("Edit mode is read-only. Skipping user creation");
+      return null;
+    }
     PicshareUser user = apiClient.addUser(username);
     if (user == null)
       return null;
@@ -139,8 +149,16 @@ public class PicshareUserStorageProvider implements
     return userAdapted;
   }
 
+  private boolean isWritable() {
+    return model.get(PicshareUserStorageProviderFactory.EDIT_MODE, EditMode.READ_ONLY.name()).equals(EditMode.WRITABLE.name());
+  }
+
   @Override
   public boolean removeUser(RealmModel realm, UserModel user) {
+    if(!isWritable()){
+      log.debug("Edit mode is read-only. Skipping user deletion");
+      return false;
+    }
     return apiClient.removeUser(StorageId.externalId(user.getId()));
   }
 
