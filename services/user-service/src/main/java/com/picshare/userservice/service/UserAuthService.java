@@ -86,6 +86,7 @@ public class UserAuthService {
       throw new UsernameExistsException(String.format("User already exists with username: %s", username));
     UserDTO user = new UserDTO();
     user.setUsername(username);
+    user.setEmail(String.format("%s@default.com",username));
     return mapper.toDto(repository.save(mapper.toEntity(user)));
 
   }

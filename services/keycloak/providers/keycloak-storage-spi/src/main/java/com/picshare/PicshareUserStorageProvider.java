@@ -124,7 +124,7 @@ public class PicshareUserStorageProvider implements
     if(!supportsCredentialType(input.getType()) || !(input instanceof UserCredentialModel cred))
       return false;
 
-    return apiClient.updateCredentials(user.getId(), new Credential("password", cred.getChallengeResponse()));
+    return apiClient.updateCredentials(StorageId.externalId(user.getId()), new Credential("password", cred.getChallengeResponse()));
   }
 
   @Override
