@@ -60,10 +60,16 @@ public class ApiClient {
     return handleRequestNoContentResponse(request);
   }
 
-  public PicshareUser addUser(PicshareUser user){
+  public PicshareUser addUser(String username){
     String url = String.format("%s/users/auth/create", this.baseUrl);
-    SimpleHttpRequest request = simpleHttp.doPost(url).json(user);
+    SimpleHttpRequest request = simpleHttp.doPost(url).json(username);
     return handleRequest(request, response -> objectMapper.readValue(response.asString(), PicshareUser.class));
+  }
+
+  public boolean updateUser(PicshareUser user){
+    String url = String.format("%s/users/auth/update", this.baseUrl);
+    SimpleHttpRequest request = simpleHttp.doPut(url).json(user);
+    return handleRequestNoContentResponse(request);
   }
 
   public boolean removeUser(String id){

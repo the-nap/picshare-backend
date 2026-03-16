@@ -67,11 +67,21 @@ public class UserAuthService {
   }
   
   @Transactional
-  public UserDTO createUser(UserDTO user){
-    if(repository.existsByUsername(user.getUsername()))
-      throw new UsernameExistsException(String.format("User already exists with username: %s", user.getUsername()));
+  public UserDTO createId(String username){
+    if(repository.existsByUsername(username))
+      throw new UsernameExistsException(String.format("User already exists with username: %s", username));
+    UserDTO user = new UserDTO();
+    user.setUsername(username);
     return mapper.toDto(repository.save(mapper.toEntity(user)));
 
+  }
+
+  @Transactional
+  public boolean updateUser(UserDTO user){
+    if(!repository.existsById(user.getId()))
+      return false;
+    repository.save(mapper.toEntity(user));
+    return true;
   }
 
   @Transactional

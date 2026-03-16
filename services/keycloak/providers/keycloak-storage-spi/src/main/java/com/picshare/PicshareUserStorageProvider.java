@@ -35,7 +35,7 @@ public class PicshareUserStorageProvider implements
   private final ComponentModel model;
   private final ApiClient apiClient;
   
-  private final UserModelTransaction transaction = new UserModelTransaction();
+  private final UserModelTransaction transaction = new UserModelTransaction(this::updateUser);
 
   public PicshareUserStorageProvider(KeycloakSession session, ComponentModel model, ApiClient apiClient){
     this.session = session;
@@ -87,6 +87,13 @@ public class PicshareUserStorageProvider implements
     return adapted;
   }
 
+  private void updateUser(UserModel user){
+    PicshareUserAdapter adapted = (PicshareUserAdapter) user;
+    if (adapted.isDirty()){
+      apiClient.updateUser(adapted.getUser());
+    }
+  }
+
   @Override
   public boolean supportsCredentialType(String credentialType) {
     return credentialType.equals(PasswordCredentialModel.TYPE);
@@ -124,9 +131,7 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public UserModel addUser(RealmModel realm, String username) {
-    PicshareUser user = new PicshareUser();
-    user.setUsername(username);
-    user = apiClient.addUser(user);
+    PicshareUser user = apiClient.addUser(username);
     if (user == null)
       return null;
     PicshareUserAdapter userAdapted = new PicshareUserAdapter(session, realm, model, user);

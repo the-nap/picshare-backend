@@ -2,15 +2,20 @@ package com.picshare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.keycloak.models.AbstractKeycloakTransaction;
 import org.keycloak.models.UserModel;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class UserModelTransaction extends AbstractKeycloakTransaction{
 
   private final List<UserModel> loadedUsers = new ArrayList<>();
+  
+  private final Consumer<UserModel> userConsumer;
 
   public UserModel findUser(@NonNull String value){
     return loadedUsers.stream()
@@ -20,14 +25,12 @@ public class UserModelTransaction extends AbstractKeycloakTransaction{
 
   @Override
   protected void commitImpl() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'commitImpl'");
+    loadedUsers.forEach(userConsumer);
   }
 
   @Override
   protected void rollbackImpl() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'rollbackImpl'");
+    loadedUsers.clear();
   }
 
   public void addUser(UserModel adapted) {

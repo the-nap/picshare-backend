@@ -25,13 +25,13 @@ public class UserEntity{
   @Column(nullable = false)
   private String id;
 
-  @Column(nullable = false)
+  @Column
   private String password;
 
   @Column(unique = true, nullable = false)
   private String username;
 
-  @Column(unique = true, nullable = false)
+  @Column(unique = true)
   private String email;
 
   @CreationTimestamp

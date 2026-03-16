@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -78,8 +79,15 @@ public class UserAuthController {
   }
 
   @PostMapping("/create")
-  ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user){
-    return ResponseEntity.ok(service.createUser(user));
+  ResponseEntity<UserDTO> generateId(@RequestBody String username){
+    return ResponseEntity.ok(service.createId(username));
+  }
+
+  @PutMapping("/update")
+  ResponseEntity<Void> updateUser(@RequestBody UserDTO user){
+    if (service.updateUser(user))
+      return ResponseEntity.noContent().build();
+    return ResponseEntity.badRequest().build();
   }
 
   @DeleteMapping("/delete")
