@@ -2,6 +2,7 @@ package com.picshare.userservice.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +33,13 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     nativeQuery = true)
   List<UserEntity> searchByEmail(String email, Integer offset, Integer max);
 
+  @Query(
+    value = "SELECT * FROM users u WHERE u.username LIKE %?1%",
+    nativeQuery = true)
+  Set<UserEntity> countByUsername(String username);
+
+  @Query(
+    value = "SELECT * FROM users u WHERE u.email LIKE %?1%",
+    nativeQuery = true)
+  Set<UserEntity> countByEmail(String email);
 }

@@ -3,6 +3,7 @@ package com.picshare;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,6 +47,16 @@ public class ApiClient {
   public PicshareUser getUserByEmail(String email){
     List<PicshareUser> users = searchUsers("email", email, 0, 1, true);
     return users.isEmpty() ? null : users.getFirst();
+  }
+
+  public Integer usersCount(String search){
+    String url = String.format("%s/users/auth/count", this.baseUrl);
+    SimpleHttpRequest request = prepareGetRequest(url);
+    request.param("toSearch", search);
+    return handleRequest(request, response -> {
+      Map<String, Integer> payload = request.asJson(new TypeReference<>() {});
+      return payload.getOrDefault("count", 0);
+    });
   }
 
   public boolean verifyCredentials(String externalId, Credential credential) {

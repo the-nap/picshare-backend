@@ -2,6 +2,7 @@ package com.picshare.userservice.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,11 @@ public class UserAuthController {
     else
       return ResponseEntity.badRequest().build();
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/count")
+  ResponseEntity<Map<String,Integer>> count(@RequestParam String toSearch){
+    return ResponseEntity.ok(Map.of("count",service.count(toSearch)));
   }
 
   @PostMapping("/create")

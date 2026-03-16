@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import com.picshare.util.Credential;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputUpdater;
@@ -186,6 +187,16 @@ public class PicshareUserStorageProvider implements
   @Override
   public Stream<UserModel> searchForUserByUserAttributeStream(RealmModel realm, String attrName, String attrValue) {
     return Stream.empty();
+  }
+
+  @Override
+  public int getUsersCount(RealmModel realm) {
+    return getUsersCount(realm, Map.of());
+  }
+
+  @Override
+  public int getUsersCount(RealmModel realm, Map<String, String> params) {
+    return apiClient.usersCount(params.getOrDefault(UserModel.SEARCH, null));
   }
   
 }

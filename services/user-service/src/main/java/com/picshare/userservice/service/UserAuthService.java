@@ -1,11 +1,13 @@
 package com.picshare.userservice.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.picshare.userservice.dto.UserDTO;
+import com.picshare.userservice.entity.UserEntity;
 import com.picshare.userservice.mapper.UserMapper;
 import com.picshare.userservice.repository.UserRepository;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
@@ -56,6 +58,18 @@ public class UserAuthService {
     return repository.findById(id)
       .orElseThrow(() -> new UserNotFoundException("id", id))
       .getPassword().equals(password);
+  }
+
+  public Integer count(String toSearch){
+    if (toSearch != null && !toSearch.isEmpty()){
+      Set<UserEntity> result = repository.countByUsername(toSearch);
+      result.addAll(repository.countByEmail(toSearch));
+      return result.size();
+    }
+    long result = repository.count();
+    if (result > Integer.MAX_VALUE)
+      return Integer.MAX_VALUE;
+    return (int) result;
   }
 
   @Transactional

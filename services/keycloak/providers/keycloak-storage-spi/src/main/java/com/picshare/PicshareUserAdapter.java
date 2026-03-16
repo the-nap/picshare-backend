@@ -8,9 +8,11 @@ import org.keycloak.storage.StorageId;
 import org.keycloak.storage.adapter.AbstractUserAdapter;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 public class PicshareUserAdapter extends AbstractUserAdapter{
+@Slf4j
 
   private final PicshareUser user;
 
