@@ -1,3 +1,6 @@
 spring:
   application:
     name: Post Service
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
