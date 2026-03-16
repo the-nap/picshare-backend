@@ -1,7 +1,6 @@
 package com.picshare;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -106,6 +105,11 @@ public class ApiClient {
     return searchUsersRequest(url, key, toSearch, first, max);
   }
 
+  public List<PicshareUser> searchAll(Integer firstResult, Integer maxResults) {
+    String url = String.format("%s/users/auth/all", this.baseUrl);
+    return searchUsersRequest(url, null, null, firstResult, maxResults);
+  }
+
   private List<PicshareUser> searchUsersRequest(String url, String key, String toSearch, Integer first, Integer max) {
     SimpleHttpRequest request = prepareGetRequest(url);
     if(key != null)
@@ -141,5 +145,7 @@ public class ApiClient {
     return Optional.ofNullable(handleRequest(request, response -> response.getStatus() == 204))
       .orElse(false);
   }
+
+
 
 }

@@ -169,10 +169,10 @@ public class PicshareUserStorageProvider implements
     List<PicshareUser> result;
     if (params.containsKey(UserModel.USERNAME))
       result = apiClient.searchByUsername(params.get(UserModel.USERNAME), firstResult, maxResults);
-    if (params.containsKey(UserModel.EMAIL))
+    else if (params.containsKey(UserModel.EMAIL))
       result = apiClient.searchByEmail(params.get(UserModel.EMAIL), firstResult, maxResults);
     else
-      return Stream.empty();
+      result = apiClient.searchAll(firstResult, maxResults);
     return result
       .stream()
       .map(user -> new PicshareUserAdapter(this.session, realm, this.model, user));

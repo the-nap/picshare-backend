@@ -50,6 +50,11 @@ public class UserAuthController {
 
   }
   
+  @GetMapping("/all")
+  ResponseEntity<List<UserDTO>> getAll(@RequestParam Integer first, @RequestParam Integer max){
+    return ResponseEntity.ok(service.getAll(first, max));
+  }
+  
   @GetMapping("/search")
   ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String key, @RequestParam String value, @RequestParam String first, @RequestParam String max){
     List<UserDTO> result =

@@ -2,6 +2,7 @@ package com.picshare.userservice.service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +59,13 @@ public class UserAuthService {
     return repository.findById(id)
       .orElseThrow(() -> new UserNotFoundException("id", id))
       .getPassword().equals(password);
+  }
+
+  public List<UserDTO> getAll(Integer first, Integer max){
+    return repository.getAll(first, max)
+      .stream()
+      .map(entity -> mapper.toDto(entity))
+      .collect(Collectors.toList());
   }
 
   public Integer count(String toSearch){
