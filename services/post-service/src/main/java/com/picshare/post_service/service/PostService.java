@@ -56,11 +56,23 @@ public class PostService {
     entity.setStatus(PostStatus.FAILED);
   }
 
-  public PostResponse serve(Long id) throws PostNotFoundException{
-    Optional<PostEntity> post = postRepository.findById(id);
-    if(post.isEmpty())
-      throw new PostNotFoundException("Post not found with id: " + id);
-    return responseMapper.toDto(post.get());
+  public PostResponse serve(String id) throws PostNotFoundException{
+    return this.responseMapper.toDto(
+      this.postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id)));
+  }
+
+  public List<PostResponse> getPostsByUser(String id){
+    return this.postRepository.findByUserId(id)
+      .stream()
+      .map((entity) -> {
+
+        PostResponse result = this.responseMapper.toDto(entity);
+        result.setUrl(result.getUrl().concat("/thumbnail.webp"));
+        return result;
+
+      })
+      .toList();
   }
 
   public List<UpdateDto> serveUpdates(){

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/post")
 public class PostController {
 
   private final PostService service;
@@ -38,11 +40,17 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @GetMapping("/post/{id}")
-  public ResponseEntity<PostResponse> servePost(@PathVariable Long id){
+  @GetMapping("/{id}")
+  public ResponseEntity<PostResponse> servePost(@PathVariable String id){
     return ResponseEntity
       .ok()
       .body(this.service.serve(id));
+  }
+
+  @GetMapping("/user/{id}")
+  public ResponseEntity<List<PostResponse>> getPostsByUser(@PathVariable String id){
+    return ResponseEntity
+      .ok(this.service.getPostsByUser(id));
   }
 
   @GetMapping("update/")

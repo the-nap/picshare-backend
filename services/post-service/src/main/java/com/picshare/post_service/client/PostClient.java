@@ -20,7 +20,7 @@ public class PostClient {
 
   private final RestClient restClient;
 
-  public String upload(InputStream data, Long id) throws ExternalException, ClientErrorException{
+  public String upload(InputStream data, String string) throws ExternalException, ClientErrorException{
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
     body.add("image", new InputStreamResource(data){
@@ -29,7 +29,7 @@ public class PostClient {
         return "uploaded-image";
       }
     });
-    body.add("id", id);
+    body.add("id", string);
 
     ResponseEntity<String> response = restClient
       .post()

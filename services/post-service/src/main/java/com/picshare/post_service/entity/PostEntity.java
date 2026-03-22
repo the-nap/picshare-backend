@@ -24,9 +24,9 @@ import lombok.NonNull;
 public class PostEntity {
   
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(nullable = false, updatable = false)
-  private Long id;
+  private String id;
 
   @Column(nullable = false, updatable = false)
   @NonNull
@@ -46,7 +46,7 @@ public class PostEntity {
   @Column(name = "tags")
   private List<String> tags;
   
-  @Column(name = "status",nullable = false)
+  @Column(name = "status", nullable = false)
   @Enumerated(EnumType.STRING)
   private PostStatus status;
 
