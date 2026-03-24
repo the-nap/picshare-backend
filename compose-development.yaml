@@ -1,5 +1,19 @@
 services:
 
+  frontend:
+    build:
+      context: ./picshare-frontend/
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4200:4200"
+    networks:
+      - frontend
+    develop:
+      watch:
+        - action: sync
+          path: ./picshare-frontend/
+          target: /app
+
   keycloak:
     build:
       context: ./services/keycloak/
@@ -13,7 +27,8 @@ services:
       keycloak-db:
         condition: service_healthy
     networks:
-      - picshare_network
+      - picshare_internal
+      - frontend
 
   keycloak-db:
     image: postgres:latest
@@ -28,8 +43,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-        - picshare_network
-
+        - picshare_internal
 
   user-service:
     image: user-service:latest
@@ -40,7 +54,7 @@ services:
       user-db:
         condition: service_healthy
     networks:
-        - picshare_network
+        - picshare_internal
 
   user-db:
     image: postgres:latest
@@ -55,12 +69,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-        - picshare_network
+        - picshare_internal
 
 volumes:
   keycloak-service-data:
   user-service-data:
 
 networks:
-  picshare_network:
+  picshare_internal:
+    driver: bridge
+  frontend:
     driver: bridge
