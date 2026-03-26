@@ -30,13 +30,13 @@ public class FeedController {
   }
 
   @PutMapping("/see")
-  public ResponseEntity<Void> markAsSeen(@RequestParam String userId, @RequestParam List<Long> postIds){
+  public ResponseEntity<Void> markAsSeen(@RequestParam String userId, @RequestParam List<String> postIds){
     postIds.forEach(postId -> feedService.markAsSeen(userId, postId));
     return ResponseEntity.ok().build();
   }
   
   @PostMapping("/add")
-  public ResponseEntity<Void> addToFeed(@RequestParam String userId, @RequestParam Long postId){
+  public ResponseEntity<Void> addToFeed(@RequestParam String userId, @RequestParam String postId){
     feedService.add(userId, postId);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
