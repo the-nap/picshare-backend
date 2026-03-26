@@ -8,5 +8,5 @@ import lombok.Data;
 public class UpdateDto {
 
   private final String userId;
-  private final Long postId;
+  private final String postId;
 }

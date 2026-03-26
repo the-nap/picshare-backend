@@ -34,6 +34,11 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
   List<UserEntity> searchByEmail(String email, Integer offset, Integer max);
 
   @Query(
+    value = "SELECT * FROM users u WHERE u.email LIKE %?1% OR u.username LIKE %?1% ORDER BY creation_date OFFSET ?2 LIMIT ?3",
+    nativeQuery = true)
+  List<UserEntity> searchByEmailOrUsername(String toSearch, Integer offset, Integer max);
+
+  @Query(
     value = "SELECT * FROM users u WHERE u.username LIKE %?1%",
     nativeQuery = true)
   Set<UserEntity> countByUsername(String username);

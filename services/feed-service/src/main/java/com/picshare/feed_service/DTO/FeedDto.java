@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class FeedDto {
   private String userId;
-  private Long postId;
+  private String postId;
 }

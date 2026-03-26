@@ -1,5 +1,6 @@
 package com.picshare.userservice.service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import com.picshare.userservice.entity.UserEntity;
 import com.picshare.userservice.mapper.UserMapper;
 import com.picshare.userservice.repository.ConnectionRepository;
 import com.picshare.userservice.repository.UserRepository;
+import com.picshare.userservice.service.exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -20,6 +22,23 @@ public class UserService {
   private final UserRepository userRepository;
   private final ConnectionRepository connectionRepository;
   private final UserMapper userMapper;
+
+  public UserDTO getUser(String id){
+    return userMapper.toDto(userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("id", id)));
+  }
+
+  public UserDTO getByUsername(String username){
+    return userMapper.toDto(userRepository.findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException("username", username)));
+  }
+
+  public List<UserDTO> search(String toSearch, int offset, int max){
+    return this.userRepository.searchByEmailOrUsername(toSearch, offset, max)
+      .stream()
+      .map((entity) -> userMapper.toDto(entity))
+      .collect(Collectors.toList());
+  }
 
   public Set<UserDTO> getFollowers(String id){
     return connectionRepository.findByFollowed(userRepository.findById(id).get())

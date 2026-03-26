@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.picshare.post_service.client.PostClient;
@@ -56,11 +58,36 @@ public class PostService {
     entity.setStatus(PostStatus.FAILED);
   }
 
-  public PostResponse serve(Long id) throws PostNotFoundException{
-    Optional<PostEntity> post = postRepository.findById(id);
-    if(post.isEmpty())
-      throw new PostNotFoundException("Post not found with id: " + id);
-    return responseMapper.toDto(post.get());
+  public PostResponse serve(String id) throws PostNotFoundException{
+    return this.responseMapper.toDto(
+      this.postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id)));
+  }
+
+  public List<PostResponse> getPosts(List<String> ids){
+    return ids.stream()
+      .map(id -> this.serve(id))
+      .collect(Collectors.toList());
+  }
+
+  public List<PostResponse> getPostsByUser(String id, int offset, int max){
+    return this.postRepository.findByUserId(id, PageRequest.of(offset, max, Sort.by("timestamp").descending()))
+      .map((entity) -> {
+
+        PostResponse result = this.responseMapper.toDto(entity);
+        result.setUrl(result.getUrl().concat("/thumbnail.webp"));
+        return result;
+
+      })
+      .toList();
+  }
+
+  public List<PostResponse> getPostByTag(String tag, int offset, int max){
+    return this.postRepository.findByTag(tag, PageRequest.of(
+        offset, max, 
+        Sort.by("timestamp").descending()))
+      .map(entity -> responseMapper.toDto(entity))
+      .toList();
   }
 
   public List<UpdateDto> serveUpdates(){

@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.picshare.feed_service.DTO.PostDto;
 import com.picshare.feed_service.DTO.UpdateDto;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,20 @@ public class FeedClient {
       .uri("http://post-service/updates")
       .retrieve()
       .body(new ParameterizedTypeReference<List<UpdateDto>>(){});
+  }
+
+  public List<PostDto> getPosts(List<String> ids){
+
+    UriComponents uriComponents = UriComponentsBuilder
+      .fromUriString("http://post-service:8080/post/feed")
+      .queryParam("id", ids.toArray())
+      .build();
+
+    return this.restClient
+      .get()
+      .uri(uriComponents.expand().toUri())
+      .retrieve()
+      .body(new ParameterizedTypeReference<List<PostDto>>() {});
   }
 
   public List<String> getFollowers(String id){

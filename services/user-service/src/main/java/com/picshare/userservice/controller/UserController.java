@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.picshare.userservice.dto.UserDTO;
 import com.picshare.userservice.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,22 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
   private final UserService userService;
+
+  @GetMapping("/{id}")
+  public ResponseEntity<UserDTO> getUser(@PathVariable String id){
+    return ResponseEntity.ok(this.userService.getUser(id));
+  }
+
+  @GetMapping("/name/{username}")
+  public ResponseEntity<UserDTO> getByUsername(@PathVariable String username){
+    return ResponseEntity.ok(this.userService.getByUsername(username));
+  }
+
+  @GetMapping("/contains/{toSearch}")
+  public ResponseEntity<List<UserDTO>> searchUsers(@PathVariable String toSearch, @RequestParam int offset, @RequestParam int max){
+    return ResponseEntity.ok(this.userService.search(toSearch, offset, max));
+
+  }
 
   @GetMapping("/followers/{id}")
   public ResponseEntity<List<String>> getFollowers(@PathVariable String id){

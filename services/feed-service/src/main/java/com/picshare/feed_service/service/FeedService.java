@@ -10,10 +10,13 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.picshare.feed_service.DTO.FeedDto;
+import com.picshare.feed_service.DTO.PostDto;
 import com.picshare.feed_service.DTO.UpdateDto;
 import com.picshare.feed_service.client.FeedClient;
 import com.picshare.feed_service.entity.FeedEntity;
@@ -30,14 +33,16 @@ public class FeedService {
   private final FeedMapper feedMapper;
   private final FeedClient feedClient;
 
-  public List<Long> getFeed(String id){
-    return feedRepository.findByUserIdOrderByTimestampDesc(id)
-      .stream()
-      .map(entity -> entity.getPostId())
-      .collect(Collectors.toList());
+  public List<PostDto> getFeed(String id, int offset, int max){
+    List<String> ids = feedRepository.findByUserId(id, PageRequest.of
+      (offset, max, Sort.by("timestamp").descending()))
+        .map(entity -> entity.getPostId())
+        .get()
+        .collect(Collectors.toList());
+    return feedClient.getPosts(ids);
   }
   
-  public void markAsSeen(String userId, Long postId){
+  public void markAsSeen(String userId, String postId){
     Optional<FeedEntity> seen = feedRepository.findByUserIdAndPostId(userId, postId);
     if(seen.isEmpty()){
       // To Do
@@ -47,7 +52,7 @@ public class FeedService {
     feedRepository.save(entity);
   }
 
-  public void add(String userId, Long postId){
+  public void add(String userId, String postId){
     FeedDto feed = new FeedDto(userId, postId);
     feedRepository.save(feedMapper.toEntity(feed));
   }
@@ -64,7 +69,7 @@ public class FeedService {
     List<UpdateDto> updates = this.feedClient.getUpdates();
     if(updates.isEmpty())
       return;
-    Map<String,List<Long>> postsByUser = updates.stream()
+    Map<String,List<String>> postsByUser = updates.stream()
       .collect(Collectors.groupingBy(
             UpdateDto::getUserId,
             Collectors.mapping(UpdateDto::getPostId, Collectors.toList())
@@ -73,15 +78,15 @@ public class FeedService {
     handleInsertion(postsByUser);
   }
 
-  private void handleInsertion(Map<String, List<Long>> postsByUser) {
-    for ( Map.Entry<String,List<Long>> entry : postsByUser.entrySet() ){
+  private void handleInsertion(Map<String, List<String>> postsByUser) {
+    for ( Map.Entry<String,List<String>> entry : postsByUser.entrySet() ){
       String posterId = entry.getKey();
-      List<Long> postIds = entry.getValue();
+      List<String> postIds = entry.getValue();
       List<String> followers = this.feedClient.getFollowers(posterId);
 
       List<FeedDto> toSave = new ArrayList<>(followers.size() * postIds.size());
       for( String follower : followers )
-        for( Long postId : postIds) 
+        for( String postId : postIds) 
           toSave.add(new FeedDto(follower, postId));
 
       feedRepository.saveAll(toSave

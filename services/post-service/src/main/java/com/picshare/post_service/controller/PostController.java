@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,9 +24,15 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/post")
 public class PostController {
 
   private final PostService service;
+
+  @GetMapping("/feed")
+  public ResponseEntity<List<PostResponse>> serveFeed(@RequestParam List<String> ids){
+    return ResponseEntity.ok(service.getPosts(ids));
+  }
 
   @PostMapping("/image/upload")
   public ResponseEntity<Void> uploadImage(
@@ -38,17 +46,28 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @GetMapping("/post/{id}")
-  public ResponseEntity<PostResponse> servePost(@PathVariable Long id){
+  @GetMapping("/{id}")
+  public ResponseEntity<PostResponse> servePost(@PathVariable String id){
     return ResponseEntity
       .ok()
       .body(this.service.serve(id));
   }
 
-  @GetMapping("update/")
+  @GetMapping("/user/{id}")
+  public ResponseEntity<List<PostResponse>> getPostsByUser(@PathVariable String id, @RequestParam int offset, @RequestParam int max){
+    return ResponseEntity
+      .ok(this.service.getPostsByUser(id, offset, max));
+  }
+
+  @GetMapping("/update")
   public ResponseEntity<List<UpdateDto>> getUpdates(){
     return ResponseEntity
       .ok()
       .body(this.service.serveUpdates());
+  }
+
+  @GetMapping("/tags/{tag}")
+  public ResponseEntity<List<PostResponse>> getByTags(@PathVariable String tag, @RequestParam int offset, @RequestParam int max){
+    return ResponseEntity.ok(service.getPostByTag(tag, offset, max));
   }
 }
