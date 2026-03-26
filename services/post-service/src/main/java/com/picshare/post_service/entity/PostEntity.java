@@ -5,13 +5,17 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,7 +47,9 @@ public class PostEntity {
   @NonNull
   private String description;
 
-  @Column(name = "tags")
+  @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
+  @CollectionTable(name = "entity_tags", joinColumns = @JoinColumn(name = "entity_id"))
+  @Column(name = "tag")
   private List<String> tags;
   
   @Column(name = "status", nullable = false)
