@@ -28,6 +28,11 @@ public class PostController {
 
   private final PostService service;
 
+  @GetMapping("/feed")
+  public ResponseEntity<List<PostResponse>> serveFeed(@RequestParam List<String> ids){
+    return ResponseEntity.ok(service.getPosts(ids));
+  }
+
   @PostMapping("/image/upload")
   public ResponseEntity<Void> uploadImage(
       @RequestPart("image") MultipartFile image,
