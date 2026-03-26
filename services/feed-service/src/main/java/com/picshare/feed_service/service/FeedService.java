@@ -10,10 +10,13 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.picshare.feed_service.DTO.FeedDto;
+import com.picshare.feed_service.DTO.PostDto;
 import com.picshare.feed_service.DTO.UpdateDto;
 import com.picshare.feed_service.client.FeedClient;
 import com.picshare.feed_service.entity.FeedEntity;
@@ -30,11 +33,13 @@ public class FeedService {
   private final FeedMapper feedMapper;
   private final FeedClient feedClient;
 
-  public List<Long> getFeed(String id){
-    return feedRepository.findByUserIdOrderByTimestampDesc(id)
-      .stream()
-      .map(entity -> entity.getPostId())
-      .collect(Collectors.toList());
+  public List<PostDto> getFeed(String id, int offset, int max){
+    List<String> ids = feedRepository.findByUserId(id, PageRequest.of
+      (offset, max, Sort.by("timestamp").descending()))
+        .map(entity -> entity.getPostId())
+        .get()
+        .collect(Collectors.toList());
+    return feedClient.getPosts(ids);
   }
   
   public void markAsSeen(String userId, Long postId){
