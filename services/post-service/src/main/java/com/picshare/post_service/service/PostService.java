@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.picshare.post_service.client.PostClient;
@@ -68,9 +70,8 @@ public class PostService {
       .collect(Collectors.toList());
   }
 
-  public List<PostResponse> getPostsByUser(String id){
-    return this.postRepository.findByUserId(id)
-      .stream()
+  public List<PostResponse> getPostsByUser(String id, int offset, int max){
+    return this.postRepository.findByUserId(id, PageRequest.of(offset, max, Sort.by("timestamp").descending()))
       .map((entity) -> {
 
         PostResponse result = this.responseMapper.toDto(entity);
@@ -78,6 +79,14 @@ public class PostService {
         return result;
 
       })
+      .toList();
+  }
+
+  public List<PostResponse> getPostByTag(String tag, int offset, int max){
+    return this.postRepository.findByTag(tag, PageRequest.of(
+        offset, max, 
+        Sort.by("timestamp").descending()))
+      .map(entity -> responseMapper.toDto(entity))
       .toList();
   }
 

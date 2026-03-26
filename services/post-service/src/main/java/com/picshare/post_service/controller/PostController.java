@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,15 +54,20 @@ public class PostController {
   }
 
   @GetMapping("/user/{id}")
-  public ResponseEntity<List<PostResponse>> getPostsByUser(@PathVariable String id){
+  public ResponseEntity<List<PostResponse>> getPostsByUser(@PathVariable String id, @RequestParam int offset, @RequestParam int max){
     return ResponseEntity
-      .ok(this.service.getPostsByUser(id));
+      .ok(this.service.getPostsByUser(id, offset, max));
   }
 
-  @GetMapping("update/")
+  @GetMapping("/update")
   public ResponseEntity<List<UpdateDto>> getUpdates(){
     return ResponseEntity
       .ok()
       .body(this.service.serveUpdates());
+  }
+
+  @GetMapping("/tags/{tag}")
+  public ResponseEntity<List<PostResponse>> getByTags(@PathVariable String tag, @RequestParam int offset, @RequestParam int max){
+    return ResponseEntity.ok(service.getPostByTag(tag, offset, max));
   }
 }
