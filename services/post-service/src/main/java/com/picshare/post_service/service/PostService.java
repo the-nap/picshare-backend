@@ -62,6 +62,12 @@ public class PostService {
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id)));
   }
 
+  public List<PostResponse> getPosts(List<String> ids){
+    return ids.stream()
+      .map(id -> this.serve(id))
+      .collect(Collectors.toList());
+  }
+
   public List<PostResponse> getPostsByUser(String id){
     return this.postRepository.findByUserId(id)
       .stream()
