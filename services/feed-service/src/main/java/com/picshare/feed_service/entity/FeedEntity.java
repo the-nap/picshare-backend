@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -20,14 +21,14 @@ import lombok.NoArgsConstructor;
 public class FeedEntity {
 
   @Id
-  @GeneratedValue
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
   @Column(name = "user_id")
-  private Long userId;
+  private String userId;
 
   @Column(name = "post_id")
-  private Long postId;
+  private String postId;
 
   @UpdateTimestamp
   @Column(name = "seen_at", nullable = true)
