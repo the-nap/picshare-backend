@@ -1,6 +1,6 @@
 services:
 
-  frontend:
+  angular:
     build:
       context: ./picshare-frontend/
       dockerfile: Dockerfile.dev
@@ -27,6 +27,16 @@ services:
       keycloak-db:
         condition: service_healthy
     networks:
+      - picshare_internal
+      - frontend
+
+  gateway:
+    image: gateway:latest
+    build:
+      context: ./gateway/
+    ports:
+      - "8080:8080"
+    networks: 
       - picshare_internal
       - frontend
 
