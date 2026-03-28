@@ -24,6 +24,8 @@ services:
       - "8090:8080"
       - "8443:8443"
     depends_on:
+      user-service:
+        condition: service_started
       keycloak-db:
         condition: service_healthy
     networks:
@@ -31,11 +33,28 @@ services:
       - frontend
 
   gateway:
-    image: gateway:latest
+    container_name: gateway-container-dev
     build:
       context: ./gateway/
+      dockerfile: Dockerfile.dev
+    env_file: ./env/gateway.env
+
     ports:
       - "8080:8080"
+      - "5005:5005"
+      - "35729:35729"
+    volumes:
+      - ~/.m2:/root/.m2:delegated
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    develop:
+      watch:
+        - action: sync
+          path: ./gateway/src
+          target: /app/src
+        - action: sync+restart
+          path: ./gateway/pom.xml
+          target: /app/pom.xml
     networks: 
       - picshare_internal
       - frontend
@@ -56,15 +75,28 @@ services:
         - picshare_internal
 
   user-service:
-    image: user-service:latest
+    container_name: user-container-dev
     build:
       context: ./services/user-service/
+      dockerfile: Dockerfile.dev
     env_file: ./env/user.env
-    depends_on:
-      user-db:
-        condition: service_healthy
-    networks:
-        - picshare_internal
+    ports:
+      - "5006:5005"
+      - "35730:35729"
+    volumes:
+      - ~/.m2:/root/.m2:delegated
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    develop:
+      watch:
+        - action: sync
+          path: ./services/user-service/src
+          target: /app/src
+        - action: sync+restart
+          path: ./services/user-service/pom.xml
+          target: /app/pom.xml
+    networks: 
+      - picshare_internal
 
   user-db:
     image: postgres:latest
