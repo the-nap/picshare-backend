@@ -34,17 +34,17 @@ services:
 
   gateway:
     container_name: gateway-container-dev
+    image: gateway-image
     build:
       context: ./gateway/
       dockerfile: Dockerfile.dev
     env_file: ./env/gateway.env
-
+    depends_on:
+      - keycloak
     ports:
       - "8080:8080"
       - "5005:5005"
       - "35729:35729"
-    volumes:
-      - ~/.m2:/root/.m2:delegated
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     develop:
@@ -80,6 +80,8 @@ services:
       context: ./services/user-service/
       dockerfile: Dockerfile.dev
     env_file: ./env/user.env
+    depends_on:
+      - user-db
     ports:
       - "5006:5005"
       - "35730:35729"

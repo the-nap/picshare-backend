@@ -1,9 +1,37 @@
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: DEBUG
+gateway-uri: http://localhost:8080
+user-service-uri: http://user-service:8080
+feed-service-uri: http://feed-service:8080
+
 
 spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          default-filters:
+          - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+          routes:
+          - id: user-service
+            uri: ${user-service-uri}
+            predicates:
+            - Path=/api/user/**
+            filters:
+            - StripPrefix=1
+
+          - id: feed-service
+            uri: ${feed-service-uri}
+            predicates:
+            - Path=/api/feed/**
+            filters:
+            - StripPrefix=1
+
+          - id: post-service
+            uri: ${post-service-uri}
+            predicates:
+            - Path=/api/post/**
+            filters:
+            - StripPrefix=1
+
   application:
     name: Gateway
 
@@ -22,18 +50,16 @@ spring:
         jwt:
           issuer-uri: http://keycloak:8080/
           jwk-set-uri: http://keycloak:8080/realms/picshare-realm/protocol/openid-connect/certs
+          
+server:
+  port: 8080
 
-gateway:
-  services:
-    post-service:
-      uri: http://post-service:8080/
-      fallback: placeholder
-      path: /api/post/**
-    user-service:
-      uri: http://user-service:8080/
-      fallback: placeholder
-      path: /api/user/**
-    feed-service:
-      uri: http://feed-service:8080/
-      fallback: placeholder
-      path: /api/feed/*
+logging:
+  level:
+    reactor.netty.http.server: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.cloud.gateway.route.RoutePredicateHandlerMapping: DEBUG
+    org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter: DEBUG
+    org.springframework.web.cors: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG

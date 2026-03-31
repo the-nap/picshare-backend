@@ -2,9 +2,9 @@ package com.picshare.gateway;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -17,13 +17,13 @@ import lombok.RequiredArgsConstructor;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-  @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
-  String jwkSetUri;
-
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
     http
       .authorizeExchange((auth) -> auth
+          .pathMatchers(HttpMethod.OPTIONS).permitAll()
+          .pathMatchers("/").permitAll()
+          .pathMatchers("/ui/**").permitAll()
           .pathMatchers("/api/user/create").hasAuthority("SCOPE_create:users")
           .anyExchange().authenticated()
           )
