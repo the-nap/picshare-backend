@@ -49,7 +49,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://keycloak:8080/
-          jwk-set-uri: http://keycloak:8080/realms/picshare-realm/protocol/openid-connect/certs
+          issuer-uri: "http://localhost:8090/realms/picshare-realm"
           
 server:
   port: 8080

@@ -11,8 +11,8 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./picshare-frontend/
-          target: /app
+          path: ./picshare-frontend/src
+          target: /app/src
 
   keycloak:
     build:
