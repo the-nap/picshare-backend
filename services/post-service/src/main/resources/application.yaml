@@ -7,6 +7,7 @@ spring:
       enabled: true
       poll-interval: 2s
       quiet-period: 1s
+      additional-paths: src/main/resources
     livereload: 
       enabled: true
   jpa:

@@ -1,24 +1,11 @@
-FROM eclipse-temurin:21-jdk-alpine as build
-
-WORKDIR /build
-
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-COPY src src
-
-RUN ./mvnw dependency:go-offline -B
-
-RUN ./mvnw package spring-boot:repackage -DskipTests
-
-FROM eclipse-temurin:21-jdk-alpine
+FROM maven:latest AS deps
 
 WORKDIR /app
 
-COPY --from=build /build/target/*.jar app.jar
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw -T 4 dependency:go-offline
 
-EXPOSE 8080 5005 35729
+COPY src ./src
 
-ENV JAVA_OPTS="-Dspring.devtools.restart.enabled=true -Dspring.devtools.livereload.enabled=true"
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["./mvnw", "spring-boot:run"]
