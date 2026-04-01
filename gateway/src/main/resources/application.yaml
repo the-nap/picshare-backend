@@ -1,6 +1,8 @@
 gateway-uri: http://localhost:8080
+ui-uri: http://angular:4200
 user-service-uri: http://user-service:8080
 feed-service-uri: http://feed-service:8080
+post-service-uri: http://post-service:8080
 
 
 spring:
@@ -8,9 +10,29 @@ spring:
     gateway:
       server:
         webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods: "*"
+                alloredHeaders: "*"
           default-filters:
           - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
           routes:
+          # Redirection from / to /ui/
+          - id: home
+            uri: ${gateway-uri}
+            predicates:
+            - Path=/
+            filters:
+            - RedirectTo=301,${gateway-uri}/ui/
+
+          # Serve a SPA through the gateway (requires it to have a baseHref set as /ui)
+          - id: ui-regular
+            uri: ${ui-uri}/ui/
+            predicates:
+            - Path=/ui/**
+                
           - id: user-service
             uri: ${user-service-uri}
             predicates:
@@ -48,8 +70,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/
-          issuer-uri: "http://localhost:8090/realms/picshare-realm"
+          issuer-uri: http://keycloak:8080/realms/picshare-realm
           
 server:
   port: 8080
