@@ -15,7 +15,7 @@ spring:
               '[/**]':
                 allowedOrigins: "*"
                 allowedMethods: "*"
-                alloredHeaders: "*"
+                allowedHeaders: "*"
           default-filters:
           - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
           routes:
@@ -27,6 +27,13 @@ spring:
             filters:
             - RedirectTo=301,${gateway-uri}/ui/
 
+          - id: ui-silent-sso
+            uri: ${ui-uri}/ui/
+            predicates:
+            - Path=/ui/silent-check-sso.html
+            filters:
+            - AddResponseHeader=X-Frame-Options,SAMEORIGIN
+          
           # Serve a SPA through the gateway (requires it to have a baseHref set as /ui)
           - id: ui-regular
             uri: ${ui-uri}/ui/
