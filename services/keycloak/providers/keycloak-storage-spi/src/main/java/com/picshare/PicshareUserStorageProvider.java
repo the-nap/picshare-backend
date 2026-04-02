@@ -13,12 +13,16 @@ import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputUpdater;
 import org.keycloak.credential.CredentialInputValidator;
+import org.keycloak.credential.CredentialModel;
 import org.keycloak.models.GroupModel;
 import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.ModelException;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserCredentialModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.credential.PasswordCredentialModel;
+import org.keycloak.policy.PasswordPolicyManagerProvider;
+import org.keycloak.policy.PolicyError;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserLookupProvider;
@@ -117,16 +121,38 @@ public class PicshareUserStorageProvider implements
 
   @Override
   public boolean updateCredential(RealmModel realm, UserModel user, CredentialInput input) {
-    if(!isWritable()){
-      log.debug("Edit mode is read-only. Skipping credential update");
-        return false;
-    }
     if(!supportsCredentialType(input.getType()) || !(input instanceof UserCredentialModel cred))
       return false;
+
+    if(!isWritable()){
+      log.debug("Edit mode is read-only. Skipping credential update");
+      return false;
+    }
+
+    if(usePasswordPolicy()) {
+      PolicyError policyError = session.getProvider(PasswordPolicyManagerProvider.class)
+        .validate(realm, user, cred.getChallengeResponse());
+      if(policyError != null){
+        ModelException exception = new ModelException(policyError.getMessage(), policyError.getParameters());
+        throw exception;
+      }
+    }
 
     return apiClient.updateCredentials(StorageId.externalId(user.getId()), new Credential("password", cred.getChallengeResponse()));
   }
 
+  private boolean usePasswordPolicy() {
+    return model.get(PicshareUserStorageProviderFactory.USE_PASSWORD_POLICY, false);
+  }
+
+  @Override
+  public Stream<CredentialModel> getCredentials(RealmModel realm, UserModel user) {
+    CredentialModel cm = new CredentialModel();
+    cm.setType(PasswordCredentialModel.TYPE);
+    cm.setCreatedDate(0L);
+    cm.setFederationLink(user.getFederationLink());
+    return Stream.of(cm);
+  }
   @Override
   public void disableCredentialType(RealmModel realm, UserModel user, String credentialType) {
   }

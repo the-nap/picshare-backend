@@ -18,6 +18,7 @@ public class PicshareUserStorageProviderFactory implements UserStorageProviderFa
   
   static final String USER_API_BASE_URL = "USER_SERVICE_API";
   static final String EDIT_MODE = "editMode";
+  static final String USE_PASSWORD_POLICY = "usePasswordPolicy";
 
   @Override
   public PicshareUserStorageProvider create(KeycloakSession session, ComponentModel model) {
@@ -35,6 +36,7 @@ public class PicshareUserStorageProviderFactory implements UserStorageProviderFa
     return ProviderConfigurationBuilder.create()
       .property(USER_API_BASE_URL, "apiBaseUrl", "apiBaseUrlHelp", ProviderConfigProperty.STRING_TYPE, System.getenv(USER_API_BASE_URL), null)
       .property(EDIT_MODE, "editMode", "editModeHelp", ProviderConfigProperty.LIST_TYPE, UserStorageProvider.EditMode.READ_ONLY, List.of(UserStorageProvider.EditMode.READ_ONLY.name(), UserStorageProvider.EditMode.WRITABLE.name()))
+      .property(USE_PASSWORD_POLICY, "usePasswordPolicy", "usePasswordPolicyHelp", ProviderConfigProperty.BOOLEAN_TYPE, "false", null)
       .build();
   }
 

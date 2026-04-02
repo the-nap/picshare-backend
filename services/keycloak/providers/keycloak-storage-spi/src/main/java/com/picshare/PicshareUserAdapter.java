@@ -37,7 +37,7 @@ public class PicshareUserAdapter extends AbstractUserAdapterFederatedStorage{
 
   @Override
   public void setUsername(String username){
-    dirty = dirty || user.getUsername().equals(username);
+    dirty = dirty || !user.getUsername().equals(username);
     user.setUsername(username);
   }
 
@@ -48,8 +48,8 @@ public class PicshareUserAdapter extends AbstractUserAdapterFederatedStorage{
 
   @Override
   public void setEmail(String email){
-    dirty = dirty || user.getEmail().equals(email);
-    user.setUsername(email);
+    dirty = dirty || !user.getEmail().equals(email);
+    user.setEmail(email);
   }
 
   @Override
