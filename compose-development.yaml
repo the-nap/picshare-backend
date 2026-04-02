@@ -85,8 +85,6 @@ services:
     ports:
       - "5006:5005"
       - "35730:35729"
-    volumes:
-      - ~/.m2:/root/.m2:delegated
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     develop:
