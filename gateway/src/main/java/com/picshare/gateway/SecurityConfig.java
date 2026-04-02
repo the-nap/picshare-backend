@@ -27,6 +27,7 @@ public class SecurityConfig {
           .pathMatchers("/api/user/create").hasAuthority("SCOPE_create:users")
           .anyExchange().authenticated()
           )
+      .csrf((csrf) -> csrf.disable())
       .oauth2ResourceServer(oauth2 -> oauth2
           .jwt(withDefaults()))
       .securityContextRepository(NoOpServerSecurityContextRepository.getInstance());

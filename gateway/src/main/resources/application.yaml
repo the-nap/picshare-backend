@@ -77,7 +77,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/picshare-realm
+          issuer-uri: http://localhost:8090/realms/picshare-realm
+          jwk-set-uri: http://keycloak:8080/realms/picshare-realm/protocol/openid-connect/certs
           
 server:
   port: 8080
@@ -85,9 +86,9 @@ server:
 logging:
   level:
     reactor.netty.http.server: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
     org.springframework.http.server.reactive: DEBUG
     org.springframework.cloud.gateway.route.RoutePredicateHandlerMapping: DEBUG
-    org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter: DEBUG
-    org.springframework.web.cors: DEBUG
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web: DEBUG
