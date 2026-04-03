@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +16,14 @@ import com.picshare.userservice.service.exceptions.UserNotFoundException;
 import com.picshare.userservice.service.exceptions.UsernameExistsException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserAuthService {
 
+  private final PasswordEncoder passwordEncoder;
   private final UserRepository repository;
   private final UserMapper mapper;
 
@@ -82,9 +86,20 @@ public class UserAuthService {
 
   @Transactional
   public boolean updateCredential(String id, String password){
-    repository.findById(id)
-      .orElseThrow(() -> new UserNotFoundException("id", id))
-      .setPassword(password);
+    UserEntity entity = repository.findById(id)
+      .orElseThrow(() -> new UserNotFoundException("id", id));
+
+    log.info("Found user: {}", entity.getId());
+    log.info("Old password: {}", entity.getPassword());
+    
+    String encodedPassword = passwordEncoder.encode(password);
+    entity.setPassword(encodedPassword);
+    log.info("New password (encoded): {}", entity.getPassword());
+
+    repository.save(entity);
+    repository.flush();
+    log.info("Flushed");
+    
     return true;
   }
   
