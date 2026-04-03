@@ -31,7 +31,7 @@ public class UserAuthController {
 
   private final UserAuthService service;
 
-  @GetMapping
+  @GetMapping("/get")
   ResponseEntity<List<UserDTO>> getUsers(@RequestParam String key, @RequestParam String value){
     Optional<List<UserDTO>> result = Optional.of(
         Arrays.asList(
@@ -77,7 +77,7 @@ public class UserAuthController {
   
   @PostMapping("/{id}/credentials/update")
   ResponseEntity<Void> updateCredentials(@PathVariable String id, @RequestBody CredentialDTO credential){
-    if(credential.getType().equals("password") && service.checkPassword(id, credential.getValue()))
+    if(credential.getType().equals("password"))
       service.updateCredential(id, credential.getValue());
     else
       return ResponseEntity.badRequest().build();

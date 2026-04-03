@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public class Credential {
 
   private final String type;
-  private final String password;
+  private final String value;
   
 }
 

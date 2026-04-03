@@ -83,7 +83,7 @@ public class ApiClient {
   }
 
   public boolean removeUser(String id){
-    String url = String.format("%s/users/auth/remove", this.baseUrl);
+    String url = String.format("%s/users/auth/delete", this.baseUrl);
     SimpleHttpRequest request = simpleHttp.doDelete(url).param("id", id);
     return handleRequestNoContentResponse(request);
   }
@@ -99,7 +99,7 @@ public class ApiClient {
   public List<PicshareUser> searchUsers(String key, String toSearch, Integer first, Integer max, boolean exactMatch){
     String url;
     if(exactMatch)
-      url = String.format("%s/users/auth", baseUrl);
+      url = String.format("%s/users/auth/get", baseUrl);
     else 
       url = String.format("%s/users/auth/search", baseUrl);
     return searchUsersRequest(url, key, toSearch, first, max);
