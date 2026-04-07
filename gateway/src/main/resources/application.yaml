@@ -28,7 +28,7 @@ spring:
             - RedirectTo=301,${gateway-uri}/ui/
 
           - id: ui-silent-sso
-            uri: ${ui-uri}/ui/
+            uri: ${ui-uri}
             predicates:
             - Path=/ui/silent-check-sso.html
             filters:
@@ -36,7 +36,7 @@ spring:
           
           # Serve a SPA through the gateway (requires it to have a baseHref set as /ui)
           - id: ui-regular
-            uri: ${ui-uri}/ui/
+            uri: ${ui-uri}
             predicates:
             - Path=/ui/**
                 
