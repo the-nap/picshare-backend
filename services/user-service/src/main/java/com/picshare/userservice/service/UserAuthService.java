@@ -60,9 +60,11 @@ public class UserAuthService {
   }
 
   public boolean checkPassword(String id, String password){
-    return repository.findById(id)
-      .orElseThrow(() -> new UserNotFoundException("id", id))
-      .getPassword().equals(password);
+    return passwordEncoder.matches(password,
+        repository.findById(id)
+        .orElseThrow(() ->  new UserNotFoundException("id", id))
+        .getPassword());
+
   }
 
   public List<UserDTO> getAll(Integer first, Integer max){
@@ -88,18 +90,10 @@ public class UserAuthService {
   public boolean updateCredential(String id, String password){
     UserEntity entity = repository.findById(id)
       .orElseThrow(() -> new UserNotFoundException("id", id));
-
-    log.info("Found user: {}", entity.getId());
-    log.info("Old password: {}", entity.getPassword());
     
-    String encodedPassword = passwordEncoder.encode(password);
-    entity.setPassword(encodedPassword);
-    log.info("New password (encoded): {}", entity.getPassword());
+    entity.setPassword(passwordEncoder.encode(password));
 
     repository.save(entity);
-    repository.flush();
-    log.info("Flushed");
-    
     return true;
   }
   
@@ -116,9 +110,13 @@ public class UserAuthService {
 
   @Transactional
   public boolean updateUser(UserDTO user){
-    if(!repository.existsById(user.getId()))
-      return false;
-    repository.save(mapper.toEntity(user));
+    UserEntity entity = repository.findById(user.getId())
+     .orElseThrow(() -> new UserNotFoundException("id", user.getId()));
+
+    entity.setUsername(user.getUsername());
+    entity.setEmail(user.getEmail());
+    
+    repository.save(entity);
     return true;
   }
 

@@ -13,5 +13,6 @@ public interface UserMapper {
 
   @Mapping(target = "creationDate", ignore = true)
   @Mapping(target = "updateDate", ignore = true)
+  @Mapping(target = "password", ignore = true)
   UserEntity toEntity(UserDTO dto);
 }
