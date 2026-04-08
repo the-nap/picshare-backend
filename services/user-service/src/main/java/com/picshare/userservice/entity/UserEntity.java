@@ -34,6 +34,12 @@ public class UserEntity{
   @Column(unique = true, nullable = false)
   private String email;
 
+  @Column
+  private String avatarUrl;
+  
+  @Column
+  private String bio;
+
   @CreationTimestamp
   @Column(updatable = false)
   private Date creationDate;
