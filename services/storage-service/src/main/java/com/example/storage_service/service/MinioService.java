@@ -80,50 +80,37 @@ public class MinioService implements StorageService{
 
     storeInBucket(
         getAvatarPath(id), source);
-
   }
-
-  @Override
-  public InputStreamResource serveAvatar(String id) {
-    try (InputStream stream = minioClient.getObject(
-          GetObjectArgs.builder()
-          .object(getAvatarPath(id))
-          .build())){
-      return new InputStreamResource(stream);
-          } catch(Exception e){
-            throw new StorageException("Storage error:" + e);
-          }
-  }
-
 
   @Override
   public InputStreamResource serveMedia(String id) {
-    try (InputStream stream = minioClient.getObject(
-          GetObjectArgs.builder()
-          .object(getMediaPath(id))
-          .build())) {
-      return new InputStreamResource(stream);
-    } catch(Exception e){
-      throw new StorageException("Storage error: " + e);
-    }
+    return search(getMediaPath(id));
   }
 
   @Override
   public InputStreamResource servePreview(String id) {
-    try(InputStream stream = minioClient.getObject(
-          GetObjectArgs.builder()
-          .bucket(bucketName)
-          .object(getPreviewPath(id))
-          .build())) {
-      return new InputStreamResource(stream);
-      } catch(Exception e) {
-        throw new StorageException("Storage error: " + e);
-      }
+    return search(getPreviewPath(id));
+  }
+
+  @Override
+  public InputStreamResource serveAvatar(String id) {
+    return search(getAvatarPath(id));
   }
 
   @Override
   public String toString() {
     return "MinioService []";
+  }
+
+  private InputStreamResource search(String toLook){
+    try (InputStream stream = minioClient.getObject(
+          GetObjectArgs.builder()
+          .object(toLook)
+          .build())) {
+      return new InputStreamResource(stream);
+    } catch(Exception e){
+      throw new StorageException("Storage error: " + e);
+    }
   }
 
   private String getAvatarPath(String id) {
