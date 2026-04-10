@@ -27,6 +27,7 @@ import io.minio.errors.InternalException;
 import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class MinioService implements StorageService{
@@ -38,24 +39,23 @@ public class MinioService implements StorageService{
       @Value("${minio.bucket.name}") String bucketName){
       this.minioClient = minioClient;
       this.bucketName = bucketName;
+  }
 
-      try {
-        boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-
-        if (!found){
-          this.minioClient.makeBucket(MakeBucketArgs.builder()
-              .bucket(bucketName)
-              .build()
-              );
+  @PostConstruct
+  private void initializeBucket(){
+    try {
+      boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+      if (!found){
+        this.minioClient.makeBucket(MakeBucketArgs.builder()
+            .bucket(bucketName)
+            .build()
+            );
+      }
+    } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+        | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
+        | IllegalArgumentException | IOException e) {
+      throw new StorageException("Error in creating bucket: " + e.getMessage() + "exceptionType: " + e.getCause());
         }
-        else {
-          System.out.println("Bucket " + bucketName + " already exits");
-        }
-      } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
-          | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
-          | IllegalArgumentException | IOException e) {
-        throw new RuntimeException("Error in creating bucket: " + e.getMessage() + "exceptionType: " + e.getCause());
-          }
   }
 
   @Override
