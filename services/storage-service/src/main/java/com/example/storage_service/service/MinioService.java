@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
+import com.example.storage_service.service.exceptions.NoAvatarException;
 import com.example.storage_service.service.exceptions.StorageException;
 import com.example.storage_service.service.util.WebpManager;
 
@@ -108,8 +109,11 @@ public class MinioService implements StorageService{
           .object(toLook)
           .build())) {
       return new InputStreamResource(stream);
-    } catch(Exception e){
-      throw new StorageException("Storage error: " + e);
+    }catch(ErrorResponseException e){
+      throw new NoAvatarException("Avatar not found, defaulting...");
+    }
+    catch(Exception e){
+      throw new StorageException("Storage exception: " + e);
     }
   }
 
