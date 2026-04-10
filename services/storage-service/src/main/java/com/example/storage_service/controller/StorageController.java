@@ -24,7 +24,7 @@ public class StorageController {
 
   private final StorageService service;
   
-  @PostMapping("/store/{id}")
+  @PostMapping("/media/{id}")
   public ResponseEntity<Void> store(@RequestParam("file") MultipartFile file, @PathVariable String id){
 
     try(InputStream is = file.getInputStream()){
@@ -45,7 +45,6 @@ public class StorageController {
     return ResponseEntity.ok().build();
   }
 
-  
   @GetMapping("/media/{id}")
   public ResponseEntity<Resource> serveMedia(@PathVariable String id) {
       return ResponseEntity.ok()
@@ -53,10 +52,10 @@ public class StorageController {
           service.serveMedia(id));
   }
 
-  @GetMapping("/thumbnail/{id}")
-  public ResponseEntity<Resource> serveThumbnail(@PathVariable String id){
+  @GetMapping("/preview/{id}")
+  public ResponseEntity<Resource> servePreview(@PathVariable String id){
     return ResponseEntity.ok()
       .body(
-          service.serveThumbnail(id));
+          service.servePreview(id));
   }
 }

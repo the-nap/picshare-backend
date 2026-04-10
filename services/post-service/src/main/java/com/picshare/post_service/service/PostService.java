@@ -75,7 +75,7 @@ public class PostService {
       .map((entity) -> {
 
         PostResponse result = this.responseMapper.toDto(entity);
-        result.setUrl(result.getUrl().concat("/thumbnail.webp"));
+        result.setUrl(result.getUrl().concat("/preview.webp"));
         return result;
 
       })
