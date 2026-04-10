@@ -5,15 +5,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import com.example.storage_service.service.exceptions.StorageException;
 import com.example.storage_service.service.util.WebpManager;
 
 import io.minio.BucketExistsArgs;
@@ -34,6 +37,9 @@ public class MinioService implements StorageService{
 
   private final MinioClient minioClient;
   private final String bucketName;
+
+  private static final int MEDIA = 0;
+  private static final int PREVIEW = 1;
 
   public MinioService(MinioClient minioClient, 
       @Value("${minio.bucket.name}") String bucketName){
@@ -60,81 +66,44 @@ public class MinioService implements StorageService{
 
   @Override
   public void store(InputStream file, String id) {
-    Path[] temp = decodeToFile(file);
+    List<Path> source = prepareMedia(file);
 
-    String basePath = getBasePath(id);
-    String mediaPath = getMediaPath(basePath);
-    String thumbPath = getThumbPath(basePath);
+    storeInBucket(
+        getMediaPath(id), source.get(MEDIA));
 
-    storeMedia(mediaPath, temp[0]);
-    storeThumbnail(thumbPath, temp[1]);
+    storeInBucket(
+        getPreviewPath(id), source.get(PREVIEW));
   }
 
-  private String getBasePath(String id) {
-    return "images/" + id + "/";
+    storeInBucket(
+        getAvatarPath(id), source);
+
   }
 
-  private String getMediaPath(String id) {
-    return getBasePath(id) + "media";
+
+  @Override
+  public InputStreamResource serveMedia(String id) {
+    try (InputStream stream = minioClient.getObject(
+          GetObjectArgs.builder()
+          .object(getMediaPath(id))
+          .build())) {
+      return new InputStreamResource(stream);
+    } catch(Exception e){
+      throw new StorageException("Storage error: " + e);
+    }
   }
 
-  private String getThumbPath(String id) {
-    return getBasePath(id) + "thumb";
-  }
-
-  private void storeMedia(String filename, Path temp) {
-    try(InputStream input = Files.newInputStream(temp)) {
-      minioClient.putObject(
-          PutObjectArgs.builder()
+  @Override
+  public InputStreamResource servePreview(String id) {
+    try(InputStream stream = minioClient.getObject(
+          GetObjectArgs.builder()
           .bucket(bucketName)
-          .object(filename)
-          .stream(input, Files.size(temp), -1)
-          .contentType("image/webp")
-          .build());
-    } catch(Exception e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        Files.deleteIfExists(temp);
-      } catch (IOException e) {
-        e.printStackTrace();
+          .object(getPreviewPath(id))
+          .build())) {
+      return new InputStreamResource(stream);
+      } catch(Exception e) {
+        throw new StorageException("Storage error: " + e);
       }
-    }
-  }
-
-  private void storeThumbnail(String filename, Path temp) {
-    try(InputStream input = Files.newInputStream(temp)) {
-      minioClient.putObject(
-          PutObjectArgs.builder()
-          .bucket(bucketName)
-          .object(filename)
-          .stream(input, Files.size(temp), -1)
-          .contentType("image/webp")
-          .build());
-    } catch(Exception e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        Files.deleteIfExists(temp);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  private Path[] decodeToFile(InputStream file) {
-    Path[] temp = new Path[2];
-    try {
-      temp[0] = Files.createTempFile("image-", ".webp");
-      temp[1] = Files.createTempFile("thumb-", ".webp");
-    } catch(IOException e){
-      throw new RuntimeException("Cannot create file: " + e.getMessage());
-    }
-    try(OutputStream out0 = Files.newOutputStream(temp[0], StandardOpenOption.CREATE_NEW); OutputStream out1 = Files.newOutputStream(temp[1], StandardOpenOption.CREATE_NEW)){
-      OutputStream[] outputs = new OutputStream[]{ out0, out1 };
-      WebpManager.toWebp(file,outputs);
-    } catch(IOException e){}
-    return temp;
   }
 
   @Override
@@ -142,28 +111,67 @@ public class MinioService implements StorageService{
     return "MinioService []";
   }
 
-  @Override
-  public Resource serveMedia(String id) {
+  private String getAvatarPath(String id) {
+    return String.format("avatar/%s", id);
+  }
 
-    try (InputStream stream = minioClient.getObject(GetObjectArgs.builder().object(getMediaPath(id)).build())) {
-      InputStreamResource resource = new InputStreamResource(stream);
+  private String getMediaPath(String id){
+    return String.format("%s/%s/media.webp",getBasePath(), id);
+  }
+  
+  private String getPreviewPath(String id){
+    return String.format("%s/%s/preview.webp",getBasePath(), id);
+  }
 
-    } catch(Exception e){
+  private String getBasePath(){
+    return "images";
+  }
+
+  private List<Path> prepareMedia(InputStream file) {
+    List<Path> temps = new LinkedList<>();
+    try {
+      temps.add(Files.createTempFile("media-", ".webp"));
+      temps.add(Files.createTempFile("preview-", ".webp"));
+    } catch(IOException e){
+      throw new RuntimeException("Cannot create file: " + e.getMessage());
     }
-    return null;
+    try(OutputStream outMedia = Files.newOutputStream(temps.get(MEDIA), StandardOpenOption.CREATE_NEW);
+        OutputStream outPreview = Files.newOutputStream(temps.get(PREVIEW), StandardOpenOption.CREATE_NEW)){
+      WebpManager.toWebp(file, outMedia, outPreview);
+    } catch(IOException e){}
+    return temps;
   }
 
-  @Override
-  public Resource serveThumbnail(String id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'loadThumbnail'");
+  private Path prepareAvatar(InputStream file) {
+    Path temp;
+    try {
+      temp = Files.createTempFile("avatar-", ".webp");
+    } catch(IOException e){
+      throw new RuntimeException("Cannot create file: " + e.getMessage());
+    }
+    try(OutputStream out = Files.newOutputStream(temp, StandardOpenOption.CREATE_NEW)){
+      WebpManager.toWebp(file, out);
+    } catch(IOException e) {}
+    return temp;
   }
 
-  @Override
-  public void deleteAll() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'deleteAll'");
+  private void storeInBucket(String filename, Path temp) {
+    try(InputStream input = Files.newInputStream(temp)) {
+      minioClient.putObject(
+          PutObjectArgs.builder()
+          .bucket(bucketName)
+          .object(filename)
+          .stream(input, Files.size(temp), -1)
+          .contentType("image/webp")
+          .build());
+    } catch(Exception e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        Files.deleteIfExists(temp);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
   }
-
-
 }
