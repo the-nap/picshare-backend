@@ -8,12 +8,14 @@ public interface StorageService {
 
   void store(InputStream file, String id);
 
+  void storeAvatar(InputStream file, String id);
+
+  Resource serveAvatar(String id);
+
   Resource serveMedia(String id);
 
-  Resource serveThumbnail(String id);
+  Resource servePreview(String id);
 
-  void deleteAll();
-  
 }
 
 

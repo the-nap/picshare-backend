@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -74,10 +73,26 @@ public class MinioService implements StorageService{
     storeInBucket(
         getPreviewPath(id), source.get(PREVIEW));
   }
+  
+  @Override
+  public void storeAvatar(InputStream input, String id){
+    Path source = prepareAvatar(input);
 
     storeInBucket(
         getAvatarPath(id), source);
 
+  }
+
+  @Override
+  public InputStreamResource serveAvatar(String id) {
+    try (InputStream stream = minioClient.getObject(
+          GetObjectArgs.builder()
+          .object(getAvatarPath(id))
+          .build())){
+      return new InputStreamResource(stream);
+          } catch(Exception e){
+            throw new StorageException("Storage error:" + e);
+          }
   }
 
 
