@@ -35,9 +35,6 @@ public class UserEntity{
   private String email;
 
   @Column
-  private String avatarUrl;
-  
-  @Column
   private String bio;
 
   @CreationTimestamp

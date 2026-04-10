@@ -12,7 +12,6 @@ public class UserDTO {
   private String id;
   private String email;
   private String username;
-  private String avatarUrl;
   private String bio;
 
 }
