@@ -25,6 +25,7 @@ public class SecurityConfig {
           .pathMatchers("/").permitAll()
           .pathMatchers("/ui/**").permitAll()
           .pathMatchers("/api/user/create").hasAuthority("SCOPE_create:users")
+          .pathMatchers("/media/**").permitAll()
           .anyExchange().authenticated()
           )
       .csrf((csrf) -> csrf.disable())

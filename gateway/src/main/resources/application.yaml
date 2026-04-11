@@ -65,7 +65,9 @@ spring:
           - id: storage-service
             uri: ${storage-service-uri}
             predicates:
-            - Path=/avatar/**
+            - Path=/media/**
+            filters:
+            - StripPrefix=1
 
   application:
     name: Gateway
