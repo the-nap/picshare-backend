@@ -23,10 +23,10 @@ import com.picshare.feed_service.entity.FeedEntity;
 import com.picshare.feed_service.mapper.FeedMapper;
 import com.picshare.feed_service.repository.FeedRepository;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RequiredArgsConstructor
 @Service
+@AllArgsConstructor
 public class FeedService {
 
   private final FeedRepository feedRepository;

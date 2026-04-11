@@ -1,6 +1,7 @@
 services:
 
   angular:
+    container_name: angular-dev
     build:
       context: ./picshare-frontend/
       dockerfile: Dockerfile.dev
@@ -15,8 +16,7 @@ services:
         target: /app/src
 
   gateway:
-    container_name: gateway-container-dev
-    image: gateway-image
+    container_name: gateway-dev
     build:
       context: ./gateway/
       dockerfile: Dockerfile.dev
@@ -59,7 +59,6 @@ services:
     - keycloak-network
     - frontend
 
-
   keycloak-db:
     image: postgres:latest
     env_file: ./env/keycloak.env
@@ -76,7 +75,7 @@ services:
     - keycloak-network
 
   user-service:
-    container_name: user-container-dev
+    container_name: user-dev
     build:
       context: ./services/user-service/
       dockerfile: Dockerfile.dev
@@ -116,7 +115,7 @@ services:
     - user-network
 
   feed-service:
-    container_name: feed-container-dev
+    container_name: feed-dev
     build:
       context: ./services/feed-service/
       dockerfile: Dockerfile.dev
@@ -156,7 +155,7 @@ services:
     - feed-network
 
   post-service:
-    container_name: post-container-dev
+    container_name: post-dev
     build:
       context: ./services/post-service/
       dockerfile: Dockerfile.dev
@@ -196,7 +195,7 @@ services:
     - post-network
 
   storage-service:
-    container_name: storage-container-dev
+    container_name: storage-dev
     build:
       context: ./services/storage-service/
       dockerfile: Dockerfile.dev
@@ -224,6 +223,7 @@ services:
     container_name: minio
     ports:
     - "9001:9001"
+    - "9000:9000"
     expose:
     - "9000"
     environment:
