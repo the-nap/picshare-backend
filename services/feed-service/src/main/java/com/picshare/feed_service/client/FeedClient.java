@@ -44,7 +44,7 @@ public class FeedClient {
   public List<String> getFollowers(String id){
     return this.restClient
       .get()
-      .uri("http://user-service/followers/{id}", id)
+      .uri("http://user-service:8080/followers/{id}", id)
       .retrieve()
       .body(new ParameterizedTypeReference<List<String>>() {});
   }
