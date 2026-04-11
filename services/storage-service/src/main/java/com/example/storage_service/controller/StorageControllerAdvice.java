@@ -1,18 +1,24 @@
 package com.example.storage_service.controller;
 
-import java.net.URI;
-
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import com.example.storage_service.service.StorageService;
 import com.example.storage_service.service.exceptions.NoAvatarException;
 import com.example.storage_service.service.exceptions.StorageException;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
+@RequiredArgsConstructor
 public class StorageControllerAdvice {
+
+  private final StorageService service;
 
   @ExceptionHandler(StorageException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -21,12 +27,9 @@ public class StorageControllerAdvice {
   }
 
   @ExceptionHandler(NoAvatarException.class)
-  @ResponseStatus(HttpStatus.OK)
-  ResponseEntity<Void> defaultHandler(NoAvatarException e){
+  ResponseEntity<Resource> defaultHandler(NoAvatarException e){
     return ResponseEntity
-      .status(HttpStatus.FOUND)
-      .location(URI.create("/avatar"))
-      .build();
+      .ok(service.serveAvatar("default"));
   }
   
 }

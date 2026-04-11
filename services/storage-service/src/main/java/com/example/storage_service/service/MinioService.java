@@ -31,8 +31,10 @@ import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class MinioService implements StorageService{
 
   private final MinioClient minioClient;
@@ -104,10 +106,14 @@ public class MinioService implements StorageService{
   }
 
   private InputStreamResource search(String toLook){
-    try (InputStream stream = minioClient.getObject(
+    toLook = toLook.concat(".webp");
+    log.info(toLook);
+    try{ 
+      InputStream stream = minioClient.getObject(
           GetObjectArgs.builder()
           .object(toLook)
-          .build())) {
+          .bucket(bucketName)
+          .build());
       return new InputStreamResource(stream);
     }catch(ErrorResponseException e){
       throw new NoAvatarException("Avatar not found, defaulting...");

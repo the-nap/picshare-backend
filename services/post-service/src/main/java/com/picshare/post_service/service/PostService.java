@@ -71,7 +71,7 @@ public class PostService {
   }
 
   public List<PostResponse> getPostsByUser(String id, int offset, int max){
-    return this.postRepository.findByUserId(id, PageRequest.of(offset, max, Sort.by("timestamp").descending()))
+    return this.postRepository.findByUserId(id, PageRequest.of(offset, max, Sort.by("creationDate").descending()))
       .map((entity) -> {
 
         PostResponse result = this.responseMapper.toDto(entity);
@@ -85,7 +85,7 @@ public class PostService {
   public List<PostResponse> getPostByTag(String tag, int offset, int max){
     return this.postRepository.findByTag(tag, PageRequest.of(
         offset, max, 
-        Sort.by("timestamp").descending()))
+        Sort.by("creationDate").descending()))
       .map(entity -> responseMapper.toDto(entity))
       .toList();
   }
