@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.picshare.userservice.dto.CredentialDTO;
-import com.picshare.userservice.dto.UserDTO;
+import com.picshare.userservice.dto.AuthUserDTO;
 import com.picshare.userservice.service.UserAuthService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,8 +32,8 @@ public class UserAuthController {
   private final UserAuthService service;
 
   @GetMapping("/get")
-  ResponseEntity<List<UserDTO>> getUsers(@RequestParam String key, @RequestParam String value){
-    Optional<List<UserDTO>> result = Optional.of(
+  ResponseEntity<List<AuthUserDTO>> getUsers(@RequestParam String key, @RequestParam String value){
+    Optional<List<AuthUserDTO>> result = Optional.of(
         Arrays.asList(
           switch (key) {
             case "id" -> service.getById(value);
@@ -51,13 +51,13 @@ public class UserAuthController {
   }
   
   @GetMapping("/all")
-  ResponseEntity<List<UserDTO>> getAll(@RequestParam Integer first, @RequestParam Integer max){
+  ResponseEntity<List<AuthUserDTO>> getAll(@RequestParam Integer first, @RequestParam Integer max){
     return ResponseEntity.ok(service.getAll(first, max));
   }
   
   @GetMapping("/search")
-  ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String key, @RequestParam String value, @RequestParam String first, @RequestParam String max){
-    List<UserDTO> result =
+  ResponseEntity<List<AuthUserDTO>> searchUsers(@RequestParam String key, @RequestParam String value, @RequestParam String first, @RequestParam String max){
+    List<AuthUserDTO> result =
       switch (key) {
         case "email" -> service.searchByEmail(value, Integer.valueOf(first), Integer.valueOf(max));
         case "username" -> service.searchByUsername(value, Integer.valueOf(first), Integer.valueOf(max));
@@ -90,12 +90,12 @@ public class UserAuthController {
   }
 
   @PostMapping("/create")
-  ResponseEntity<UserDTO> generateId(@RequestBody String username){
+  ResponseEntity<AuthUserDTO> generateId(@RequestBody String username){
     return ResponseEntity.ok(service.createId(username));
   }
 
   @PutMapping("/update")
-  ResponseEntity<Void> updateUser(@RequestBody UserDTO user){
+  ResponseEntity<Void> updateUser(@RequestBody AuthUserDTO user){
     if (service.updateUser(user))
       return ResponseEntity.noContent().build();
     return ResponseEntity.badRequest().build();

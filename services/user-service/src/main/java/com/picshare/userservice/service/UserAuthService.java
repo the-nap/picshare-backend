@@ -8,9 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.picshare.userservice.dto.UserDTO;
+import com.picshare.userservice.dto.AuthUserDTO;
 import com.picshare.userservice.entity.UserEntity;
-import com.picshare.userservice.mapper.UserMapper;
+import com.picshare.userservice.mapper.AuthMapper;
 import com.picshare.userservice.repository.UserRepository;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
 import com.picshare.userservice.service.exceptions.UsernameExistsException;
@@ -25,34 +25,34 @@ public class UserAuthService {
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository repository;
-  private final UserMapper mapper;
+  private final AuthMapper mapper;
 
-  public UserDTO getById(String id){
+  public AuthUserDTO getById(String id){
     return repository.findById(id)
       .map(mapper::toDto)
       .orElse(null);
   }
 
-  public UserDTO getByUsername(String username){
+  public AuthUserDTO getByUsername(String username){
     return repository.findByUsername(username)
       .map(mapper::toDto)
       .orElse(null);
   }
 
-  public UserDTO getByEmail(String email){
+  public AuthUserDTO getByEmail(String email){
     return repository.findByEmail(email)
       .map(mapper::toDto)
       .orElse(null);
   }
 
-  public List<UserDTO> searchByEmail(String email, Integer first, Integer max){
+  public List<AuthUserDTO> searchByEmail(String email, Integer first, Integer max){
     return repository.searchByEmail(email, first, max)
       .stream()
       .map(entity -> mapper.toDto(entity))
       .toList();
   }
 
-  public List<UserDTO> searchByUsername(String username, Integer first, Integer max){
+  public List<AuthUserDTO> searchByUsername(String username, Integer first, Integer max){
     return repository.searchByUsername(username, first, max)
       .stream()
       .map(entity -> mapper.toDto(entity))
@@ -67,7 +67,7 @@ public class UserAuthService {
 
   }
 
-  public List<UserDTO> getAll(Integer first, Integer max){
+  public List<AuthUserDTO> getAll(Integer first, Integer max){
     return repository.getAll(first, max)
       .stream()
       .map(entity -> mapper.toDto(entity))
@@ -98,10 +98,10 @@ public class UserAuthService {
   }
   
   @Transactional
-  public UserDTO createId(String username){
+  public AuthUserDTO createId(String username){
     if(repository.existsByUsername(username))
       throw new UsernameExistsException(String.format("User already exists with username: %s", username));
-    UserDTO user = new UserDTO();
+    AuthUserDTO user = new AuthUserDTO();
     user.setUsername(username);
     user.setEmail(String.format("%s@default.com",username));
     return mapper.toDto(repository.save(mapper.toEntity(user)));
@@ -109,7 +109,7 @@ public class UserAuthService {
   }
 
   @Transactional
-  public boolean updateUser(UserDTO user){
+  public boolean updateUser(AuthUserDTO user){
     UserEntity entity = repository.findById(user.getId())
      .orElseThrow(() -> new UserNotFoundException("id", user.getId()));
 
