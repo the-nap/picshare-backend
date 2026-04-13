@@ -56,17 +56,6 @@ public class UserController {
 
   }
 
-  @GetMapping("/followers/{id}")
-  public ResponseEntity<List<String>> getFollowers(@PathVariable String id){
-    List<String> followers = userService.getFollowers(id)
-      .stream()
-      .map(user -> user.getId())
-      .collect(Collectors.toList());
-
-    return ResponseEntity
-      .ok()
-      .body(followers);
-  }
   
   @PostMapping("/follow")
   public ResponseEntity<Void> addFollower(@RequestBody String userId, @RequestBody String toFollowId){

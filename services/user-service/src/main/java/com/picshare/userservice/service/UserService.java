@@ -49,20 +49,6 @@ public class UserService {
       .collect(Collectors.toList());
   }
 
-  public Set<UserDTO> getFollowers(String id){
-    return connectionRepository.findByFollowed(userRepository.findById(id).get())
-      .stream()
-      .map(connection -> userMapper.toDto(connection.getFollower()))
-      .collect(Collectors.toSet());
-  }
-
-  public Set<UserDTO> getFollowed(String id){
-    return connectionRepository.findByFollower(userRepository.findById(id).get())
-      .stream()
-      .map(connection -> userMapper.toDto(connection.getFollowed()))
-      .collect(Collectors.toSet());
-  }
-
   private boolean exist(String userId, String toFollowId){
     if(!userRepository.existsById(userId) || !userRepository.existsById(toFollowId))
       return false;
