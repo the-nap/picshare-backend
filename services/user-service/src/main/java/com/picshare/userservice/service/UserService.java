@@ -29,7 +29,8 @@ public class UserService {
 
   public UserDTO getUser(String id){
     return userMapper.toDto(userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("id", id)));
+        .orElseThrow(() -> new UserNotFoundException("id", id)),
+        connectionRepository);
   }
 
   public void uploadAvatar(String id, InputStream stream){
@@ -39,13 +40,14 @@ public class UserService {
 
   public UserDTO getByUsername(String username){
     return userMapper.toDto(userRepository.findByUsername(username)
-        .orElseThrow(() -> new UserNotFoundException("username", username)));
+        .orElseThrow(() -> new UserNotFoundException("username", username)),
+        connectionRepository);
   }
 
   public List<UserDTO> search(String toSearch, int offset, int max){
     return this.userRepository.searchByEmailOrUsername(toSearch, offset, max)
       .stream()
-      .map((entity) -> userMapper.toDto(entity))
+      .map((entity) -> userMapper.toDto(entity, connectionRepository))
       .collect(Collectors.toList());
   }
 

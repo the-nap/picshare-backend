@@ -13,5 +13,7 @@ public class UserDTO {
   private String email;
   private String username;
   private String bio;
+  private int followersCount;
+  private int followedCount;
 
 }

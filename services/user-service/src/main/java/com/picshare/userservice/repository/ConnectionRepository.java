@@ -13,10 +13,16 @@ import com.picshare.userservice.entity.UserEntity;
 public interface ConnectionRepository extends CrudRepository<ConnectionEntity, ConnectionId>{
 
   // Find all users followed by this
-  List<ConnectionEntity> findByFollower(UserEntity follower);
+  long countByFollower(UserEntity user);
+
+  // Find all users that follow this
+  long countByFollowed(UserEntity user);
+
+  // Find all users followed by this
+  List<ConnectionEntity> findByFollower(UserEntity user);
   
-  // Find all users this follows
-  List<ConnectionEntity> findByFollowed(UserEntity followed);
+  // Find all users that follow this
+  List<ConnectionEntity> findByFollowed(UserEntity user);
 
   ConnectionEntity findByFollowerAndFollowed(UserEntity follower, UserEntity followed);
 
