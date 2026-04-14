@@ -57,6 +57,14 @@ public class UserController {
 
   }
 
+  @GetMapping("/follows/{id}")
+  public ResponseEntity<Boolean> follows(@AuthenticationPrincipal OAuth2User principal, @RequestParam String followed){
+
+    String userId = (String) principal.getAttribute("sub");
+    return ResponseEntity.ok(this.userService.follows(userId, followed));
+  }
+
+
   @PostMapping("/follow")
   public ResponseEntity<Void> addFollower(@AuthenticationPrincipal OAuth2User principal, @RequestBody String toFollow){
 
