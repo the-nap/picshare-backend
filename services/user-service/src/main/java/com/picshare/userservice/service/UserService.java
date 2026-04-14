@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.picshare.userservice.client.UserClient;
@@ -51,30 +52,23 @@ public class UserService {
       .collect(Collectors.toList());
   }
 
-  private boolean exist(String userId, String toFollowId){
-    if(!userRepository.existsById(userId) || !userRepository.existsById(toFollowId))
-      return false;
-    return true;
-  }
-
   public void follow(String userId, String toFollowId){
-    if(!exist(userId, toFollowId))
-      return; //ToDo throw exception
 
-    UserEntity user = userRepository.findById(userId).get();
-    UserEntity toFollow = userRepository.findById(toFollowId).get();
+    UserEntity user = userRepository.findById(userId)
+      .orElseThrow(() -> new UserNotFoundException("id", userId));
+    UserEntity toFollow = userRepository.findById(toFollowId)
+      .orElseThrow(() -> new UserNotFoundException("id", toFollowId));
+
     connectionRepository.save(new ConnectionEntity(user, toFollow));
   }
 
-  public void removeFollow(String userId, String toFollowId){
-    if(!exist(userId, toFollowId))
-      return; //ToDo throw exception
+  public void unfollow(String userId, String toUnfollowId){
 
-    UserEntity user = userRepository.findById(userId).get();
-    UserEntity toFollow = userRepository.findById(toFollowId).get();
-    if(!connectionRepository.existsByFollowerAndFollowed(user, toFollow))
-      return; //ToDo throw exception
+    UserEntity user = userRepository.findById(userId)
+      .orElseThrow(() -> new UserNotFoundException("id", userId));
+    UserEntity toUnfollow = userRepository.findById(toUnfollowId)
+      .orElseThrow(() -> new UserNotFoundException("id", toUnfollowId));
 
-    connectionRepository.delete(connectionRepository.findByFollowerAndFollowed(user, toFollow));
+    connectionRepository.delete(connectionRepository.findByFollowerAndFollowed(user, toUnfollow));
   }
 }

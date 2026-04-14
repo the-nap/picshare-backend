@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,11 +59,22 @@ public class UserController {
 
   }
 
-  
   @PostMapping("/follow")
-  public ResponseEntity<Void> addFollower(@RequestBody String userId, @RequestBody String toFollowId){
+  public ResponseEntity<Void> addFollower(@AuthenticationPrincipal OAuth2User principal, @RequestBody String toFollow){
 
-    return null;
+    String userId = (String) principal.getAttribute("sub");
+    this.userService.follow(userId.split(":")[2], toFollow);
+
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/unfollow")
+  public ResponseEntity<Void> removeFollower(@AuthenticationPrincipal OAuth2User principal, @RequestBody String toFollow){
+
+    String userId = (String) principal.getAttribute("sub");
+    this.userService.unfollow(userId.split(":")[2], toFollow);
+
+    return ResponseEntity.ok().build();
   }
 
 }
