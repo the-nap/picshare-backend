@@ -2,10 +2,8 @@ package com.picshare.userservice.service;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.picshare.userservice.client.UserClient;
