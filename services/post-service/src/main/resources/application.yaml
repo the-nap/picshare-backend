@@ -2,6 +2,13 @@ spring:
   application:
     name: Post Service
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/picshare-realm
+          jwk-set-uri: http://keycloak:8080/realms/picshare-realm/protocol/openid-connect/certs
+
   devtools:
     restart:
       enabled: true

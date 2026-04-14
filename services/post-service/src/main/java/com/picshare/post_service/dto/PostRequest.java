@@ -7,7 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class PostRequest {
 
-  private final String userId;
   private final String description;
   private final String[] tags;
   

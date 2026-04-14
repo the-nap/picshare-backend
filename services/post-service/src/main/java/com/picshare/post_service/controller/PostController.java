@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,11 +38,14 @@ public class PostController {
 
   @PostMapping("/image/upload")
   public ResponseEntity<Void> uploadImage(
+      @AuthenticationPrincipal OAuth2User user,
       @RequestPart("image") MultipartFile image,
       @RequestPart("metadata") PostRequest metadata){
+
+      String userId = (String) user.getAttribute("sub");
       
       try(InputStream stream = image.getInputStream()){
-        this.service.store(stream, metadata);
+        this.service.store(stream, metadata, userId.split(":")[2]);
       }catch(IOException e){}
 
       return ResponseEntity.status(HttpStatus.CREATED).build();

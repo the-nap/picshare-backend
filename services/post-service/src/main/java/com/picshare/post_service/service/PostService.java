@@ -39,13 +39,12 @@ public class PostService {
   private final PostResponseMapper responseMapper;
 
 
-  public void store(InputStream data, PostRequest metadata) throws ExternalException, ClientErrorException{
+  public void store(InputStream data, PostRequest metadata, String userId) throws ExternalException, ClientErrorException{
     PostEntity entity = requestMapper.toEntity(metadata);
+    entity.setUserId(userId);
     postRepository.save(entity);
-    String url;
     try {
-      url = client.upload(data, entity.getId());
-      entity.setImageUrl(url);
+      client.upload(data, entity.getId());
       entity.setStatus(PostStatus.PUBLISHED);
       postRepository.save(entity);
     } catch (ExternalException | ClientErrorException e) {
