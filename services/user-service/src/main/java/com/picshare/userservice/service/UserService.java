@@ -60,6 +60,15 @@ public class UserService {
     connectionRepository.save(new ConnectionEntity(user, toFollow));
   }
 
+public boolean follows(String userId, String followedId){
+    UserEntity follower = userRepository.findById(userId)
+      .orElseThrow(() -> new UserNotFoundException("id", userId));
+    UserEntity followed = userRepository.findById(followedId)
+      .orElseThrow(() -> new UserNotFoundException("id", followedId));
+
+  return connectionRepository.existsByFollowerAndFollowed(follower, followed);
+}
+
   public void unfollow(String userId, String toUnfollowId){
 
     UserEntity user = userRepository.findById(userId)
