@@ -36,11 +36,11 @@ public class PostController {
     return ResponseEntity.ok(service.getPosts(ids));
   }
 
-  @PostMapping("/image/upload")
+  @PostMapping("/upload")
   public ResponseEntity<Void> uploadImage(
       @AuthenticationPrincipal OAuth2User user,
-      @RequestPart("image") MultipartFile image,
-      @RequestPart("metadata") PostRequest metadata){
+      @RequestPart("media") MultipartFile image,
+      @RequestPart("data") PostRequest metadata){
 
       String userId = (String) user.getAttribute("sub");
       
