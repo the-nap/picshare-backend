@@ -1,14 +1,13 @@
 package com.example.storage_service.service;
 
-import java.io.InputStream;
-
 import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface StorageService {
 
-  void store(InputStream file, String id);
+  void store(MultipartFile file, String id);
 
-  void storeAvatar(InputStream file, String id);
+  void storeAvatar(MultipartFile file, String id);
 
   Resource serveAvatar(String id);
 

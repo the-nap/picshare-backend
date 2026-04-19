@@ -14,6 +14,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.storage_service.service.exceptions.NoAvatarException;
 import com.example.storage_service.service.exceptions.StorageException;
@@ -67,7 +68,7 @@ public class MinioService implements StorageService{
   }
 
   @Override
-  public void store(InputStream file, String id) {
+  public void store(MultipartFile file, String id) {
     List<Path> source = prepareMedia(file);
 
     storeInBucket(
@@ -78,7 +79,7 @@ public class MinioService implements StorageService{
   }
   
   @Override
-  public void storeAvatar(InputStream input, String id){
+  public void storeAvatar(MultipartFile input, String id){
     Path source = prepareAvatar(input);
 
     storeInBucket(
@@ -106,7 +107,6 @@ public class MinioService implements StorageService{
   }
 
   private InputStreamResource search(String toLook){
-    toLook = toLook.concat(".webp");
     log.info(toLook);
     try{ 
       InputStream stream = minioClient.getObject(
@@ -124,7 +124,7 @@ public class MinioService implements StorageService{
   }
 
   private String getAvatarPath(String id) {
-    return String.format("avatar/%s", id);
+    return String.format("avatar/%s.webp", id);
   }
 
   private String getMediaPath(String id){
@@ -139,7 +139,7 @@ public class MinioService implements StorageService{
     return "images";
   }
 
-  private List<Path> prepareMedia(InputStream file) {
+  private List<Path> prepareMedia(MultipartFile file) {
     List<Path> temps = new LinkedList<>();
     try {
       temps.add(Files.createTempFile("media-", ".webp"));
@@ -147,22 +147,31 @@ public class MinioService implements StorageService{
     } catch(IOException e){
       throw new RuntimeException("Cannot create file: " + e.getMessage());
     }
-    try(OutputStream outMedia = Files.newOutputStream(temps.get(MEDIA), StandardOpenOption.CREATE_NEW);
-        OutputStream outPreview = Files.newOutputStream(temps.get(PREVIEW), StandardOpenOption.CREATE_NEW)){
-      WebpManager.toWebp(file, outMedia, outPreview);
-    } catch(IOException e){}
+
+    temps.forEach((path) -> System.out.println(path.toString()));
+
+    try(OutputStream outMedia = Files.newOutputStream(temps.get(MEDIA));
+        OutputStream outPreview = Files.newOutputStream(temps.get(PREVIEW));
+        InputStream input = file.getResource().getInputStream()){
+      System.out.println("here we go");
+
+      WebpManager.toWebp(input, outMedia, outPreview);
+    } catch(Exception e){
+      throw new StorageException("in prepareMedia: " + e);
+    }
     return temps;
   }
 
-  private Path prepareAvatar(InputStream file) {
+  private Path prepareAvatar(MultipartFile file) {
     Path temp;
     try {
       temp = Files.createTempFile("avatar-", ".webp");
     } catch(IOException e){
       throw new RuntimeException("Cannot create file: " + e.getMessage());
     }
-    try(OutputStream out = Files.newOutputStream(temp, StandardOpenOption.CREATE_NEW)){
-      WebpManager.toWebp(file, out);
+    try(OutputStream out = Files.newOutputStream(temp);
+        InputStream stream = file.getInputStream()){
+      WebpManager.toWebp(stream, out, null);
     } catch(IOException e) {}
     return temp;
   }
