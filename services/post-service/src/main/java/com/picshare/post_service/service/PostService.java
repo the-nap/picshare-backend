@@ -26,6 +26,7 @@ import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
 
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -39,12 +40,15 @@ public class PostService {
   private final PostResponseMapper responseMapper;
 
 
-  public void store(InputStream data, PostRequest metadata, String userId) throws ExternalException, ClientErrorException{
-    PostEntity entity = requestMapper.toEntity(metadata);
+  public void store(InputStream media, String jsonData, String userId) throws ExternalException, ClientErrorException{
+    ObjectMapper objectMapper = new ObjectMapper();
+    PostRequest data = objectMapper.readValue(jsonData, PostRequest.class);
+
+    PostEntity entity = postMapper.toEntity(data);
     entity.setUserId(userId);
     postRepository.save(entity);
     try {
-      client.upload(data, entity.getId());
+      client.upload(media, entity.getId());
       entity.setStatus(PostStatus.PUBLISHED);
       postRepository.save(entity);
     } catch (ExternalException | ClientErrorException e) {

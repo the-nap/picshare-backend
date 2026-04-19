@@ -9,6 +9,11 @@ spring:
           issuer-uri: http://localhost:8090/realms/picshare-realm
           jwk-set-uri: http://keycloak:8080/realms/picshare-realm/protocol/openid-connect/certs
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   devtools:
     restart:
       enabled: true
@@ -20,3 +25,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+logging.level.org.springframework.security: DEBUG
