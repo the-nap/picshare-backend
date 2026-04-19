@@ -67,7 +67,6 @@ spring:
             predicates:
             - Path=/media/**
             filters:
-            - StripPrefix=1
 
   application:
     name: Gateway
