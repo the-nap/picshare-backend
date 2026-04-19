@@ -36,9 +36,6 @@ public class PostEntity {
   @NonNull
   private String userId;
 
-  @Column
-  private String imageUrl;
-
   @CreationTimestamp
   @Column(updatable = false)
   private Date creationDate;

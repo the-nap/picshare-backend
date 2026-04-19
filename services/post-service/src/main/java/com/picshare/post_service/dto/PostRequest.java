@@ -8,6 +8,6 @@ import lombok.Data;
 public class PostRequest {
 
   private final String description;
-  private final String[] tags;
+  private final String tags;
   
 }

@@ -35,7 +35,7 @@ public class PostController {
     return ResponseEntity.ok(service.getPosts(ids));
   }
 
-  @PostMapping("/image/upload")
+  @PostMapping("/upload")
   public ResponseEntity<Void> uploadImage(
       @AuthenticationPrincipal Jwt jwt,
       @RequestParam("media") MultipartFile image,
