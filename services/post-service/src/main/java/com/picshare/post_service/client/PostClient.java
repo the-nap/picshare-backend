@@ -1,12 +1,11 @@
 package com.picshare.post_service.client;
 
+import java.io.IOException;
 import java.io.InputStream;
 
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import com.picshare.post_service.service.exceptions.ClientErrorException;
@@ -20,22 +19,15 @@ public class PostClient {
 
   private final RestClient restClient;
 
-  public String upload(InputStream data, String string) throws ExternalException, ClientErrorException{
-    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+  public String upload(InputStream data, String id) throws ExternalException, ClientErrorException, IOException{
+    byte[] bytes = data.readAllBytes();
 
-    body.add("image", new InputStreamResource(data){
-      @Override
-      public String getFilename() {
-        return "uploaded-image";
-      }
-    });
-    body.add("id", string);
+    ByteArrayResource image = new ByteArrayResource(bytes);
 
     ResponseEntity<String> response = restClient
       .post()
-      .uri("http://storage-service:8080")
-      .header("Content-Type", "multipart/form-data")
-      .body(body)
+      .uri(String.format("http://storage-service:8080/media/%s", id))
+      .body(image)
       .retrieve()
       .toEntity(String.class);
 

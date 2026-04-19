@@ -48,15 +48,4 @@ public class PostEntity {
   @CollectionTable(name = "entity_tags", joinColumns = @JoinColumn(name = "entity_id"))
   @Column(name = "tag")
   private List<String> tags;
-  
-  @Column(name = "status", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private PostStatus status;
-
-
-  public enum PostStatus{
-    PENDING,
-    PUBLISHED,
-    FAILED
-  }
 }

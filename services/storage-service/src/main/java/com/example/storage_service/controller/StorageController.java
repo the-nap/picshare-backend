@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +26,9 @@ public class StorageController {
   private final StorageService service;
   
   @PostMapping("/media/{id}")
-  public ResponseEntity<Void> store(@RequestParam("file") MultipartFile file, @PathVariable String id){
+  public ResponseEntity<Void> store(@RequestBody Resource image, @PathVariable String id){
 
-    try(InputStream is = file.getInputStream()){
+    try(InputStream is = image.getInputStream()){
       service.store(is, id);
     } catch(IOException e) {
       throw new StorageException("Error while reading resource");

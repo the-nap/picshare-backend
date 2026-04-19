@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.springframework.boot.security.oauth2.server.resource.autoconfigure.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.picshare.post_service.dto.PostResponse;
 import com.picshare.post_service.dto.UpdateDto;
 import com.picshare.post_service.service.PostService;
+import com.picshare.post_service.service.exceptions.ExternalException;
 
 import lombok.AllArgsConstructor;
 
@@ -37,19 +36,16 @@ public class PostController {
 
   @PostMapping("/upload")
   public ResponseEntity<Void> uploadImage(
-      @AuthenticationPrincipal Jwt jwt,
+      JwtAuthenticationToken token,
       @RequestParam("media") MultipartFile image,
       @RequestParam("data") String data){
 
-      String userId = jwt.getPrincipalClaimName();
-      System.out.println(userId);
-
-      System.out.println(image.getSize());
-      System.out.println(data);
-
+      String userId = token.getName();
       try(InputStream stream = image.getInputStream()){
         this.service.store(stream, data, userId.split(":")[2]);
-      }catch(IOException e){}
+      }catch(IOException e){
+        throw new ExternalException(e.getMessage());
+      }
 
       return ResponseEntity.status(HttpStatus.CREATED).build();
   }

@@ -1,10 +1,8 @@
 package com.picshare.post_service.service;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +14,6 @@ import com.picshare.post_service.dto.PostRequest;
 import com.picshare.post_service.dto.PostResponse;
 import com.picshare.post_service.dto.UpdateDto;
 import com.picshare.post_service.entity.PostEntity;
-import com.picshare.post_service.entity.PostEntity.PostStatus;
 import com.picshare.post_service.entity.UpdateEntity.UpdateStatus;
 import com.picshare.post_service.mapper.PostMapper;
 import com.picshare.post_service.mapper.UpdateMapper;
@@ -40,7 +37,7 @@ public class PostService {
   private final PostMapper postMapper;
 
 
-  public void store(InputStream media, String jsonData, String userId) throws ExternalException, ClientErrorException{
+  public void store(InputStream media, String jsonData, String userId) throws ExternalException, ClientErrorException, IOException{
     ObjectMapper objectMapper = new ObjectMapper();
     PostRequest data = objectMapper.readValue(jsonData, PostRequest.class);
 
@@ -49,17 +46,10 @@ public class PostService {
     postRepository.save(entity);
     try {
       client.upload(media, entity.getId());
-      entity.setStatus(PostStatus.PUBLISHED);
       postRepository.save(entity);
-    } catch (ExternalException | ClientErrorException e) {
-      compensate(entity);
+    } catch (RuntimeException | IOException e) {
       throw e;
     }
-  }
-
-
-  private void compensate(PostEntity entity) {
-    entity.setStatus(PostStatus.FAILED);
   }
 
   public PostResponse serve(String id) throws PostNotFoundException{
