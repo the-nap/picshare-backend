@@ -41,9 +41,9 @@ public class PostController {
       @RequestParam("data") String data){
 
       String userId = token.getName();
-      try(InputStream stream = image.getInputStream()){
-        this.service.store(stream, data, userId.split(":")[2]);
-      }catch(IOException e){
+      try {
+        this.service.store(image, data, userId.split(":")[2]);
+      } catch(IOException e){
         throw new ExternalException(e.getMessage());
       }
 

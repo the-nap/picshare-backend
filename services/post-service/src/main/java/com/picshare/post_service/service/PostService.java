@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.post_service.client.PostClient;
 import com.picshare.post_service.dto.PostRequest;
@@ -37,7 +38,7 @@ public class PostService {
   private final PostMapper postMapper;
 
 
-  public void store(InputStream media, String jsonData, String userId) throws ExternalException, ClientErrorException, IOException{
+  public void store(MultipartFile image, String jsonData, String userId) throws ExternalException, ClientErrorException, IOException{
     ObjectMapper objectMapper = new ObjectMapper();
     PostRequest data = objectMapper.readValue(jsonData, PostRequest.class);
 
@@ -45,7 +46,7 @@ public class PostService {
     entity.setUserId(userId);
     postRepository.save(entity);
     try {
-      client.upload(media, entity.getId());
+      client.upload(image, entity.getId());
       postRepository.save(entity);
     } catch (RuntimeException | IOException e) {
       throw e;
