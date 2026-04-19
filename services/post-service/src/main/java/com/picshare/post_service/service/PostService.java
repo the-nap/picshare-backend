@@ -1,8 +1,10 @@
 package com.picshare.post_service.service;
 
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -16,8 +18,7 @@ import com.picshare.post_service.dto.UpdateDto;
 import com.picshare.post_service.entity.PostEntity;
 import com.picshare.post_service.entity.PostEntity.PostStatus;
 import com.picshare.post_service.entity.UpdateEntity.UpdateStatus;
-import com.picshare.post_service.mapper.PostRequestMapper;
-import com.picshare.post_service.mapper.PostResponseMapper;
+import com.picshare.post_service.mapper.PostMapper;
 import com.picshare.post_service.mapper.UpdateMapper;
 import com.picshare.post_service.repository.PostRepository;
 import com.picshare.post_service.repository.UpdateRepository;
@@ -35,12 +36,11 @@ public class PostService {
   private final UpdateMapper updateMapper;
   private final PostRepository postRepository;
   private final PostClient client;
-  private final PostRequestMapper requestMapper;
-  private final PostResponseMapper responseMapper;
+  private final PostMapper postMapper;
 
 
   public void store(InputStream data, PostRequest metadata, String userId) throws ExternalException, ClientErrorException{
-    PostEntity entity = requestMapper.toEntity(metadata);
+    PostEntity entity = postMapper.toEntity(metadata);
     entity.setUserId(userId);
     postRepository.save(entity);
     try {
@@ -53,12 +53,13 @@ public class PostService {
     }
   }
 
+
   private void compensate(PostEntity entity) {
     entity.setStatus(PostStatus.FAILED);
   }
 
   public PostResponse serve(String id) throws PostNotFoundException{
-    return this.responseMapper.toDto(
+    return this.postMapper.toDto(
       this.postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id)));
   }
@@ -73,8 +74,7 @@ public class PostService {
     return this.postRepository.findByUserId(id, PageRequest.of(offset, max, Sort.by("creationDate").descending()))
       .map((entity) -> {
 
-        PostResponse result = this.responseMapper.toDto(entity);
-        result.setUrl(result.getUrl().concat("/preview.webp"));
+        PostResponse result = this.postMapper.toDto(entity);
         return result;
 
       })
@@ -85,7 +85,7 @@ public class PostService {
     return this.postRepository.findByTag(tag, PageRequest.of(
         offset, max, 
         Sort.by("creationDate").descending()))
-      .map(entity -> responseMapper.toDto(entity))
+      .map(entity -> postMapper.toDto(entity))
       .toList();
   }
 

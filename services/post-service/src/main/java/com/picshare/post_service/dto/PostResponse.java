@@ -1,7 +1,5 @@
 package com.picshare.post_service.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,7 +10,6 @@ public class PostResponse {
   private String id;
   private String userId;
   private String description;
-  private String url;
-  private List<String> tags;
+  private String tags;
 
 }
