@@ -2,6 +2,11 @@ spring:
   application:
     name: Storage Service
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   devtools:
     restart:
       enabled: true

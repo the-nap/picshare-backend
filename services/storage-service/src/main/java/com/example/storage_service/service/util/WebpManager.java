@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -20,10 +19,17 @@ import com.luciad.imageio.webp.WebPWriteParam;
 @Component
 public class WebpManager {
 
+  private static final int MAX_DIMENSION = 576;
+
   public static void toWebp(InputStream originalImage, OutputStream originalOutput, OutputStream previewOutput) throws IOException{
     BufferedImage original = ImageIO.read(originalImage);
 
-    BufferedImage preview = Scalr.resize(original, Scalr.Method.SPEED, 300);
+    BufferedImage preview;
+    if(original.getHeight() > MAX_DIMENSION && original.getWidth() > MAX_DIMENSION){
+      preview = Scalr.resize(original, Scalr.Method.SPEED, MAX_DIMENSION);
+    }else{
+      preview = new BufferedImage(original.getColorModel(), original.copyData(null), original.isAlphaPremultiplied(), null);
+    }
 
     ImageWriter writer = ImageIO.getImageWritersByFormatName("webp").next();
     
