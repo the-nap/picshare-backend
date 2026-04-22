@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/users/auth")
 @RequiredArgsConstructor
-@Slf4j
 public class UserAuthController {
 
   private final UserAuthService service;
