@@ -1,9 +1,9 @@
-package com.picshare.userservice.mapper;
+package com.picshare.userservice.service.mapper;
 
 import org.mapstruct.Mapper;
 
-import com.picshare.userservice.dto.AuthUserDTO;
-import com.picshare.userservice.entity.UserEntity;
+import com.picshare.userservice.service.dto.AuthUserDTO;
+import com.picshare.userservice.service.entity.UserEntity;
 
 @Mapper(componentModel = "spring")
 public interface AuthMapper{

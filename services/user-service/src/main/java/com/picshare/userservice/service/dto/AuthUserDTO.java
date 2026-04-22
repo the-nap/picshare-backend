@@ -1,4 +1,4 @@
-package com.picshare.userservice.dto;
+package com.picshare.userservice.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,12 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class AuthUserDTO {
 
   private String id;
+  private String email;
   private String username;
-  private String bio;
-  private int followersCount;
-  private int followedCount;
 
 }

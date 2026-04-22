@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -31,4 +32,9 @@ public class LoggingAspect {
     log.info("Controller method {} returned: {}", joinPoint.getSignature().getName(), result);
   }
   
+  @AfterThrowing(pointcut = "controllerMethods()", throwing = "exception")
+  public void logException(JoinPoint joinPoint, Throwable exception) {
+    log.warn("Exception in method {}: {}", joinPoint.getSignature().getName(), exception.getMessage());
+  }
+
 }

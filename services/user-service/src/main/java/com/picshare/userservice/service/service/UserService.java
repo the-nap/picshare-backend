@@ -1,4 +1,4 @@
-package com.picshare.userservice.service;
+package com.picshare.userservice.service.service;
 
 import java.io.InputStream;
 import java.util.List;
@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.picshare.userservice.client.UserClient;
-import com.picshare.userservice.dto.UserDTO;
-import com.picshare.userservice.entity.ConnectionEntity;
-import com.picshare.userservice.entity.UserEntity;
-import com.picshare.userservice.mapper.UserMapper;
-import com.picshare.userservice.repository.ConnectionRepository;
-import com.picshare.userservice.repository.UserRepository;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
+import com.picshare.userservice.service.mapper.UserMapper;
+import com.picshare.userservice.service.repository.ConnectionRepository;
+import com.picshare.userservice.service.repository.UserRepository;
+import com.picshare.userservice.service.dto.UserDTO;
+import com.picshare.userservice.service.entity.ConnectionEntity;
+import com.picshare.userservice.service.entity.UserEntity;
 import com.picshare.userservice.service.exceptions.UploadException;
 
 import lombok.AllArgsConstructor;

@@ -1,12 +1,12 @@
-package com.picshare.userservice.mapper;
+package com.picshare.userservice.service.mapper;
 
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.picshare.userservice.dto.UserDTO;
-import com.picshare.userservice.entity.UserEntity;
-import com.picshare.userservice.repository.ConnectionRepository;
+import com.picshare.userservice.service.dto.UserDTO;
+import com.picshare.userservice.service.entity.UserEntity;
+import com.picshare.userservice.service.repository.ConnectionRepository;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
