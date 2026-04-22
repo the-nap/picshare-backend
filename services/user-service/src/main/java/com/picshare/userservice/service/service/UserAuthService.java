@@ -1,4 +1,4 @@
-package com.picshare.userservice.service;
+package com.picshare.userservice.service.service;
 
 import java.util.List;
 import java.util.Set;
@@ -8,12 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.picshare.userservice.dto.AuthUserDTO;
-import com.picshare.userservice.entity.UserEntity;
-import com.picshare.userservice.mapper.AuthMapper;
-import com.picshare.userservice.repository.UserRepository;
+import com.picshare.userservice.service.dto.AuthUserDTO;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
 import com.picshare.userservice.service.exceptions.UsernameExistsException;
+import com.picshare.userservice.service.mapper.AuthMapper;
+import com.picshare.userservice.service.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

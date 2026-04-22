@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.picshare.userservice.dto.UserDTO;
-import com.picshare.userservice.service.UserService;
+import com.picshare.userservice.service.dto.UserDTO;
+import com.picshare.userservice.service.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
