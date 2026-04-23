@@ -11,8 +11,8 @@ import com.picshare.userservice.service.repository.ConnectionRepository;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-  @Mapping(target = "followersCount", expression = "java((int) repo.countByFollower(entity))")
-  @Mapping(target = "followedCount", expression = "java((int) repo.countByFollowed(entity))")
+  @Mapping(target = "followersCount", expression = "java((int) repo.countByFollowed(entity))")
+  @Mapping(target = "followedCount", expression = "java((int) repo.countByFollower(entity))")
   UserDTO toDto(UserEntity entity, @Context ConnectionRepository repo);
 
   @Mapping(target = "creationDate", ignore = true)
