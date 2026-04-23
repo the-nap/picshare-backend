@@ -35,18 +35,12 @@ public class UserController {
   }
 
   @PutMapping("/upload")
-  public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @RequestBody MultipartFile media, @RequestBody String data){
+  public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @RequestParam MultipartFile media, @RequestParam String data){
 
     String userId = token.getName().split(":")[2];
-    if(!media.isEmpty()){
-      try(InputStream stream = media.getInputStream()){
+    if(!media.isEmpty())
+        this.userService.uploadAvatar(userId, media);
 
-        this.userService.uploadAvatar(userId, stream);
-
-      }catch(IOException e){
-        return ResponseEntity.badRequest().build();
-      }
-    }
     if(!data.isEmpty())
       this.userService.updateBio(userId, data);
     return ResponseEntity.ok().build();

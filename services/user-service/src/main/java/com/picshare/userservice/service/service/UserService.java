@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.userservice.client.UserClient;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
@@ -32,8 +33,8 @@ public class UserService {
         connectionRepository);
   }
 
-  public void uploadAvatar(String id, InputStream stream){
-    if(!this.userClient.uploadAvatar(stream, id))
+  public void uploadAvatar(String id, MultipartFile media){
+    if(!this.userClient.uploadAvatar(media, id))
       throw new UploadException("Error while uploading");
   }
 

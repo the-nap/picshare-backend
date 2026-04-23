@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
@@ -172,6 +171,7 @@ public class MinioService implements StorageService{
     try(OutputStream out = Files.newOutputStream(temp);
         InputStream stream = file.getInputStream()){
       WebpManager.toWebp(stream, out, null);
+      
     } catch(IOException e) {}
     return temp;
   }
