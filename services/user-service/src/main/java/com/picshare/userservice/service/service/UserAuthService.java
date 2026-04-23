@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.picshare.userservice.service.dto.AuthUserDTO;
+import com.picshare.userservice.service.entity.UserEntity;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
 import com.picshare.userservice.service.exceptions.UsernameExistsException;
 import com.picshare.userservice.service.mapper.AuthMapper;

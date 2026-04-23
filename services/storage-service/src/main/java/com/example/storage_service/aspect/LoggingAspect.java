@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LoggingAspect {
   
-  @Pointcut("execution(* com.picshare.storageservice.controller.*.*(..))")
+  @Pointcut("execution(* com.picshare.storage_service.controller.*.*(..))")
   public void controllerMethods() {}
 
 
