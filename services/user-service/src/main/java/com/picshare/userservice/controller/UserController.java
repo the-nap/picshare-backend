@@ -34,17 +34,22 @@ public class UserController {
     return ResponseEntity.ok(this.userService.getUser(id));
   }
 
-  @PutMapping("/avatar/{id}")
-  public ResponseEntity<Void> uploadAvatar(@PathVariable String id, @RequestBody MultipartFile image){
-    try(InputStream stream = image.getInputStream()){
+  @PutMapping("/upload")
+  public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @RequestBody MultipartFile media, @RequestBody String data){
 
-      this.userService.uploadAvatar(id, stream);
-      return ResponseEntity.ok().build();
+    String userId = token.getName().split(":")[2];
+    if(!media.isEmpty()){
+      try(InputStream stream = media.getInputStream()){
 
-    }catch(IOException e){
-      return ResponseEntity.badRequest().build();
+        this.userService.uploadAvatar(userId, stream);
+
+      }catch(IOException e){
+        return ResponseEntity.badRequest().build();
+      }
     }
-    
+    if(!data.isEmpty())
+      this.userService.updateBio(userId, data);
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("/name/{username}")

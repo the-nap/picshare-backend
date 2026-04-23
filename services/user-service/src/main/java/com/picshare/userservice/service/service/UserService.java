@@ -37,6 +37,14 @@ public class UserService {
       throw new UploadException("Error while uploading");
   }
 
+  public void updateBio(String id, String bio){
+    UserEntity entity = this.userRepository.findById(id)
+      .orElseThrow(() -> new UserNotFoundException("id", id));
+
+    entity.setBio(bio);
+    userRepository.save(entity);
+  }
+
   public UserDTO getByUsername(String username){
     return userMapper.toDto(userRepository.findByUsername(username)
         .orElseThrow(() -> new UserNotFoundException("username", username)),
@@ -82,4 +90,5 @@ public boolean follows(String userId, String followedId){
 
     return toUnfollow.getUsername();
   }
+
 }
