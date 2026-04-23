@@ -1,4 +1,4 @@
-package com.picshare.post_service.mapper;
+package com.picshare.post_service.service.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import com.picshare.post_service.dto.PostRequest;
-import com.picshare.post_service.dto.PostResponse;
-import com.picshare.post_service.entity.PostEntity;
+import com.picshare.post_service.service.dto.PostRequest;
+import com.picshare.post_service.service.dto.PostResponse;
+import com.picshare.post_service.service.entity.PostEntity;
 
 @Mapper(componentModel = "spring")
 public interface PostMapper {

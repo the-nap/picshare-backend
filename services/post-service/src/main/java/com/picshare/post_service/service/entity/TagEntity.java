@@ -1,4 +1,4 @@
-package com.picshare.post_service.entity;
+package com.picshare.post_service.service.entity;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;

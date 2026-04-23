@@ -1,4 +1,4 @@
-package com.picshare.post_service.repository;
+package com.picshare.post_service.service.repository;
 
 import java.util.Optional;
 
@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Repository;
 
-import com.picshare.post_service.entity.PostEntity;
+import com.picshare.post_service.service.entity.PostEntity;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {

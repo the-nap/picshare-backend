@@ -1,4 +1,4 @@
-package com.picshare.post_service.entity;
+package com.picshare.post_service.service.entity;
 
 import java.io.Serializable;
 

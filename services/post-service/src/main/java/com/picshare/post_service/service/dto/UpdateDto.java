@@ -1,4 +1,4 @@
-package com.picshare.post_service.dto;
+package com.picshare.post_service.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class UpdateDto {
 
-  private final String userId;
-  private final String postId;
+  private String userId;
+  private String postId;
 
 }

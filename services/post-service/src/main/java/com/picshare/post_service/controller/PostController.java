@@ -1,7 +1,6 @@
 package com.picshare.post_service.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -15,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.picshare.post_service.dto.PostResponse;
-import com.picshare.post_service.dto.UpdateDto;
-import com.picshare.post_service.service.PostService;
+import com.picshare.post_service.service.dto.PostResponse;
+import com.picshare.post_service.service.dto.UpdateDto;
 import com.picshare.post_service.service.exceptions.ExternalException;
+import com.picshare.post_service.service.service.PostService;
 
 import lombok.AllArgsConstructor;
 

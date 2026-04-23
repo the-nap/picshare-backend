@@ -1,4 +1,4 @@
-package com.picshare.post_service.dto;
+package com.picshare.post_service.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

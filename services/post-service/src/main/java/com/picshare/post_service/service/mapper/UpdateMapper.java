@@ -1,10 +1,10 @@
-package com.picshare.post_service.mapper;
+package com.picshare.post_service.service.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.picshare.post_service.dto.UpdateDto;
-import com.picshare.post_service.entity.UpdateEntity;
+import com.picshare.post_service.service.dto.UpdateDto;
+import com.picshare.post_service.service.entity.UpdateEntity;
 
 @Mapper(componentModel = "spring")
 public interface UpdateMapper {

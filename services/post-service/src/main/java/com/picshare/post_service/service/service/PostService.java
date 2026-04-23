@@ -1,7 +1,6 @@
-package com.picshare.post_service.service;
+package com.picshare.post_service.service.service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,18 +10,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.post_service.client.PostClient;
-import com.picshare.post_service.dto.PostRequest;
-import com.picshare.post_service.dto.PostResponse;
-import com.picshare.post_service.dto.UpdateDto;
-import com.picshare.post_service.entity.PostEntity;
-import com.picshare.post_service.entity.UpdateEntity.UpdateStatus;
-import com.picshare.post_service.mapper.PostMapper;
-import com.picshare.post_service.mapper.UpdateMapper;
-import com.picshare.post_service.repository.PostRepository;
-import com.picshare.post_service.repository.UpdateRepository;
+import com.picshare.post_service.service.dto.PostRequest;
+import com.picshare.post_service.service.dto.PostResponse;
+import com.picshare.post_service.service.dto.UpdateDto;
+import com.picshare.post_service.service.entity.PostEntity;
+import com.picshare.post_service.service.entity.UpdateEntity.UpdateStatus;
 import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
+import com.picshare.post_service.service.mapper.PostMapper;
+import com.picshare.post_service.service.mapper.UpdateMapper;
+import com.picshare.post_service.service.repository.PostRepository;
+import com.picshare.post_service.service.repository.UpdateRepository;
 
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;
