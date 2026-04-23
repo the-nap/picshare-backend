@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.picshare.feed_service.DTO.PostDto;
-import com.picshare.feed_service.service.FeedService;
+import com.picshare.feed_service.service.dto.PostDto;
+import com.picshare.feed_service.service.service.FeedService;
 
 import lombok.RequiredArgsConstructor;
 

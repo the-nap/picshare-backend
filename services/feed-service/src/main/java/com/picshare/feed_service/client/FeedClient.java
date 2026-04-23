@@ -8,8 +8,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.picshare.feed_service.DTO.PostDto;
-import com.picshare.feed_service.DTO.UpdateDto;
+import com.picshare.feed_service.service.dto.PostDto;
+import com.picshare.feed_service.service.dto.UpdateDto;
 
 import lombok.RequiredArgsConstructor;
 
