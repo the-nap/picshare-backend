@@ -3,10 +3,10 @@ package com.picshare.userservice.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,30 +57,31 @@ public class UserController {
     return ResponseEntity.ok(this.userService.search(toSearch, offset, max));
   }
 
-  @GetMapping("/follows/{id}")
-  public ResponseEntity<Boolean> follows(@AuthenticationPrincipal OAuth2User principal, @RequestParam String followed){
+  @GetMapping("/follows")
+  public ResponseEntity<Boolean> follows(JwtAuthenticationToken token, @RequestParam String followed){
 
-    String userId = (String) principal.getAttribute("sub");
-    return ResponseEntity.ok(this.userService.follows(userId, followed));
+    String userId = token.getName();
+    return ResponseEntity.ok(this.userService.follows(userId.split(":")[2], followed));
   }
 
 
   @PostMapping("/follow")
-  public ResponseEntity<Void> addFollower(@AuthenticationPrincipal OAuth2User principal, @RequestBody String toFollow){
+  public ResponseEntity<String> addFollower(JwtAuthenticationToken token, @RequestBody Map<String, String> body){
 
-    String userId = (String) principal.getAttribute("sub");
-    this.userService.follow(userId.split(":")[2], toFollow);
+    String userId = token.getName();
+    String username = this.userService.follow(userId.split(":")[2], body.get("toFollow"));
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok().body(username);
   }
 
   @PostMapping("/unfollow")
-  public ResponseEntity<Void> removeFollower(@AuthenticationPrincipal OAuth2User principal, @RequestBody String toFollow){
+  public ResponseEntity<String> removeFollower(JwtAuthenticationToken token, @RequestBody Map<String, String> body){
 
-    String userId = (String) principal.getAttribute("sub");
-    this.userService.unfollow(userId.split(":")[2], toFollow);
 
-    return ResponseEntity.ok().build();
+    String userId = token.getName();
+    String username = this.userService.unfollow(userId.split(":")[2], body.get("toUnfollow"));
+
+    return ResponseEntity.ok().body(username);
   }
 
 }

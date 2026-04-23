@@ -50,7 +50,7 @@ public class UserService {
       .collect(Collectors.toList());
   }
 
-  public void follow(String userId, String toFollowId){
+  public String follow(String userId, String toFollowId){
 
     UserEntity user = userRepository.findById(userId)
       .orElseThrow(() -> new UserNotFoundException("id", userId));
@@ -58,6 +58,7 @@ public class UserService {
       .orElseThrow(() -> new UserNotFoundException("id", toFollowId));
 
     connectionRepository.save(new ConnectionEntity(user, toFollow));
+    return toFollow.getUsername();
   }
 
 public boolean follows(String userId, String followedId){
@@ -69,13 +70,16 @@ public boolean follows(String userId, String followedId){
   return connectionRepository.existsByFollowerAndFollowed(follower, followed);
 }
 
-  public void unfollow(String userId, String toUnfollowId){
+  public String unfollow(String userId, String toUnfollowId){
 
     UserEntity user = userRepository.findById(userId)
       .orElseThrow(() -> new UserNotFoundException("id", userId));
     UserEntity toUnfollow = userRepository.findById(toUnfollowId)
       .orElseThrow(() -> new UserNotFoundException("id", toUnfollowId));
 
-    connectionRepository.delete(connectionRepository.findByFollowerAndFollowed(user, toUnfollow));
+    connectionRepository.delete(
+        connectionRepository.findByFollowerAndFollowed(user, toUnfollow));
+
+    return toUnfollow.getUsername();
   }
 }
