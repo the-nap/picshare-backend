@@ -65,7 +65,7 @@ public class UserController {
   }
 
 
-  @PostMapping("/follow")
+  @PostMapping(value = "/follow", produces = "text/plain")
   public ResponseEntity<String> addFollower(JwtAuthenticationToken token, @RequestBody Map<String, String> body){
 
     String userId = token.getName();
@@ -74,7 +74,7 @@ public class UserController {
     return ResponseEntity.ok().body(username);
   }
 
-  @PostMapping("/unfollow")
+  @PostMapping(value = "/unfollow", produces = "text/plain")
   public ResponseEntity<String> removeFollower(JwtAuthenticationToken token, @RequestBody Map<String, String> body){
 
 
