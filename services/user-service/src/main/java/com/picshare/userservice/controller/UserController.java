@@ -51,8 +51,8 @@ public class UserController {
     return ResponseEntity.ok(this.userService.getByUsername(username));
   }
 
-  @GetMapping("/contains/{toSearch}")
-  public ResponseEntity<List<UserDTO>> searchUsers(@PathVariable String toSearch, @RequestParam int offset, @RequestParam int max){
+  @GetMapping("/contains")
+  public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String toSearch, @RequestParam int offset, @RequestParam int max){
     return ResponseEntity.ok(this.userService.search(toSearch, offset, max));
 
   }
