@@ -1,4 +1,4 @@
-package com.picshare.feed_service.repository;
+package com.picshare.feed_service.service.repository;
 
 import java.util.Date;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Repository;
 
-import com.picshare.feed_service.entity.FeedEntity;
+import com.picshare.feed_service.service.entity.FeedEntity;
 
 @Repository
 public interface FeedRepository extends CrudRepository<FeedEntity, String>{

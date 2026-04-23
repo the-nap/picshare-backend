@@ -1,10 +1,10 @@
-package com.picshare.feed_service.mapper;
+package com.picshare.feed_service.service.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.picshare.feed_service.DTO.FeedDto;
-import com.picshare.feed_service.entity.FeedEntity;
+import com.picshare.feed_service.service.dto.FeedDto;
+import com.picshare.feed_service.service.entity.FeedEntity;
 
 @Mapper(componentModel = "spring")
 public interface FeedMapper {

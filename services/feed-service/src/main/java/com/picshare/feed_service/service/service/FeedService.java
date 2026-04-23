@@ -1,4 +1,4 @@
-package com.picshare.feed_service.service;
+package com.picshare.feed_service.service.service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -15,13 +15,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.picshare.feed_service.DTO.FeedDto;
-import com.picshare.feed_service.DTO.PostDto;
-import com.picshare.feed_service.DTO.UpdateDto;
 import com.picshare.feed_service.client.FeedClient;
-import com.picshare.feed_service.entity.FeedEntity;
-import com.picshare.feed_service.mapper.FeedMapper;
-import com.picshare.feed_service.repository.FeedRepository;
+import com.picshare.feed_service.service.dto.FeedDto;
+import com.picshare.feed_service.service.dto.PostDto;
+import com.picshare.feed_service.service.dto.UpdateDto;
+import com.picshare.feed_service.service.entity.FeedEntity;
+import com.picshare.feed_service.service.mapper.FeedMapper;
+import com.picshare.feed_service.service.repository.FeedRepository;
 
 import lombok.AllArgsConstructor;
 

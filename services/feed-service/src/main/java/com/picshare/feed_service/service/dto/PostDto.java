@@ -1,7 +1,12 @@
-package com.picshare.feed_service.DTO;
+package com.picshare.feed_service.service.dto;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class PostDto {
 
   private Long id;
