@@ -46,6 +46,7 @@ public class UserController {
     }
     
   }
+
   @GetMapping("/name/{username}")
   public ResponseEntity<UserDTO> getByUsername(@PathVariable String username){
     return ResponseEntity.ok(this.userService.getByUsername(username));
@@ -54,7 +55,6 @@ public class UserController {
   @GetMapping("/contains")
   public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String toSearch, @RequestParam int offset, @RequestParam int max){
     return ResponseEntity.ok(this.userService.search(toSearch, offset, max));
-
   }
 
   @GetMapping("/follows/{id}")
