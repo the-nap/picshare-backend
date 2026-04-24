@@ -21,3 +21,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+eureka:
+  client.service_url.defaultZone: http://discovery-server:8761/eureka
+
+logging:
+  level:
+    org.springframework.web: DEBUG
