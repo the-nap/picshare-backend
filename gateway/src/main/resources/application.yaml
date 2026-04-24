@@ -22,19 +22,6 @@ spring:
           - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
           routes:
 
-          - id: eureka-dashboard
-            uri: ${discovery-server-uri}
-            predicates:
-            - Path=/eureka
-            - Method=GET,HEAD
-            filters:
-            - StripPrefix=1
-          - id: eureka-static
-            uri: ${discovery-server-uri}
-            predicates:
-            - Path=/eureka/**
-            - Method=GET,HEAD
-            filters:
 
           # Redirection from / to /ui/
           - id: home
@@ -58,28 +45,28 @@ spring:
             - Path=/ui/**
                 
           - id: user-service
-            uri: ${user-service-uri}
+            uri: lb://user-service
             predicates:
             - Path=/api/user/**
             filters:
             - StripPrefix=1
 
           - id: feed-service
-            uri: ${feed-service-uri}
+            uri: lb://feed-service
             predicates:
             - Path=/api/feed/**
             filters:
             - StripPrefix=1
 
           - id: post-service
-            uri: ${post-service-uri}
+            uri: lb://post-service
             predicates:
             - Path=/api/post/**
             filters:
             - StripPrefix=1
 
           - id: storage-service
-            uri: ${storage-service-uri}
+            uri: lb://storage-service
             predicates:
             - Path=/media/**
             filters:
@@ -105,6 +92,18 @@ spring:
           
 server:
   port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${discovery-server-uri}
+    instance:
+      prefer-ip-address: true
+  managaement:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
 
 logging:
   level:

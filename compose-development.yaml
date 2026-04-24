@@ -23,6 +23,7 @@ services:
     env_file: ./env/gateway.env
     depends_on:
     - keycloak
+    - discovery-server
     ports:
     - "8080:8080"
     - "5005:5005"
@@ -47,7 +48,8 @@ services:
       dockerfile: Dockerfile.dev
     ports:
     - "5010:5005"
-    - "35734:35729"
+    - "35735:35729"
+    - "8761:8761"
     environment:
     - SPRING_PROFILES_ACTIVE=dev
     develop:
@@ -103,6 +105,7 @@ services:
     env_file: ./env/user.env
     depends_on:
     - user-db
+    - discovery-server
     ports:
     - "5006:5005"
     - "35730:35729"
@@ -142,6 +145,7 @@ services:
       dockerfile: Dockerfile.dev
     env_file: ./env/feed.env
     depends_on:
+    - discovery-server
     - feed-db
     ports:
     - "5007:5005"
@@ -182,6 +186,7 @@ services:
       dockerfile: Dockerfile.dev
     env_file: ./env/post.env
     depends_on:
+    - discovery-server
     - post-db
     ports:
     - "5008:5005"
@@ -221,6 +226,7 @@ services:
       context: ./services/storage-service/
       dockerfile: Dockerfile.dev
     depends_on:
+    - discovery-server
     - minio
     ports:
     - "5009:5005"
