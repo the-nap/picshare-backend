@@ -97,8 +97,8 @@ eureka:
   client:
     service-url:
       defaultZone: ${discovery-server-uri}
-    instance:
-      prefer-ip-address: true
+  instance:
+    prefer-ip-address: true
   managaement:
     endpoints:
       web:

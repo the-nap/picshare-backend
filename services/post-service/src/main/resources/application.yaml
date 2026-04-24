@@ -28,3 +28,28 @@ spring:
 
 eureka:
   client.service_url.defaultZone: http://discovery-server:8761/eureka
+  instance:
+    secure-port-enabled: false
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: 0.0.1
+    environment: dev
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 
+        - health
+        - info
+        - metrics
+
+  endpoint:
+    health:
+      show-details: always

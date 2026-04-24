@@ -2,6 +2,8 @@ package com.picshare.userservice.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +85,13 @@ public class UserController {
     return ResponseEntity.ok().body(username);
   }
 
+    @GetMapping("/actuator/health")
+    public ResponseEntity<Map<String, String>> health() {
+        Map<String, String> health = new HashMap<>();
+        health.put("status", "UP");
+        health.put("timestamp", LocalDateTime.now().toString());
+        return ResponseEntity.ok(health);
+    }
 }
 
 

@@ -7,14 +7,28 @@ server:
 
 eureka:
   instance.hostname: localhost
+  server:
+    enable-self-preservation: false
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url.defaultzone: http://${eureka.instance.hostname}:${server.port}/eureka
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 
+        - health
+        - info
+  
+  endpoint:
+    health:
+      show-details: always
+
 logging:
   level:
     com:
       netflix:
-        eureka: OFF
-        discovery: OFF
+        eureka: INFO
+        discovery: INFO
