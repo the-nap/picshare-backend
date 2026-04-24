@@ -48,7 +48,6 @@ services:
     ports:
     - "5008:5005"
     - "35733:35729"
-    - "8761:8761"
     environment:
     - SPRING_PROFILES_ACTIVE=dev
     develop:

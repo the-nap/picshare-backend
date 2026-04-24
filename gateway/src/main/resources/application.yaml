@@ -4,6 +4,7 @@ storage-service-uri: http://storage-service:8080
 user-service-uri: http://user-service:8080
 feed-service-uri: http://feed-service:8080
 post-service-uri: http://post-service:8080
+discovery-server-uri: http://discovery-server:8761
 
 
 spring:
@@ -20,6 +21,21 @@ spring:
           default-filters:
           - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
           routes:
+
+          - id: eureka-dashboard
+            uri: ${discovery-server-uri}
+            predicates:
+            - Path=/eureka
+            - Method=GET,HEAD
+            filters:
+            - StripPrefix=1
+          - id: eureka-static
+            uri: ${discovery-server-uri}
+            predicates:
+            - Path=/eureka/**
+            - Method=GET,HEAD
+            filters:
+
           # Redirection from / to /ui/
           - id: home
             uri: ${gateway-uri}
