@@ -1,8 +1,7 @@
 package com.picshare.userservice.client;
 
-import java.io.InputStream;
-
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserClient {
 
   private final RestClient restClient;
+  private final DiscoveryClient discoveryClient;
 
   public boolean uploadAvatar(MultipartFile image, String id){
 
@@ -33,9 +34,11 @@ public class UserClient {
 
     body.add("file", part);
 
+    ServiceInstance serviceInstance = discoveryClient.getInstances("storage-service").get(0);
+
     ResponseEntity<String> response = this.restClient
       .post()
-      .uri(String.format("http://storage-service:8080/media/avatar/%s", id))
+      .uri(String.format("%s/media/avatar/%s", serviceInstance.getUri(), id))
       .body(body)
       .contentType(MediaType.MULTIPART_FORM_DATA)
       .retrieve()

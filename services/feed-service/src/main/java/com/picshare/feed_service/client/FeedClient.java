@@ -2,6 +2,8 @@ package com.picshare.feed_service.client;
 
 import java.util.List;
 
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -18,19 +20,23 @@ import lombok.RequiredArgsConstructor;
 public class FeedClient {
 
   private final RestClient restClient;
+  private final DiscoveryClient discoveryClient;
 
   public List<UpdateDto> getUpdates(){
+    ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
     return this.restClient
       .get()
-      .uri("http://post-service/updates")
+      .uri(String.format("%s/updates", serviceInstance.getUri()))
       .retrieve()
       .body(new ParameterizedTypeReference<List<UpdateDto>>(){});
   }
 
   public List<PostDto> getPosts(List<String> ids){
 
+    ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
+
     UriComponents uriComponents = UriComponentsBuilder
-      .fromUriString("http://post-service:8080/post/feed")
+      .fromUriString(String.format("%s/post/feed", serviceInstance.getUri()))
       .queryParam("id", ids.toArray())
       .build();
 
@@ -42,9 +48,10 @@ public class FeedClient {
   }
 
   public List<String> getFollowers(String id){
+    ServiceInstance serviceInstance = discoveryClient.getInstances("user-service").get(0);
     return this.restClient
       .get()
-      .uri("http://user-service:8080/followers/{id}", id)
+      .uri(String.format("%s/followers/%s", serviceInstance.getUri(), id))
       .retrieve()
       .body(new ParameterizedTypeReference<List<String>>() {});
   }

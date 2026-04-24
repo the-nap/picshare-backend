@@ -2,6 +2,8 @@ package com.picshare.post_service.client;
 
 import java.io.IOException;
 
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class PostClient {
 
   private final RestClient restClient;
+  private final DiscoveryClient discoveryClient;
 
   public String upload(MultipartFile image, String id) throws ExternalException, ClientErrorException, IOException{
 
@@ -35,9 +38,11 @@ public class PostClient {
 
     body.add("file", part);
 
+    ServiceInstance serviceInstance = discoveryClient.getInstances("storage-service").get(0);
+
     ResponseEntity<String> response = restClient
       .post()
-      .uri(String.format("http://storage-service:8080/media/%s", id))
+      .uri(String.format("%s/media/%s", serviceInstance.getUri(), id))
       .contentType(MediaType.MULTIPART_FORM_DATA)
       .body(body)
       .retrieve()
