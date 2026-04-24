@@ -34,12 +34,34 @@ services:
       - action: sync
         path: ./gateway/src
         target: /app/src
-      - action: sync+restart
+      - action: sync
         path: ./gateway/pom.xml
         target: /app/pom.xml
     networks: 
     - picshare_internal
     - frontend
+
+  discovery-server:
+    build: 
+      context: ./services/discovery-server/
+      dockerfile: Dockerfile.dev
+    ports:
+    - "5008:5005"
+    - "35733:35729"
+    - "8761:8761"
+    environment:
+    - SPRING_PROFILES_ACTIVE=dev
+    develop:
+      watch:
+      - action: sync
+        path: ./services/discovery-server/src
+        target: /app/src
+      - action: sync
+        path: ./services/discovery-server/pom.xml
+        target: /app/pom.xml
+    networks: 
+    - user-network
+    - picshare_internal
 
   keycloak:
     build:
@@ -92,7 +114,7 @@ services:
       - action: sync
         path: ./services/user-service/src
         target: /app/src
-      - action: sync+restart
+      - action: sync
         path: ./services/user-service/pom.xml
         target: /app/pom.xml
     networks: 
@@ -132,7 +154,7 @@ services:
       - action: sync
         path: ./services/feed-service/src
         target: /app/src
-      - action: sync+restart
+      - action: sync
         path: ./services/feed-service/pom.xml
         target: /app/pom.xml
     networks: 
@@ -172,7 +194,7 @@ services:
       - action: sync
         path: ./services/post-service/src
         target: /app/src
-      - action: sync+restart
+      - action: sync
         path: ./services/post-service/pom.xml
         target: /app/pom.xml
     networks: 
@@ -211,7 +233,7 @@ services:
       - action: sync
         path: ./services/storage-service/src
         target: /app/src
-      - action: sync+restart
+      - action: sync
         path: ./services/storage-service/pom.xml
         target: /app/pom.xml
     networks: 
