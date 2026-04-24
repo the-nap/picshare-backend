@@ -10,4 +10,4 @@ RUN ./mvnw -T 4 dependency:go-offline
 
 COPY src ./src
 
-CMD ["sh", "-lc", "find src pom.xml | entr -r ./mvnw spring-boot:run"]
+CMD ["sh", "-lc", "find src pom.xml | entr -rn ./mvnw spring-boot:run"]
