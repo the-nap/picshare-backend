@@ -46,8 +46,8 @@ services:
       context: ./services/discovery-server/
       dockerfile: Dockerfile.dev
     ports:
-    - "5008:5005"
-    - "35733:35729"
+    - "5010:5005"
+    - "35734:35729"
     environment:
     - SPRING_PROFILES_ACTIVE=dev
     develop:

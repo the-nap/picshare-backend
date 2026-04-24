@@ -24,3 +24,5 @@ minio:
   bucket:
     name: data
     
+eureka:
+  client.service_url.defaultZone: http://discovery-server:8761/eureka
