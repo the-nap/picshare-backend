@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.picshare.post_service.service.entity.PostEntity;
 
 @Repository
-public interface PostRepository extends JpaRepository<PostEntity, Long> {
+public interface PostRepository extends JpaRepository<PostEntity, String> {
 
   Optional<PostEntity> findById(String id);
 
