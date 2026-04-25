@@ -22,6 +22,7 @@ services:
       dockerfile: gateway/Dockerfile.dev
     env_file: ./env/gateway.env
     depends_on:
+    - zipkin
     - keycloak
     - discovery-server
     ports:
@@ -104,6 +105,7 @@ services:
       dockerfile: services/user-service/Dockerfile.dev
     env_file: ./env/user.env
     depends_on:
+    - zipkin
     - user-db
     - discovery-server
     ports:
@@ -261,6 +263,14 @@ services:
     - storage-network
     volumes:
     - minio-data:/data
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    # Environment settings are defined here https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md#environment-variables
+    ports:
+      - 9411:9411
+    networks:
+      - picshare_internal
 
 volumes:
   keycloak-service-data:
