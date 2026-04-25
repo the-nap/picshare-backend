@@ -147,12 +147,9 @@ public class MinioService implements StorageService{
       throw new RuntimeException("Cannot create file: " + e.getMessage());
     }
 
-    temps.forEach((path) -> System.out.println(path.toString()));
-
     try(OutputStream outMedia = Files.newOutputStream(temps.get(MEDIA));
         OutputStream outPreview = Files.newOutputStream(temps.get(PREVIEW));
         InputStream input = file.getResource().getInputStream()){
-      System.out.println("here we go");
 
       WebpManager.toWebp(input, outMedia, outPreview);
     } catch(Exception e){
