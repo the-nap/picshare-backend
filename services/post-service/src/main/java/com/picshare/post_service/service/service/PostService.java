@@ -89,6 +89,8 @@ public class PostService {
     
     return updateRepository.findTop100ByStatusOrderByIdUserId(UpdateStatus.PENDING)
       .stream()
+      .peek(entity -> entity.setStatus(UpdateStatus.UPDATED))
+      .peek(entity -> updateRepository.save(entity))
       .map(entity -> updateMapper.toDto(entity))
       .collect(Collectors.toList());
   }
