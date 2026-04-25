@@ -18,8 +18,8 @@ services:
   gateway:
     container_name: gateway-dev
     build:
-      context: ./gateway/
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: gateway/Dockerfile.dev
     env_file: ./env/gateway.env
     depends_on:
     - keycloak
@@ -44,8 +44,8 @@ services:
 
   discovery-server:
     build: 
-      context: ./services/discovery-server/
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: services/discovery-server/Dockerfile.dev
     ports:
     - "5010:5005"
     - "35735:35729"
@@ -100,8 +100,8 @@ services:
   user-service:
     container_name: user-dev
     build:
-      context: ./services/user-service/
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: services/user-service/Dockerfile.dev
     env_file: ./env/user.env
     depends_on:
     - user-db
@@ -141,8 +141,8 @@ services:
   feed-service:
     container_name: feed-dev
     build:
-      context: ./services/feed-service/
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: services/feed-service/Dockerfile.dev
     env_file: ./env/feed.env
     depends_on:
     - discovery-server
@@ -182,8 +182,8 @@ services:
   post-service:
     container_name: post-dev
     build:
-      context: ./services/post-service/
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: services/post-service/Dockerfile.dev
     env_file: ./env/post.env
     depends_on:
     - discovery-server
@@ -223,8 +223,8 @@ services:
   storage-service:
     container_name: storage-dev
     build:
-      context: ./services/storage-service/
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: services/storage-service/Dockerfile.dev
     depends_on:
     - discovery-server
     - minio

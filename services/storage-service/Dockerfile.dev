@@ -4,10 +4,13 @@ WORKDIR /app
 
 RUN apt update && apt install -y --no-install-recommends entr && rm -rf /var/lib/apt/lists/*
 
-COPY .mvn .mvn
-COPY mvnw pom.xml ./
+COPY pom.xml /bom/pom.xml
+RUN mvn -f /bom/pom.xml install -N
+
+COPY services/storage-service/.mvn .mvn
+COPY services/storage-service/mvnw services/storage-service/pom.xml ./
 RUN ./mvnw -T 4 dependency:go-offline
 
-COPY src ./src
+COPY services/storage-service/src ./src
 
 CMD ["sh", "-lc", "find src pom.xml | entr -rn ./mvnw spring-boot:run"]
