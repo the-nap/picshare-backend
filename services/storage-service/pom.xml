@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.1</version>
+		<version>4.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.picshare</groupId>
@@ -28,7 +28,6 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-    <spring-cloud.version>2025.1.1</spring-cloud.version>
 	</properties>
 	<dependencies>
 
@@ -97,9 +96,9 @@
  <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
+        <groupId>com.picshare</groupId>
+        <artifactId>picshare-bom</artifactId>
+        <version>1.0.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
