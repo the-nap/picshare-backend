@@ -1,4 +1,4 @@
-package com.example.storage_service.service;
+package com.picshare.storage_service.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,9 +15,9 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.storage_service.service.exceptions.NoAvatarException;
-import com.example.storage_service.service.exceptions.StorageException;
-import com.example.storage_service.service.util.WebpManager;
+import com.picshare.storage_service.service.exceptions.NoAvatarException;
+import com.picshare.storage_service.service.exceptions.StorageException;
+import com.picshare.storage_service.service.util.WebpManager;
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;

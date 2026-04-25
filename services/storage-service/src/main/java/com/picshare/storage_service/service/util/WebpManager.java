@@ -1,4 +1,4 @@
-package com.example.storage_service.service.util;
+package com.picshare.storage_service.service.util;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

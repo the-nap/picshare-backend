@@ -1,5 +1,4 @@
-package com.example.storage_service.controller;
-
+package com.picshare.storage_service.controller;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.storage_service.service.StorageService;
-import com.example.storage_service.service.exceptions.StorageException;
+import com.picshare.storage_service.service.StorageService;
+import com.picshare.storage_service.service.exceptions.StorageException;
 
 import lombok.RequiredArgsConstructor;
 
