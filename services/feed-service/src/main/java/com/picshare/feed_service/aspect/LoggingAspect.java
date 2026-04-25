@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LoggingAspect {
   
-  @Pointcut("execution(* com.picshare.user_service.controller.*.*(..))")
+  @Pointcut("execution(* com.picshare.feed_service.controller.*.*(..))")
   public void controllerMethods() {}
 
 
@@ -27,7 +27,7 @@ public class LoggingAspect {
     log.info("Arguments: {}", Arrays.toString(joinPoint.getArgs()));
   }
 
-  @AfterReturning(pointcut = "controllerMethods", returning = "result")
+  @AfterReturning(pointcut = "controllerMethods()", returning = "result")
   public void logAfterReturning(JoinPoint joinPoint, Object result) {
     log.info("Controller method {} returned: {}", joinPoint.getSignature().getName(), result);
   }
