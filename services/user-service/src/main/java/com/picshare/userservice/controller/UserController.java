@@ -1,7 +1,5 @@
 package com.picshare.userservice.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.picshare.userservice.service.dto.UserDTO;
 import com.picshare.userservice.service.service.UserService;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -37,13 +36,13 @@ public class UserController {
   }
 
   @PutMapping("/upload")
-  public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @RequestParam MultipartFile media, @RequestParam String data){
+  public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @Nullable @RequestParam MultipartFile media, @Nullable @RequestParam String data){
 
     String userId = token.getName().split(":")[2];
-    if(!media.isEmpty())
+    if(media != null)
         this.userService.uploadAvatar(userId, media);
 
-    if(!data.isEmpty())
+    if(data != null)
       this.userService.updateBio(userId, data);
     return ResponseEntity.ok().build();
   }
@@ -93,5 +92,3 @@ public class UserController {
         return ResponseEntity.ok(health);
     }
 }
-
-
