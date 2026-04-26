@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CredentialDTO {
 
   @NotBlank(message = "Credential type not specified")

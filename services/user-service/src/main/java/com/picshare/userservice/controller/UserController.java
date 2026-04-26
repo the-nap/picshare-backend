@@ -77,18 +77,10 @@ public class UserController {
   @PostMapping(value = "/unfollow", produces = "text/plain")
   public ResponseEntity<String> removeFollower(JwtAuthenticationToken token, @RequestBody Map<String, String> body){
 
-
     String userId = token.getName();
     String username = this.userService.unfollow(userId.split(":")[2], body.get("toUnfollow"));
 
     return ResponseEntity.ok().body(username);
   }
 
-    @GetMapping("/actuator/health")
-    public ResponseEntity<Map<String, String>> health() {
-        Map<String, String> health = new HashMap<>();
-        health.put("status", "UP");
-        health.put("timestamp", LocalDateTime.now().toString());
-        return ResponseEntity.ok(health);
-    }
 }
