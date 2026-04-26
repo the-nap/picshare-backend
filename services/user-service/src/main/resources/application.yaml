@@ -63,8 +63,8 @@ management:
 
 logging:
   level:
-    org.springframework.web: DEBUG
-    zipkin2: DEBUG
-    zipkin2.reporter: DEBUG
-    zipkin2.reporter.internal: DEBUG
-    org.springframework.boot.zipkin.autoconfigure: DEBUG
+    org.springframework.web: INFO
+    zipkin2: INFO
+    zipkin2.reporter: INFO
+    zipkin2.reporter.internal: INFO
+    org.springframework.boot.zipkin.autoconfigure: INFO

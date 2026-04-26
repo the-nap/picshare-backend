@@ -41,8 +41,6 @@ public class UserAuthController {
           }
         )
       );
-
-    System.out.println(result);
     
     return ResponseEntity.ok(result.orElse(List.of()));
 
