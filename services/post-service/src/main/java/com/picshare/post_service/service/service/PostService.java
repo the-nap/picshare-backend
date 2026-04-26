@@ -24,7 +24,6 @@ import com.picshare.post_service.service.repository.PostRepository;
 import com.picshare.post_service.service.repository.UpdateRepository;
 
 import lombok.RequiredArgsConstructor;
-import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -37,9 +36,7 @@ public class PostService {
   private final PostMapper postMapper;
 
 
-  public void store(MultipartFile image, String jsonData, String userId) throws ExternalException, ClientErrorException, IOException{
-    ObjectMapper objectMapper = new ObjectMapper();
-    PostRequest data = objectMapper.readValue(jsonData, PostRequest.class);
+  public void store(MultipartFile image, PostRequest data, String userId) throws ExternalException, ClientErrorException, IOException{
 
     PostEntity entity = postMapper.toEntity(data);
     entity.setUserId(userId);
