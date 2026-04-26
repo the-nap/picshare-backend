@@ -1,15 +1,29 @@
 package com.picshare.post_service.service.dto;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostResponse {
 
-  private String id;
-  private String userId;
-  private String description;
-  private String tags;
+  @NotBlank(message = "Post id cannot be blank")
+  String id;
+
+  @NotBlank(message = "Poster id cannot be blank")
+  String userId;
+
+  @Nullable
+  String description;
+
+  @Nullable
+  @Size(max = 25, message = "Tags max length is 25 characters (spaces included)")
+  String tags;
 
 }

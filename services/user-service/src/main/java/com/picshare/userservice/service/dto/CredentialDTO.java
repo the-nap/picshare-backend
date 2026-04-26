@@ -1,13 +1,20 @@
 package com.picshare.userservice.service.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CredentialDTO {
 
-  private final String type;
-  private final String value;
+  @NotBlank(message = "Credential type not specified")
+  final String type;
+
+  @NotBlank(message = "Credential value cannot be blank")
+  final String value;
   
 }

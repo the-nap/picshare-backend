@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +12,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.picshare.post_service.service.dto.PostRequest;
 import com.picshare.post_service.service.dto.PostResponse;
 import com.picshare.post_service.service.dto.UpdateDto;
 import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.service.PostService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -33,11 +37,8 @@ public class PostController {
     return ResponseEntity.ok(service.getPosts(ids));
   }
 
-  @PostMapping("/upload")
-  public ResponseEntity<Void> uploadImage(
-      JwtAuthenticationToken token,
-      @RequestParam("media") MultipartFile image,
-      @RequestParam("data") String data){
+  @PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+  public ResponseEntity<Void> uploadImage(JwtAuthenticationToken token, @RequestPart MultipartFile image, @Valid @RequestPart PostRequest data){
 
       String userId = token.getName();
       try {

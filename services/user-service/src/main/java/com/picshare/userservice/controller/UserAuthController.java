@@ -20,6 +20,7 @@ import com.picshare.userservice.service.dto.AuthUserDTO;
 import com.picshare.userservice.service.dto.CredentialDTO;
 import com.picshare.userservice.service.service.UserAuthService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -64,7 +65,7 @@ public class UserAuthController {
   }
 
   @PostMapping("/{id}/credentials/verify")
-  ResponseEntity<Void> verifyCredentials(@PathVariable String id, @RequestBody CredentialDTO credential){
+  ResponseEntity<Void> verifyCredentials(@PathVariable String id, @Valid @RequestBody CredentialDTO credential){
     if(credential.getType().equals("password") && service.checkPassword(id, credential.getValue()))
       return ResponseEntity.noContent().build();
     else
@@ -72,7 +73,7 @@ public class UserAuthController {
   }
   
   @PostMapping("/{id}/credentials/update")
-  ResponseEntity<Void> updateCredentials(@PathVariable String id, @RequestBody CredentialDTO credential){
+  ResponseEntity<Void> updateCredentials(@PathVariable String id, @Valid @RequestBody CredentialDTO credential){
     if(credential.getType().equals("password"))
       service.updateCredential(id, credential.getValue());
     else
@@ -91,7 +92,7 @@ public class UserAuthController {
   }
 
   @PutMapping("/update")
-  ResponseEntity<Void> updateUser(@RequestBody AuthUserDTO user){
+  ResponseEntity<Void> updateUser(@Valid @RequestBody AuthUserDTO user){
     if (service.updateUser(user))
       return ResponseEntity.noContent().build();
     return ResponseEntity.badRequest().build();

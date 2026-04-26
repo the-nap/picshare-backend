@@ -58,7 +58,7 @@ public class FeedService {
     feedRepository.save(feedMapper.toEntity(feed));
   }
 
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
   public void removeOld(){
     LocalDate now = LocalDate.now();
     Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
