@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.picshare.feed_service.client.FeedClient;
 import com.picshare.feed_service.service.dto.FeedDto;
@@ -78,6 +79,7 @@ public class FeedService {
     handleInsertion(postsByUser);
   }
 
+  @Transactional
   private void handleInsertion(Map<String, List<String>> postsByUser) {
     for ( Map.Entry<String,List<String>> entry : postsByUser.entrySet() ){
       String posterId = entry.getKey();

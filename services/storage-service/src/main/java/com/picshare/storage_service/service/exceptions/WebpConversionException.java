@@ -1,4 +1,4 @@
-package com.example.storage_service.service.exceptions;
+package com.picshare.storage_service.service.exceptions;
 
 public class WebpConversionException extends RuntimeException{
 

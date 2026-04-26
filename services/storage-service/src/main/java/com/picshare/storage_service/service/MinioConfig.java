@@ -1,4 +1,4 @@
-package com.example.storage_service.service;
+package com.picshare.storage_service.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

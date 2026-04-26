@@ -1,21 +1,21 @@
 package com.picshare.userservice.service.service;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.userservice.client.UserClient;
-import com.picshare.userservice.service.exceptions.UserNotFoundException;
-import com.picshare.userservice.service.mapper.UserMapper;
-import com.picshare.userservice.service.repository.ConnectionRepository;
-import com.picshare.userservice.service.repository.UserRepository;
 import com.picshare.userservice.service.dto.UserDTO;
 import com.picshare.userservice.service.entity.ConnectionEntity;
 import com.picshare.userservice.service.entity.UserEntity;
 import com.picshare.userservice.service.exceptions.UploadException;
+import com.picshare.userservice.service.exceptions.UserNotFoundException;
+import com.picshare.userservice.service.mapper.UserMapper;
+import com.picshare.userservice.service.repository.ConnectionRepository;
+import com.picshare.userservice.service.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -59,6 +59,7 @@ public class UserService {
       .collect(Collectors.toList());
   }
 
+  @Transactional
   public String follow(String userId, String toFollowId){
 
     UserEntity user = userRepository.findById(userId)
@@ -70,15 +71,16 @@ public class UserService {
     return toFollow.getUsername();
   }
 
-public boolean follows(String userId, String followedId){
+  public boolean follows(String userId, String followedId){
     UserEntity follower = userRepository.findById(userId)
       .orElseThrow(() -> new UserNotFoundException("id", userId));
     UserEntity followed = userRepository.findById(followedId)
       .orElseThrow(() -> new UserNotFoundException("id", followedId));
 
-  return connectionRepository.existsByFollowerAndFollowed(follower, followed);
-}
+    return connectionRepository.existsByFollowerAndFollowed(follower, followed);
+  }
 
+  @Transactional
   public String unfollow(String userId, String toUnfollowId){
 
     UserEntity user = userRepository.findById(userId)

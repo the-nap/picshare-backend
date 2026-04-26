@@ -1,4 +1,4 @@
-package com.example.storage_service.controller;
+package com.picshare.storage_service.controller;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -6,9 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.example.storage_service.service.StorageService;
-import com.example.storage_service.service.exceptions.NoAvatarException;
-import com.example.storage_service.service.exceptions.StorageException;
+
+import com.picshare.storage_service.service.StorageService;
+import com.picshare.storage_service.service.exceptions.NoAvatarException;
+import com.picshare.storage_service.service.exceptions.StorageException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

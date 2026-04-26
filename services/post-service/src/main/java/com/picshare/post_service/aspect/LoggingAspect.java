@@ -27,7 +27,7 @@ public class LoggingAspect {
     log.info("Arguments: {}", Arrays.toString(joinPoint.getArgs()));
   }
 
-  @AfterReturning(pointcut = "controllerMethods", returning = "result")
+  @AfterReturning(pointcut = "controllerMethods()", returning = "result")
   public void logAfterReturning(JoinPoint joinPoint, Object result) {
     log.info("Controller method {} returned: {}", joinPoint.getSignature().getName(), result);
   }

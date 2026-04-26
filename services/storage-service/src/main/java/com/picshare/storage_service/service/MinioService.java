@@ -1,4 +1,4 @@
-package com.example.storage_service.service;
+package com.picshare.storage_service.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,9 +15,9 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.storage_service.service.exceptions.NoAvatarException;
-import com.example.storage_service.service.exceptions.StorageException;
-import com.example.storage_service.service.util.WebpManager;
+import com.picshare.storage_service.service.exceptions.NoAvatarException;
+import com.picshare.storage_service.service.exceptions.StorageException;
+import com.picshare.storage_service.service.util.WebpManager;
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
@@ -147,12 +147,9 @@ public class MinioService implements StorageService{
       throw new RuntimeException("Cannot create file: " + e.getMessage());
     }
 
-    temps.forEach((path) -> System.out.println(path.toString()));
-
     try(OutputStream outMedia = Files.newOutputStream(temps.get(MEDIA));
         OutputStream outPreview = Files.newOutputStream(temps.get(PREVIEW));
         InputStream input = file.getResource().getInputStream()){
-      System.out.println("here we go");
 
       WebpManager.toWebp(input, outMedia, outPreview);
     } catch(Exception e){
