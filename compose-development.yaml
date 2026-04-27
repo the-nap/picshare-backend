@@ -270,6 +270,15 @@ services:
     networks:
     - picshare-internal
 
+  kafka:
+    image: apache/kafka:4.2.0
+    ports:
+    - 9092:9092
+    networks:
+    -picshare-internal
+
+    
+
 volumes:
   keycloak-service-data:
   user-service-data:
