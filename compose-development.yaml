@@ -275,7 +275,7 @@ services:
     ports:
     - 9092:9092
     networks:
-    -picshare-internal
+    - picshare-internal
 
     
 
