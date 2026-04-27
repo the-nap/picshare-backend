@@ -40,7 +40,7 @@ services:
         path: ./gateway/pom.xml
         target: /app/pom.xml
     networks: 
-    - picshare_internal
+    - picshare-internal
     - frontend
 
   discovery-server:
@@ -63,7 +63,7 @@ services:
         target: /app/pom.xml
     networks: 
     - user-network
-    - picshare_internal
+    - picshare-internal
 
   keycloak:
     build:
@@ -79,7 +79,7 @@ services:
       keycloak-db:
         condition: service_healthy
     networks:
-    - picshare_internal
+    - picshare-internal
     - keycloak-network
     - frontend
 
@@ -123,7 +123,7 @@ services:
         target: /app/pom.xml
     networks: 
     - user-network
-    - picshare_internal
+    - picshare-internal
 
   user-db:
     image: postgres:latest
@@ -164,7 +164,7 @@ services:
         target: /app/pom.xml
     networks: 
     - feed-network
-    - picshare_internal
+    - picshare-internal
 
   feed-db:
     image: postgres:latest
@@ -205,7 +205,7 @@ services:
         target: /app/pom.xml
     networks: 
     - post-network
-    - picshare_internal
+    - picshare-internal
 
   post-db:
     image: postgres:latest
@@ -245,7 +245,7 @@ services:
         target: /app/pom.xml
     networks: 
     - storage-network
-    - picshare_internal
+    - picshare-internal
 
   minio:
     image: minio/minio
@@ -266,9 +266,9 @@ services:
     image: openzipkin/zipkin:latest
     # Environment settings are defined here https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md#environment-variables
     ports:
-      - 9411:9411
+    - 9411:9411
     networks:
-      - picshare_internal
+    - picshare-internal
 
 volumes:
   keycloak-service-data:
@@ -283,5 +283,5 @@ networks:
   keycloak-network:
   feed-network:
   storage-network:
-  picshare_internal:
+  picshare-internal:
   frontend:
