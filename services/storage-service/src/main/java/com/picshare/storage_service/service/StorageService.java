@@ -9,6 +9,10 @@ public interface StorageService {
 
   void storeAvatar(MultipartFile file, String id);
 
+  void deleteMedia(String id);
+
+  void deleteAvatar(String id);
+
   Resource serveAvatar(String id);
 
   Resource serveMedia(String id);
