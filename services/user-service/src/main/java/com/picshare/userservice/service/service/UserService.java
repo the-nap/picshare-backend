@@ -3,14 +3,20 @@ package com.picshare.userservice.service.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.userservice.client.UserClient;
+import com.picshare.userservice.event.UserEventProducer;
 import com.picshare.userservice.service.dto.UserDTO;
 import com.picshare.userservice.service.entity.ConnectionEntity;
+import com.picshare.userservice.service.entity.ConnectionStatus;
 import com.picshare.userservice.service.entity.UserEntity;
+import com.picshare.userservice.service.entity.UserStatus;
+import com.picshare.userservice.service.exceptions.ConnectionNotFoundException;
 import com.picshare.userservice.service.exceptions.UploadException;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
 import com.picshare.userservice.service.mapper.UserMapper;
@@ -26,6 +32,7 @@ public class UserService {
   private final ConnectionRepository connectionRepository;
   private final UserMapper userMapper;
   private final UserClient userClient;
+  private final UserEventProducer eventProducer;
 
   public UserDTO getUser(String id){
     return userMapper.toDto(userRepository.findById(id)
@@ -88,10 +95,33 @@ public class UserService {
     UserEntity toUnfollow = userRepository.findById(toUnfollowId)
       .orElseThrow(() -> new UserNotFoundException("id", toUnfollowId));
 
-    connectionRepository.delete(
-        connectionRepository.findByFollowerAndFollowed(user, toUnfollow));
+    ConnectionEntity connection = connectionRepository.findByFollowerAndFollowed(user, toUnfollow)
+      .orElseThrow(() -> new ConnectionNotFoundException(String.format("%s is not following %s", user.getUsername(), toUnfollow.getUsername())));
+
+    connection.setStatus(ConnectionStatus.DELETED);
+    connectionRepository.save(connection);
 
     return toUnfollow.getUsername();
+  }
+
+  @Transactional
+  public void removeUserConnections(UserEntity user){
+    Streamable<ConnectionEntity> entities = this.connectionRepository.findByFollowed(user).and(this.connectionRepository.findByFollower(user));
+    entities.stream()
+      .peek(entity -> entity.setStatus(ConnectionStatus.DELETED));
+    connectionRepository.saveAll(entities);
+  }
+
+  @Transactional
+  public void deleteUser(String userId){
+    UserEntity entity = this.userRepository.findById(userId)
+      .orElseThrow(() -> new UserNotFoundException("id", userId));
+
+    entity.setStatus(UserStatus.DELETED);
+    removeUserConnections(entity);
+
+    userRepository.save(entity);
+    eventProducer.sendUserDeletedEvent(userId);
   }
 
 }

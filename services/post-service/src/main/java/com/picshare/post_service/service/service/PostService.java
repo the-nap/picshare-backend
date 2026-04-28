@@ -73,13 +73,11 @@ public class PostService {
       toDelete = this.postRepository.findByUserId(userId, PageRequest.of(offset, 999));
       toDelete
         .stream()
-        .peek(entity -> entity.setStatus(PostStatus.DELETED));
+        .peek(entity -> deletePost(entity.getId()));
 
-      try{
-        postRepository.saveAll(toDelete);
-      }catch(DataIntegrityViolationException dao){
+      offset++;
 
-      }
+      postRepository.saveAll(toDelete);
 
     } while (!toDelete.isEmpty());
   }
