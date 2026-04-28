@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.picshare.post_service.service.exceptions.PostNotFoundException;
+
 @RestControllerAdvice
 public class PostControllerAdvice {
 
@@ -22,6 +24,12 @@ public class PostControllerAdvice {
       errors.put(((FieldError) error).getField(), error.getDefaultMessage());
     });
     return errors;
+  }
+
+  @ExceptionHandler(PostNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public String notFoundHandler(PostNotFoundException pe){
+    return pe.getMessage();
   }
 
   @ExceptionHandler(Exception.class)

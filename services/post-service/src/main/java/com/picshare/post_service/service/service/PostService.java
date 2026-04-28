@@ -52,7 +52,16 @@ public class PostService {
     }
   }
 
-  public PostResponse serve(String id) throws PostNotFoundException{
+  @Transactional
+  public UpdateDto confirm(String id){
+    PostEntity entity = this.postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
+    entity.setStatus(PostStatus.CONFIRMED);
+    postRepository.save(entity);
+    return new UpdateDto(entity.getUserId(), entity.getId());
+  }
+
+  public PostResponse serve(String id){
     return this.postMapper.toDto(
       this.postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id)));
@@ -93,11 +102,4 @@ public class PostService {
       .collect(Collectors.toList());
   }
 
-  public UpdateDto confirm(String id){
-    PostEntity entity = this.postRepository.findById(id)
-      .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
-    entity.setStatus(PostStatus.CONFIRMED);
-    postRepository.save(entity);
-    return new UpdateDto(entity.getUserId(), entity.getId());
-  }
 }
