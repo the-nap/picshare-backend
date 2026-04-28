@@ -9,6 +9,12 @@ services:
     - "4200:4200"
     networks:
     - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '0.50'
+          pids: 512
 
   gateway:
     container_name: gateway-prod
@@ -24,12 +30,24 @@ services:
     networks: 
     - picshare-internal
     - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.50'
+          pids: 512
 
   discovery-server:
     build: 
       context: ./services/discovery-server/
     networks: 
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.50'
+          pids: 512
 
   keycloak:
     build:
@@ -48,6 +66,12 @@ services:
     - picshare-internal
     - keycloak-network
     - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '0.50'
+          pids: 512
 
   keycloak-db:
     image: postgres:latest
@@ -63,6 +87,12 @@ services:
       retries: 5
     networks:
     - keycloak-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.50'
+          pids: 512
 
   user-service:
     container_name: user-prod
@@ -76,6 +106,11 @@ services:
     networks: 
     - user-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          pids: 512
 
   user-db:
     image: postgres:latest
@@ -91,6 +126,12 @@ services:
       retries: 5
     networks:
     - user-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+          pids: 512
 
   feed-service:
     container_name: feed-prod
@@ -103,6 +144,11 @@ services:
     networks: 
     - feed-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          pids: 512
 
   feed-db:
     image: postgres:latest
@@ -118,6 +164,12 @@ services:
       retries: 5
     networks:
     - feed-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+          pids: 512
         
 
   post-service:
@@ -131,6 +183,11 @@ services:
     networks: 
     - post-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          pids: 512
 
   post-db:
     image: postgres:latest
@@ -146,6 +203,12 @@ services:
       retries: 5
     networks:
     - post-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+          pids: 512
 
   storage-service:
     container_name: storage-prod
@@ -157,6 +220,11 @@ services:
     networks: 
     - storage-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          pids: 512
 
   minio:
     image: minio/minio
@@ -172,6 +240,12 @@ services:
     - storage-network
     volumes:
     - minio-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+          pids: 512
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -179,6 +253,12 @@ services:
     - 9411:9411
     networks:
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
 volumes:
   keycloak-service-data:
