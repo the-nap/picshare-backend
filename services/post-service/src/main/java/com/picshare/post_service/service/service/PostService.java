@@ -15,6 +15,7 @@ import com.picshare.post_service.service.dto.PostRequest;
 import com.picshare.post_service.service.dto.PostResponse;
 import com.picshare.post_service.service.dto.UpdateDto;
 import com.picshare.post_service.service.entity.PostEntity;
+import com.picshare.post_service.service.entity.PostStatus;
 import com.picshare.post_service.service.entity.UpdateEntity.UpdateStatus;
 import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.ExternalException;
@@ -42,10 +43,10 @@ public class PostService {
 
     PostEntity entity = postMapper.toEntity(data);
     entity.setUserId(userId);
+    entity.setStatus(PostStatus.PENDING);
     postRepository.save(entity);
     try {
       client.upload(image, entity.getId());
-      postRepository.save(entity);
     } catch (RuntimeException | IOException e) {
       throw e;
     }
@@ -90,5 +91,13 @@ public class PostService {
       .peek(entity -> updateRepository.save(entity))
       .map(entity -> updateMapper.toDto(entity))
       .collect(Collectors.toList());
+  }
+
+  public UpdateDto confirm(String id){
+    PostEntity entity = this.postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
+    entity.setStatus(PostStatus.CONFIRMED);
+    postRepository.save(entity);
+    return new UpdateDto(entity.getUserId(), entity.getId());
   }
 }

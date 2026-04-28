@@ -9,6 +9,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,4 +48,10 @@ public class PostEntity {
   @CollectionTable(name = "entity_tags", joinColumns = @JoinColumn(name = "entity_id"))
   @Column(name = "tag")
   private List<String> tags;
+
+  @Column(name = "status")
+  @Enumerated(EnumType.STRING)
+  private PostStatus status;
+
 }
+
