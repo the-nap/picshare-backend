@@ -45,25 +45,45 @@ public class FeedService {
     return feedClient.getPosts(ids);
   }
   
-  public void markAsSeen(String userId, String postId){
-    markAsSeen(feedRepository.findByUserIdAndPostId(userId, postId)
+  public void postSeen(String userId, String postId){
+    postSeen(feedRepository.findByUserIdAndPostId(userId, postId)
         .orElseThrow(() -> new FeedNotFoundException(String.format("user with id: %s does not have post with id: %s in its feed", userId, postId))));
   }
 
   @Transactional
-  public void markAsSeen(String userId){ final int max = 100;
+  public void userDeleted(String userId){
+    final int max = 100;
     int offset = 0;
     Streamable<FeedEntity> entities;
     do{
       entities = this.feedRepository.findByUserId(userId, PageRequest.of(offset, max));
-    entities.stream()
-      .peek(entity -> markAsSeen(entity));
-    offset++;
+      entities.stream()
+        .peek(entity -> markForDeletion(entity));
+
+      feedRepository.saveAll(entities);
+      offset++;
+
+    } while(!entities.isEmpty());
+  }
+  
+  @Transactional
+  public void postDeleted(String postId){
+    final int max = 100;
+    int offset = 0;
+    Streamable<FeedEntity> entities;
+    do{
+      entities = this.feedRepository.findByPostId(postId, PageRequest.of(offset,max));
+      entities.stream()
+        .peek(entity -> markForDeletion(entity));
+
+      feedRepository.saveAll(entities);
+      offset++;
+
     } while(!entities.isEmpty());
   }
 
   @Transactional
-  public void markAsSeen(FeedEntity entity){
+  public void postSeen(FeedEntity entity){
     entity.setStatus(FeedStatus.SEEN);
     feedRepository.save(entity);
   }
@@ -73,6 +93,9 @@ public class FeedService {
     feedRepository.save(feedMapper.toEntity(feed));
   }
 
+  public void markForDeletion(FeedEntity entity){
+    entity.setStatus(FeedStatus.DELETED);
+  }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
   @Transactional

@@ -15,8 +15,10 @@ public interface FeedRepository extends CrudRepository<FeedEntity, String>{
 
   Streamable<FeedEntity> findByUserId(String userId, Pageable pageable);
 
+  Streamable<FeedEntity> findByPostId(String postId, Pageable pageable);
+
   Optional<FeedEntity> findByUserIdAndPostId(String userId, String postId);
 
-  void deleteAllBySeenAtAfter(Date date);
+  void deleteAllByTimestampBefore(Date date);
 
 }
