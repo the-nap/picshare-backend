@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,14 +36,14 @@ public class UserController {
   }
 
   @PutMapping("/upload")
-  public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @Nullable @RequestParam MultipartFile media, @Nullable @RequestParam String data){
+  public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @Nullable @RequestPart(value = "data") MultipartFile data, @Nullable @RequestPart(value = "metadata") String metadata){
 
     String userId = token.getName().split(":")[2];
-    if(media != null)
-        this.userService.uploadAvatar(userId, media);
-
     if(data != null)
-      this.userService.updateBio(userId, data);
+        this.userService.uploadAvatar(userId, data);
+
+    if(metadata != null)
+      this.userService.updateBio(userId, metadata);
     return ResponseEntity.ok().build();
   }
 

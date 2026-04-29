@@ -26,6 +26,4 @@ public class StorageEventFunctions {
   public Consumer<UserDeletedEvent> userDeleted(){
     return event -> this.service.deleteAvatar(event.userId());
   }
-
-  
 }

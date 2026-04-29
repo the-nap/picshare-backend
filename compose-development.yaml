@@ -127,7 +127,7 @@ services:
       resources:
         limits:
           memory: 64M
-          cpus: '0.50'
+          cpus: '0.25'
           pids: 512
 
   user-service:
@@ -187,7 +187,7 @@ services:
       resources:
         limits:
           memory: 64M
-          cpus: '0.50'
+          cpus: '0.25'
           pids: 512
 
   feed-service:
@@ -247,7 +247,7 @@ services:
       resources:
         limits:
           memory: 64M
-          cpus: '0.50'
+          cpus: '0.25'
           pids: 512
 
   post-service:
@@ -307,7 +307,7 @@ services:
       resources:
         limits:
           memory: 64M
-          cpus: '0.50'
+          cpus: '0.25'
           pids: 512
 
   storage-service:
@@ -364,8 +364,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 64M
-          cpus: '0.50'
+          memory: 128M
+          cpus: '1.00'
           pids: 512
 
   zipkin:
