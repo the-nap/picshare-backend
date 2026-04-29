@@ -1,12 +1,11 @@
 package com.picshare.userservice.controller;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,5 +80,12 @@ public class UserController {
     String username = this.userService.unfollow(userId.split(":")[2], body.get("toUnfollow"));
 
     return ResponseEntity.ok().body(username);
+  }
+
+  @DeleteMapping
+  public ResponseEntity<Void> deleteProfile(JwtAuthenticationToken token){
+    String userId = token.getName().split(":")[2];
+    this.userService.deleteUser(userId);
+    return ResponseEntity.noContent().build();
   }
 }

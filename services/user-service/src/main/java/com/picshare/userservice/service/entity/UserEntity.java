@@ -41,7 +41,7 @@ public class UserEntity{
 
   @Column(name = "status")
   @Enumerated(EnumType.STRING)
-  private UserStatus status;
+  private UserStatus status = UserStatus.REGULAR;
 
   @CreationTimestamp
   @Column(updatable = false)

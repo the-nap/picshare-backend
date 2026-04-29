@@ -1,10 +1,12 @@
 package com.picshare.userservice.service.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Streamable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,6 +124,12 @@ public class UserService {
 
     userRepository.save(entity);
     eventProducer.sendUserDeletedEvent(userId);
+  }
+
+  @Transactional
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+  private void removeDeleted() {
+    this.userRepository.deleteAllByStatus(UserStatus.DELETED);
   }
 
 }

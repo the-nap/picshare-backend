@@ -28,19 +28,19 @@ public class UserAuthService {
   private final AuthMapper mapper;
 
   public AuthUserDTO getById(String id){
-    return repository.findById(id)
+    return repository.findAlwaysById(id)
       .map(mapper::toDto)
       .orElse(null);
   }
 
   public AuthUserDTO getByUsername(String username){
-    return repository.findByUsername(username)
+    return repository.findAlwaysByUsername(username)
       .map(mapper::toDto)
       .orElse(null);
   }
 
   public AuthUserDTO getByEmail(String email){
-    return repository.findByEmail(email)
+    return repository.findAlwaysByEmail(email)
       .map(mapper::toDto)
       .orElse(null);
   }

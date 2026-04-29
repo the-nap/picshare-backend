@@ -24,6 +24,20 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
   void deleteByIdAndStatus(String id, UserStatus status);
 
+  void deleteAllByStatus(UserStatus status);
+
+  default Optional<UserEntity> findAlwaysById(String id){
+    return findByIdAndStatus(id, UserStatus.DELETED).or(() -> findByIdAndStatus(id, UserStatus.REGULAR));
+  }
+
+  default Optional<UserEntity> findAlwaysByUsername(String username){
+    return findByUsernameAndStatus(username, UserStatus.DELETED).or(() -> findByUsernameAndStatus(username, UserStatus.REGULAR));
+  }
+
+  default Optional<UserEntity> findAlwaysByEmail(String email){
+    return findByEmailAndStatus(email, UserStatus.DELETED).or(() -> findByEmailAndStatus(email, UserStatus.REGULAR));
+  }
+
   @Query(
     value = "SELECT * FROM users u WHERE u.username LIKE %?1% AND u.status = 'REGULAR' ORDER BY creation_date OFFSET ?2 LIMIT ?3", 
     nativeQuery = true)
@@ -74,4 +88,5 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
   default void deleteById(String id){
     this.deleteByIdAndStatus(id, UserStatus.REGULAR);
   }
+
 }
