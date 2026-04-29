@@ -9,6 +9,12 @@ spring:
           issuer-uri: http://localhost:8090/realms/picshare-realm
           jwk-set-uri: http://keycloak:8080/realms/picshare-realm/protocol/openid-connect/certs
 
+  cloud:
+    stream:
+      bindings:
+        userDeletedEvent-out-0:
+          destination: user_deleted_topic
+
   devtools:
     restart:
       enabled: true

@@ -105,7 +105,7 @@ public class UserService {
   }
 
   @Transactional
-  public void removeUserConnections(UserEntity user){
+  private void removeUserConnections(UserEntity user){
     Streamable<ConnectionEntity> entities = this.connectionRepository.findByFollowed(user).and(this.connectionRepository.findByFollower(user));
     entities.stream()
       .peek(entity -> entity.setStatus(ConnectionStatus.DELETED));
