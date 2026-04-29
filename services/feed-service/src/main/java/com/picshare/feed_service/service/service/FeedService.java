@@ -105,6 +105,13 @@ public class FeedService {
     feedRepository.deleteAllByTimestampBefore(yesterday);
   }
 
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  @Transactional
+  public void removeSeenOrDeleted(){
+    feedRepository.deleteAllByStatus(FeedStatus.DELETED);
+    feedRepository.deleteAllByStatus(FeedStatus.SEEN);
+  }
+
   @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
   public void update(){
     List<UpdateDto> updates = this.feedClient.getUpdates();
