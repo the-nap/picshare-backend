@@ -13,6 +13,9 @@ spring:
     function:
       definition: userDeleted; postDeleted
     stream:
+      kafka:
+        binder:
+          brokers: broker:29092
       bindings:
         userDeleted-in-0:
           destination: user_deleted_topic

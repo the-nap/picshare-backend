@@ -13,6 +13,9 @@ spring:
     function:
       definition: postSavedSuccess; userDeleted;
     stream:
+      kafka:
+        binder:
+          brokers: broker:29092
       bindings:
         postSavedSuccess-in-0:
           destination: post_saved_success_topic
