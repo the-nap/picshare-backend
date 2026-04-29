@@ -15,7 +15,7 @@ spring:
         binder:
           brokers: broker:29092
       bindings:
-        userDeletedEvent-out-0:
+        userDeleted-out-0:
           destination: user_deleted_topic
 
   devtools:

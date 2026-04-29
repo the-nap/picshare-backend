@@ -16,7 +16,7 @@ public class UserEventProducer {
   private final StreamBridge streamBridge;
 
   public boolean sendUserDeletedEvent(String userId){
-    return this.streamBridge.send("userDeletedEvent-out-0",
+    return this.streamBridge.send("userDeleted-out-0",
         new UserDeletedEvent(userId, Instant.now()));
   }
   
