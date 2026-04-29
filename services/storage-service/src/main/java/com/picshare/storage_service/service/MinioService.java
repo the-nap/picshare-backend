@@ -15,6 +15,8 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.picshare.storage_service.event.StorageEventFunctions;
+import com.picshare.storage_service.event.StorageEventProducer;
 import com.picshare.storage_service.service.exceptions.NoAvatarException;
 import com.picshare.storage_service.service.exceptions.StorageException;
 import com.picshare.storage_service.service.util.WebpManager;
@@ -24,6 +26,7 @@ import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.InsufficientDataException;
 import io.minio.errors.InternalException;
@@ -38,13 +41,16 @@ import lombok.extern.slf4j.Slf4j;
 public class MinioService implements StorageService{
 
   private final MinioClient minioClient;
+  private final StorageEventProducer eventProducer;
   private final String bucketName;
 
   private static final int MEDIA = 0;
   private static final int PREVIEW = 1;
 
-  public MinioService(MinioClient minioClient, 
+  public MinioService(StorageEventProducer producer, MinioClient minioClient, 
       @Value("${minio.bucket.name}") String bucketName){
+
+      this.eventProducer = producer;
       this.minioClient = minioClient;
       this.bucketName = bucketName;
   }
@@ -75,6 +81,8 @@ public class MinioService implements StorageService{
 
     storeInBucket(
         getPreviewPath(id), source.get(PREVIEW));
+
+    this.eventProducer.sendPostSavedEvent(id);
   }
   
   @Override
@@ -83,6 +91,28 @@ public class MinioService implements StorageService{
 
     storeInBucket(
         getAvatarPath(id), source);
+  }
+
+  @Override
+  public void deleteMedia(String id){
+    delete(String.format("media/%s", id));
+  }
+
+  @Override
+  public void deleteAvatar(String id){
+    delete(String.format("media/%s", id));
+  }
+
+  private void delete(String toDelete){
+    try{
+      minioClient.removeObject(
+          RemoveObjectArgs.builder()
+          .object(toDelete)
+          .bucket(bucketName)
+          .build());
+    } catch(Exception e){
+      throw new StorageException("Error while deleting at: " + toDelete);
+    }
   }
 
   @Override

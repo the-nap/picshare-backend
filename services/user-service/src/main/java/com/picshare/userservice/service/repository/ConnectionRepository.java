@@ -1,34 +1,56 @@
 package com.picshare.userservice.service.repository;
 
-import java.util.List;
+import java.util.Optional;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Repository;
 
 import com.picshare.userservice.service.entity.ConnectionEntity;
 import com.picshare.userservice.service.entity.ConnectionEntity.ConnectionId;
+import com.picshare.userservice.service.entity.ConnectionStatus;
 import com.picshare.userservice.service.entity.UserEntity;
 
 @Repository
-public interface ConnectionRepository extends CrudRepository<ConnectionEntity, ConnectionId>{
+public interface ConnectionRepository extends JpaRepository<ConnectionEntity, ConnectionId>{
 
-  // Find all users followed by this
-  long countByFollower(UserEntity user);
+  Streamable<ConnectionEntity> findByFollowerAndStatus(UserEntity user, ConnectionStatus status);
 
-  // Find all users that follow this
-  long countByFollowed(UserEntity user);
+  Streamable<ConnectionEntity> findByFollowedAndStatus(UserEntity user, ConnectionStatus status);
 
-  // Find all users followed by this
-  List<ConnectionEntity> findByFollower(UserEntity user);
-  
-  // Find all users that follow this
-  List<ConnectionEntity> findByFollowed(UserEntity user);
+  Optional<ConnectionEntity> findByFollowerAndFollowedAndStatus(UserEntity follower, UserEntity followed, ConnectionStatus status);
 
-  ConnectionEntity findByFollowerAndFollowed(UserEntity follower, UserEntity followed);
+  long countByFollowerAndStatus(UserEntity user, ConnectionStatus status);
 
-  // Check if follower follows followed
-  boolean existsByFollowerAndFollowed(UserEntity follower, UserEntity followed);
+  long countByFollowedAndStatus(UserEntity user, ConnectionStatus status);
 
-  // Delete the relationship
-  void deleteByFollowerAndFollowed(UserEntity follower, UserEntity followed);
+  boolean existsByFollowerAndFollowedAndStatus(UserEntity follower, UserEntity followed, ConnectionStatus status);
+
+  void deleteByFollowerAndFollowedAndStatus(UserEntity follower, UserEntity followed, ConnectionStatus status);
+
+  // Convenience methods for REGULAR status
+  default Streamable<ConnectionEntity> findByFollower(UserEntity user) {
+    return findByFollowerAndStatus(user, ConnectionStatus.REGULAR);
+  }
+
+  default Streamable<ConnectionEntity> findByFollowed(UserEntity user) {
+    return findByFollowedAndStatus(user, ConnectionStatus.REGULAR);
+  }
+
+  default Optional<ConnectionEntity> findByFollowerAndFollowed(UserEntity follower, UserEntity followed){
+    return findByFollowerAndFollowedAndStatus(follower, followed, ConnectionStatus.REGULAR);
+  }
+
+  default long countByFollower(UserEntity user) {
+    return countByFollowerAndStatus(user, ConnectionStatus.REGULAR);
+  }
+
+  default long countByFollowed(UserEntity user) {
+    return countByFollowedAndStatus(user, ConnectionStatus.REGULAR);
+  }
+
+  default boolean existsByFollowerAndFollowed(UserEntity follower, UserEntity followed) {
+    return existsByFollowerAndFollowedAndStatus(follower, followed, ConnectionStatus.REGULAR);
+  }
+
 }

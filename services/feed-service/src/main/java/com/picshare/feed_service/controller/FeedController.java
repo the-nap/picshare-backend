@@ -34,7 +34,7 @@ public class FeedController {
   @PutMapping("/see")
   public ResponseEntity<Void> markAsSeen(JwtAuthenticationToken token , @RequestParam List<String> postIds){
     String userId = token.getName().split(":")[2];
-    postIds.forEach(postId -> feedService.markAsSeen(userId, postId));
+    postIds.forEach(postId -> feedService.postSeen(userId, postId));
     return ResponseEntity.ok().build();
   }
   

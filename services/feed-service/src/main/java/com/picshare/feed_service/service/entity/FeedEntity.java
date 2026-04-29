@@ -3,10 +3,11 @@ package com.picshare.feed_service.service.entity;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,9 +31,9 @@ public class FeedEntity {
   @Column(name = "post_id")
   private String postId;
 
-  @UpdateTimestamp
-  @Column(name = "seen_at", nullable = true)
-  private Date seenAt;
+  @Column
+  @Enumerated(EnumType.STRING)
+  private FeedStatus status = FeedStatus.REGULAR;
 
   @CreationTimestamp
   @Column(name = "timestamp")

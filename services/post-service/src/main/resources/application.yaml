@@ -9,6 +9,18 @@ spring:
           issuer-uri: http://localhost:8090/realms/picshare-realm
           jwk-set-uri: http://keycloak:8080/realms/picshare-realm/protocol/openid-connect/certs
 
+  cloud:
+    function:
+      definition: postSavedSuccess; userDeleted;
+    stream:
+      bindings:
+        postSavedSuccess-in-0:
+          destination: post_saved_success_topic
+        userDeleted-in-0:
+          destination: user_deleted_topic
+        postDeleted-out-0:
+          destination: post_deleted_topic
+
   servlet:
     multipart:
       max-file-size: 10MB

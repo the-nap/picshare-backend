@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Streamable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +21,8 @@ import com.picshare.feed_service.service.dto.FeedDto;
 import com.picshare.feed_service.service.dto.PostDto;
 import com.picshare.feed_service.service.dto.UpdateDto;
 import com.picshare.feed_service.service.entity.FeedEntity;
+import com.picshare.feed_service.service.entity.FeedStatus;
+import com.picshare.feed_service.service.exceptions.FeedNotFoundException;
 import com.picshare.feed_service.service.mapper.FeedMapper;
 import com.picshare.feed_service.service.repository.FeedRepository;
 
@@ -43,13 +45,46 @@ public class FeedService {
     return feedClient.getPosts(ids);
   }
   
-  public void markAsSeen(String userId, String postId){
-    Optional<FeedEntity> seen = feedRepository.findByUserIdAndPostId(userId, postId);
-    if(seen.isEmpty()){
-      // To Do
-    }
-    FeedEntity entity = seen.get();
-    entity.setSeenAt(new Date());
+  public void postSeen(String userId, String postId){
+    postSeen(feedRepository.findByUserIdAndPostId(userId, postId)
+        .orElseThrow(() -> new FeedNotFoundException(String.format("user with id: %s does not have post with id: %s in its feed", userId, postId))));
+  }
+
+  @Transactional
+  public void userDeleted(String userId){
+    final int max = 100;
+    int offset = 0;
+    Streamable<FeedEntity> entities;
+    do{
+      entities = this.feedRepository.findByUserId(userId, PageRequest.of(offset, max));
+      entities.stream()
+        .peek(entity -> markForDeletion(entity));
+
+      feedRepository.saveAll(entities);
+      offset++;
+
+    } while(!entities.isEmpty());
+  }
+  
+  @Transactional
+  public void postDeleted(String postId){
+    final int max = 100;
+    int offset = 0;
+    Streamable<FeedEntity> entities;
+    do{
+      entities = this.feedRepository.findByPostId(postId, PageRequest.of(offset,max));
+      entities.stream()
+        .peek(entity -> markForDeletion(entity));
+
+      feedRepository.saveAll(entities);
+      offset++;
+
+    } while(!entities.isEmpty());
+  }
+
+  @Transactional
+  public void postSeen(FeedEntity entity){
+    entity.setStatus(FeedStatus.SEEN);
     feedRepository.save(entity);
   }
 
@@ -58,11 +93,23 @@ public class FeedService {
     feedRepository.save(feedMapper.toEntity(feed));
   }
 
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  public void markForDeletion(FeedEntity entity){
+    entity.setStatus(FeedStatus.DELETED);
+  }
+
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+  @Transactional
   public void removeOld(){
     LocalDate now = LocalDate.now();
     Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    feedRepository.deleteAllBySeenAtAfter(yesterday);
+    feedRepository.deleteAllByTimestampBefore(yesterday);
+  }
+
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  @Transactional
+  public void removeSeenOrDeleted(){
+    feedRepository.deleteAllByStatus(FeedStatus.DELETED);
+    feedRepository.deleteAllByStatus(FeedStatus.SEEN);
   }
 
   @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)

@@ -4,17 +4,22 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.post_service.client.PostClient;
+import com.picshare.post_service.event.PostEventProducer;
 import com.picshare.post_service.service.dto.PostRequest;
 import com.picshare.post_service.service.dto.PostResponse;
 import com.picshare.post_service.service.dto.UpdateDto;
 import com.picshare.post_service.service.entity.PostEntity;
+import com.picshare.post_service.service.entity.PostStatus;
 import com.picshare.post_service.service.entity.UpdateEntity.UpdateStatus;
 import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.ExternalException;
@@ -35,23 +40,60 @@ public class PostService {
   private final PostRepository postRepository;
   private final PostClient client;
   private final PostMapper postMapper;
-
+  private final PostEventProducer eventProducer;
 
   @Transactional
   public void store(MultipartFile image, PostRequest data, String userId) throws ExternalException, ClientErrorException, IOException{
 
     PostEntity entity = postMapper.toEntity(data);
     entity.setUserId(userId);
+    entity.setStatus(PostStatus.PENDING);
     postRepository.save(entity);
     try {
       client.upload(image, entity.getId());
-      postRepository.save(entity);
     } catch (RuntimeException | IOException e) {
       throw e;
     }
   }
 
-  public PostResponse serve(String id) throws PostNotFoundException{
+  @Transactional
+  public UpdateDto confirm(String id){
+    PostEntity entity = this.postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
+    entity.setStatus(PostStatus.CONFIRMED);
+    postRepository.save(entity);
+    return new UpdateDto(entity.getUserId(), entity.getId());
+  }
+
+  @Transactional
+  public void deleteByUser(String userId){
+    Streamable<PostEntity> toDelete;
+    int offset = 0;
+    do {
+      toDelete = this.postRepository.findByUserId(userId, PageRequest.of(offset, 999));
+      toDelete
+        .stream()
+        .peek(entity -> deletePost(entity.getId()));
+
+      offset++;
+
+      postRepository.saveAll(toDelete);
+
+    } while (!toDelete.isEmpty());
+  }
+
+  @Transactional
+  public void deletePost(String id){
+    PostEntity entity = postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id));
+    entity.setStatus(PostStatus.DELETED);
+
+    postRepository.save(entity);
+
+    this.eventProducer.sendPostDeletedEvent(id);
+  }
+
+  public PostResponse serve(String id){
     return this.postMapper.toDto(
       this.postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id)));
@@ -91,4 +133,5 @@ public class PostService {
       .map(entity -> updateMapper.toDto(entity))
       .collect(Collectors.toList());
   }
+
 }
