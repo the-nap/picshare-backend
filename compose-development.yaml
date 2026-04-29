@@ -14,6 +14,12 @@ services:
       - action: sync
         path: ./picshare-frontend/src
         target: /app/src
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '0.50'
+          pids: 512
 
   gateway:
     container_name: gateway-dev
@@ -42,6 +48,12 @@ services:
     networks: 
     - picshare-internal
     - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   discovery-server:
     container_name: discovery-dev
@@ -65,6 +77,12 @@ services:
     networks: 
     - user-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   keycloak:
     build:
@@ -83,6 +101,12 @@ services:
     - picshare-internal
     - keycloak-network
     - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   keycloak-db:
     container_name: keycloak-db
@@ -99,6 +123,12 @@ services:
       retries: 5
     networks:
     - keycloak-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.50'
+          pids: 512
 
   user-service:
     container_name: user-dev
@@ -107,10 +137,14 @@ services:
       dockerfile: services/user-service/Dockerfile.dev
     env_file: ./env/user.env
     depends_on:
-    - zipkin
-    - user-db
-    - discovery-server
-    - broker
+      zipkin:
+        condition: service_started
+      user-db:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      broker: 
+        condition: service_started
     ports:
     - "5006:5005"
     - "35730:35729"
@@ -127,6 +161,12 @@ services:
     networks: 
     - user-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   user-db:
     image: postgres:latest
@@ -143,6 +183,12 @@ services:
       retries: 5
     networks:
     - user-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.50'
+          pids: 512
 
   feed-service:
     container_name: feed-dev
@@ -151,9 +197,14 @@ services:
       dockerfile: services/feed-service/Dockerfile.dev
     env_file: ./env/feed.env
     depends_on:
-    - discovery-server
-    - feed-db
-    - broker
+      zipkin:
+        condition: service_started
+      feed-db:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      broker: 
+        condition: service_started
     ports:
     - "5007:5005"
     - "35731:35729"
@@ -170,6 +221,12 @@ services:
     networks: 
     - feed-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   feed-db:
     image: postgres:latest
@@ -186,6 +243,12 @@ services:
       retries: 5
     networks:
     - feed-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.50'
+          pids: 512
 
   post-service:
     container_name: post-dev
@@ -194,9 +257,14 @@ services:
       dockerfile: services/post-service/Dockerfile.dev
     env_file: ./env/post.env
     depends_on:
-    - discovery-server
-    - post-db
-    - broker
+      zipkin:
+        condition: service_started
+      post-db:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      broker: 
+        condition: service_started
     ports:
     - "5008:5005"
     - "35733:35729"
@@ -213,6 +281,12 @@ services:
     networks: 
     - post-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   post-db:
     image: postgres:latest
@@ -229,6 +303,12 @@ services:
       retries: 5
     networks:
     - post-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.50'
+          pids: 512
 
   storage-service:
     container_name: storage-dev
@@ -236,9 +316,14 @@ services:
       context: .
       dockerfile: services/storage-service/Dockerfile.dev
     depends_on:
-    - discovery-server
-    - minio
-    - broker
+      zipkin:
+        condition: service_started
+      minio:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      broker: 
+        condition: service_started
     ports:
     - "5009:5005"
     - "35734:35729"
@@ -255,6 +340,12 @@ services:
     networks: 
     - storage-network
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   minio:
     image: minio/minio
@@ -270,6 +361,12 @@ services:
     - storage-network
     volumes:
     - minio-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.50'
+          pids: 512
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -279,6 +376,12 @@ services:
     - 9411:9411
     networks:
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.50'
+          pids: 512
 
   broker:
     image: apache/kafka:4.2.0
@@ -308,6 +411,12 @@ services:
     - 9101:9101
     networks:
     - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.50'
+          pids: 512
       
 
 volumes:
