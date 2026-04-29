@@ -18,12 +18,12 @@ public class StorageEventFunctions {
   private final StorageService service;
 
   @Bean
-  public Consumer<PostDeletedEvent> deletePost(){
+  public Consumer<PostDeletedEvent> postDeleted(){
     return event -> this.service.deleteMedia(event.postId());
   }
 
   @Bean
-  public Consumer<UserDeletedEvent> deleteUser(){
+  public Consumer<UserDeletedEvent> userDeleted(){
     return event -> this.service.deleteAvatar(event.userId());
   }
 

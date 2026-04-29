@@ -18,7 +18,7 @@ public class StorageEventProducer {
 
   public boolean sendPostSavedEvent(String postId) {
 
-    return streamBridge.send("postSavedSuccessEvent-out-0",
+    return streamBridge.send("postSavedSuccess-out-0",
         new PostSavedSuccessEvent(postId, Instant.now()));
 
   }
