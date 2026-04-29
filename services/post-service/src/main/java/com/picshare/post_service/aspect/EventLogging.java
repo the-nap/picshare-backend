@@ -15,24 +15,24 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
-public class LoggingAspect {
+public class EventLogging {
   
-  @Pointcut("execution(* com.picshare.post_service.controller.*.*(..))")
-  public void controllerMethods() {}
+  @Pointcut("execution(* com.picshare.post_service.event..*(..))")
+  public void eventMethods() {}
 
 
-  @Before("controllerMethods()")
+  @Before("eventMethods()")
   public void logBefore(JoinPoint joinPoint) {
-    log.info("Called controller method: {}", joinPoint.getSignature().getName());
+    log.info("Called event method: {}", joinPoint.getSignature().getName());
     log.info("Arguments: {}", Arrays.toString(joinPoint.getArgs()));
   }
 
-  @AfterReturning(pointcut = "controllerMethods()", returning = "result")
+  @AfterReturning(pointcut = "eventMethods()", returning = "result")
   public void logAfterReturning(JoinPoint joinPoint, Object result) {
     log.info("Controller method {} returned: {}", joinPoint.getSignature().getName(), result);
   }
   
-  @AfterThrowing(pointcut = "controllerMethods()", throwing = "exception")
+  @AfterThrowing(pointcut = "eventMethods()", throwing = "exception")
   public void logException(JoinPoint joinPoint, Throwable exception) {
     log.warn("Exception in method {}: {}", joinPoint.getSignature().getName(), exception.getMessage());
   }
