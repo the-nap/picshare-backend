@@ -18,20 +18,17 @@ public class PostEventFunctions {
   private final PostService service;
 
   @Bean
-  public Consumer<PostSavedSuccessEvent> postSaved() {
+  public Consumer<PostSavedSuccessEvent> postSavedSuccess() {
     return event -> {
       this.service.confirm(event.postId());
     };
   }
 
   @Bean
-  public Consumer<UserDeletedEvent> deleteUserPosts() {
+  public Consumer<UserDeletedEvent> userDeleted() {
     return event -> {
       this.service.deleteByUser(event.userId());
     };
   }
-
-
-  
 }
 
