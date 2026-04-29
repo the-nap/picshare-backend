@@ -24,6 +24,7 @@ import com.picshare.post_service.service.service.PostService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import tools.jackson.databind.ObjectMapper;
 
 @RestController
 @AllArgsConstructor
@@ -38,11 +39,13 @@ public class PostController {
   }
 
   @PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-  public ResponseEntity<Void> uploadImage(JwtAuthenticationToken token, @RequestPart MultipartFile image, @Valid @RequestPart PostRequest data){
+  public ResponseEntity<Void> uploadImage(JwtAuthenticationToken token, @RequestPart(value = "data") MultipartFile data, @Valid @RequestPart(value = "metadata") String metadataJson){
+    PostRequest metadata = new ObjectMapper().readValue(metadataJson, PostRequest.class);
+
 
       String userId = token.getName();
       try {
-        this.service.store(image, data, userId.split(":")[2]);
+        this.service.store(data, metadata, userId.split(":")[2]);
       } catch(IOException e){
         throw new ExternalException(e.getMessage());
       }
