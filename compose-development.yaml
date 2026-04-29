@@ -44,6 +44,7 @@ services:
     - frontend
 
   discovery-server:
+    container_name: discovery-dev
     build: 
       context: .
       dockerfile: services/discovery-server/Dockerfile.dev
@@ -84,6 +85,7 @@ services:
     - frontend
 
   keycloak-db:
+    container_name: keycloak-db
     image: postgres:latest
     env_file: ./env/keycloak.env
     volumes:
@@ -108,6 +110,7 @@ services:
     - zipkin
     - user-db
     - discovery-server
+    - kafka
     ports:
     - "5006:5005"
     - "35730:35729"
@@ -127,6 +130,7 @@ services:
 
   user-db:
     image: postgres:latest
+    container_name: user-db
     env_file: ./env/user.env
     volumes: 
     - user-service-data:/var/lib/postgresql
@@ -149,6 +153,7 @@ services:
     depends_on:
     - discovery-server
     - feed-db
+    - kafka
     ports:
     - "5007:5005"
     - "35731:35729"
@@ -168,6 +173,7 @@ services:
 
   feed-db:
     image: postgres:latest
+    container_name: feed-db
     env_file: ./env/feed.env
     volumes: 
     - feed-service-data:/var/lib/postgresql
@@ -190,6 +196,7 @@ services:
     depends_on:
     - discovery-server
     - post-db
+    - kafka
     ports:
     - "5008:5005"
     - "35733:35729"
@@ -209,6 +216,7 @@ services:
 
   post-db:
     image: postgres:latest
+    container_name: post-db
     env_file: ./env/post.env
     volumes: 
     - post-service-data:/var/lib/postgresql
@@ -230,6 +238,7 @@ services:
     depends_on:
     - discovery-server
     - minio
+    - kafka
     ports:
     - "5009:5005"
     - "35734:35729"
@@ -264,6 +273,7 @@ services:
 
   zipkin:
     image: openzipkin/zipkin:latest
+    container_name: zipkin
     # Environment settings are defined here https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md#environment-variables
     ports:
     - 9411:9411
@@ -272,12 +282,13 @@ services:
 
   kafka:
     image: apache/kafka:4.2.0
+    container_name: kafka
     ports:
     - 9092:9092
+    - 9101:9101
     networks:
     - picshare-internal
-
-    
+      
 
 volumes:
   keycloak-service-data:
