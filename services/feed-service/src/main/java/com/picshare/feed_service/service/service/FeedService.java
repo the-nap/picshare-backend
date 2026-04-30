@@ -128,6 +128,16 @@ public class FeedService {
     feedRepository.saveAll(entities);
   }
 
+  @Transactional
+  public void connectionDeleted(String followerId, String followedId){
+    feedRepository.saveAll(
+        feedRepository.findByUserIdAndPosterId(followerId, followedId)
+        .stream()
+        .peek(entity -> entity.setStatus(FeedStatus.DELETED))
+        .toList()
+        );
+  }
+
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
   @Transactional
   public void removeOld(){
