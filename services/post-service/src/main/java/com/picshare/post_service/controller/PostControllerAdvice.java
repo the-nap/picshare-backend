@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,11 +30,4 @@ public class PostControllerAdvice {
   public String notFoundHandler(PostNotFoundException pe){
     return pe.getMessage();
   }
-
-  @ExceptionHandler(Exception.class)
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  ResponseEntity<String> genericHandler(Exception se) {
-    return ResponseEntity.status(500).body(se.getMessage());
-  }
-
 }

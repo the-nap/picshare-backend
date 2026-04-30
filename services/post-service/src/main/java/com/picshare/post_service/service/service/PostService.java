@@ -47,10 +47,9 @@ public class PostService {
     entity.setUserId(userId);
     entity.setStatus(PostStatus.PENDING);
     postRepository.save(entity);
-    try {
+    try{
       client.upload(image, entity.getId());
-    } catch (RuntimeException | IOException e) {
-      throw e;
+    } catch(ExternalException e){
     }
   }
 

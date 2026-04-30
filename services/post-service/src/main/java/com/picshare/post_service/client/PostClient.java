@@ -8,14 +8,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.ExternalException;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,7 @@ public class PostClient {
   private final RestClient restClient;
   private final DiscoveryClient discoveryClient;
 
-  public String upload(MultipartFile image, String id) throws ExternalException, ClientErrorException, IOException{
+  public void upload(MultipartFile image, String id) throws ExternalException{
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
@@ -40,20 +38,17 @@ public class PostClient {
 
     ServiceInstance serviceInstance = discoveryClient.getInstances("storage-service").get(0);
 
-    ResponseEntity<String> response = restClient
-      .post()
-      .uri(String.format("%s/media/%s", serviceInstance.getUri(), id))
-      .contentType(MediaType.MULTIPART_FORM_DATA)
-      .body(body)
-      .retrieve()
-      .toEntity(String.class);
+    try{ 
+      this.restClient
+        .post()
+        .uri(String.format("%s/media/%s", serviceInstance.getUri(), id))
+        .contentType(MediaType.MULTIPART_FORM_DATA)
+        .body(body)
+        .retrieve()
+        .toBodilessEntity();
+    } catch (Exception e){
+      throw new ExternalException(e.getMessage());
+    }
 
-    if(response.getStatusCode().is2xxSuccessful())
-      return response.getBody();
-    if(response.getStatusCode().is5xxServerError())
-      throw new ExternalException(response.getBody());
-    if(response.getStatusCode().is4xxClientError())
-      throw new ClientErrorException(response.getBody());
-    return "";
   }
 }
