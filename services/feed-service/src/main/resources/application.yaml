@@ -11,7 +11,7 @@ spring:
 
   cloud:
     function:
-      definition: userDeleted;postDeleted;connectionCreated;connectionDeleted;postConfirmed
+      definition: userDeleted; postDeleted; connectionCreated; connectionDeleted; postConfirmed
     stream:
       kafka:
         binder:

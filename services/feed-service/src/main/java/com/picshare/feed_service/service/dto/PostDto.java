@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class PostDto {
 
   @NotBlank(message = "Id cannot be blank")
-  private Long id;
+  private String id;
   
   @NotBlank(message = "User id cannot be blank")
   private String userId;

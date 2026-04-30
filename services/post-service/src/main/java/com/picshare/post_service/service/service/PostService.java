@@ -52,7 +52,7 @@ public class PostService {
   
   @Transactional(readOnly = true)
   public Map<String, String> getPosts(UpdateRequest request){
-    return  postRepository.findByUserIdAfterDate(request.getUserId(), request.getDate())
+    return  postRepository.findByUserIdAndCreationDateAfter(request.getUserId(), request.getDate())
       .stream()
       .collect(Collectors.toMap(
           entity -> entity.getId(),

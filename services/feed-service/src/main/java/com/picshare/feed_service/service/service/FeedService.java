@@ -1,7 +1,9 @@
 package com.picshare.feed_service.service.service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -100,9 +102,7 @@ public class FeedService {
 
   @Transactional
   public void connectionCreated(String followerId, String followedId){
-    Date yesterday = getYesterday();
-
-    UpdateRequest request = new UpdateRequest(followedId, yesterday);
+    UpdateRequest request = new UpdateRequest(followedId, getYesterday());
     Map<String, String> posts = feedClient.getPostsForNewConnection(request);
 
     Set<FeedEntity> entities = posts.entrySet()
@@ -163,8 +163,9 @@ public class FeedService {
   }
 
   private Date getYesterday() {
-    LocalDate now = LocalDate.now();
-    Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    return yesterday;
+    System.out.println(Instant.now().minus(1, ChronoUnit.DAYS));
+    Date result = Date.from(Instant.now().minus(1, ChronoUnit.DAYS));
+    System.out.println(result);
+    return result;
   }
 }

@@ -18,5 +18,5 @@ public class UpdateRequest {
   String userId;
 
   @NotNull
-  Date dateFrom;
+  Date date;
 }

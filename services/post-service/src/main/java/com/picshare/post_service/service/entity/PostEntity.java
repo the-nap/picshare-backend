@@ -40,7 +40,7 @@ public class PostEntity {
 
   @CreationTimestamp
   @Column(updatable = false)
-  private Date creationDate;
+  private Date creationDate = new Date();
 
   @Column(length = 140)
   @NonNull

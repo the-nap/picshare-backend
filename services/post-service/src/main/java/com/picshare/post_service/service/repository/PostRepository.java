@@ -17,7 +17,7 @@ public interface PostRepository extends JpaRepository<PostEntity, String> {
 
   Optional<PostEntity> findById(String id);
 
-  Streamable<PostEntity> findByUserIdAfterDate(String userId, Date date);
+  Streamable<PostEntity> findByUserIdAndCreationDateAfter(String userId, Date date);
 
   Streamable<PostEntity> findByUserId(String id, Pageable pageable);
 
