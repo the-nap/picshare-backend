@@ -2,6 +2,7 @@ package com.picshare.post_service.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -18,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.post_service.service.dto.PostRequest;
 import com.picshare.post_service.service.dto.PostResponse;
-import com.picshare.post_service.service.dto.UpdateDto;
+import com.picshare.post_service.service.dto.UpdateRequest;
 import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.service.PostService;
 
@@ -33,15 +35,10 @@ public class PostController {
 
   private final PostService service;
 
-  @GetMapping("/feed")
-  public ResponseEntity<List<PostResponse>> serveFeed(@RequestParam List<String> ids){
-    return ResponseEntity.ok(service.getPosts(ids));
-  }
-
+  // Frontend Endpoint
   @PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
   public ResponseEntity<Void> uploadImage(JwtAuthenticationToken token, @RequestPart(value = "data") MultipartFile data, @Valid @RequestPart(value = "metadata") String metadataJson){
     PostRequest metadata = new ObjectMapper().readValue(metadataJson, PostRequest.class);
-
 
       String userId = token.getName();
       try {
@@ -53,28 +50,25 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<PostResponse> servePost(@PathVariable String id){
-    return ResponseEntity
-      .ok()
-      .body(this.service.serve(id));
-  }
-
   @GetMapping("/user/{id}")
   public ResponseEntity<List<PostResponse>> getPostsByUser(@PathVariable String id, @RequestParam int offset, @RequestParam int max){
     return ResponseEntity
       .ok(this.service.getPostsByUser(id, offset, max));
   }
 
-  @GetMapping("/update")
-  public ResponseEntity<List<UpdateDto>> getUpdates(){
-    return ResponseEntity
-      .ok()
-      .body(this.service.serveUpdates());
-  }
-
   @GetMapping("/tags/{tag}")
   public ResponseEntity<List<PostResponse>> getByTags(@PathVariable String tag, @RequestParam int offset, @RequestParam int max){
     return ResponseEntity.ok(service.getPostByTag(tag, offset, max));
+  }
+
+  // Feed Service Endpoints
+  @PostMapping("/feed/posts")
+  public ResponseEntity<List<PostResponse>> serveFeed(@RequestBody List<String> ids){
+    return ResponseEntity.ok(service.getPosts(ids));
+  }
+
+  @GetMapping("/feed/connection")
+  public ResponseEntity<Map<String,String>> getUpdates(@RequestBody UpdateRequest request){
+    return ResponseEntity.ok(service.getPosts(request));
   }
 }

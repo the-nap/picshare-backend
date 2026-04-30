@@ -1,5 +1,6 @@
 package com.picshare.post_service.service.repository;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,8 @@ import com.picshare.post_service.service.entity.PostEntity;
 public interface PostRepository extends JpaRepository<PostEntity, String> {
 
   Optional<PostEntity> findById(String id);
+
+  Streamable<PostEntity> findByUserIdAfterDate(String userId, Date date);
 
   Streamable<PostEntity> findByUserId(String id, Pageable pageable);
 

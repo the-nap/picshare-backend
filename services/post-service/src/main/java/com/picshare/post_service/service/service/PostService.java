@@ -1,7 +1,9 @@
 package com.picshare.post_service.service.service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -22,9 +24,7 @@ import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
 import com.picshare.post_service.service.mapper.PostMapper;
-import com.picshare.post_service.service.mapper.UpdateMapper;
 import com.picshare.post_service.service.repository.PostRepository;
-import com.picshare.post_service.service.repository.UpdateRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -49,6 +49,17 @@ public class PostService {
     } catch(ExternalException e){
     }
   }
+  
+  @Transactional(readOnly = true)
+  public Map<String, String> getPosts(UpdateRequest request){
+    return  postRepository.findByUserIdAfterDate(request.getUserId(), request.getDate())
+      .stream()
+      .collect(Collectors.toMap(
+          entity -> entity.getId(),
+          entity -> entity.getUserId())
+      );
+  }
+
 
   @Transactional
   public void confirm(String id){
@@ -66,7 +77,7 @@ public class PostService {
       toDelete = this.postRepository.findByUserId(userId, PageRequest.of(offset, 999));
       toDelete
         .stream()
-        .peek(entity -> deletePost(entity.getId()));
+        .forEach(entity -> deletePost(entity.getId()));
 
       offset++;
 
