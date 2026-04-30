@@ -35,6 +35,11 @@ public class UserController {
     return ResponseEntity.ok(this.userService.getUser(id));
   }
 
+  @GetMapping("/followers/{id}")
+  public ResponseEntity<List<String>> getFollowers(@PathVariable String id){
+    return ResponseEntity.ok(userService.getFollowers(id));
+  }
+
   @PutMapping("/upload")
   public ResponseEntity<Void> uploadAvatar(JwtAuthenticationToken token, @Nullable @RequestPart(value = "data") MultipartFile data, @Nullable @RequestPart(value = "metadata") String metadata){
 

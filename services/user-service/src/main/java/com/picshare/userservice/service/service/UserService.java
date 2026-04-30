@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.data.util.Streamable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,4 +130,12 @@ public class UserService {
     this.userRepository.deleteAllByStatus(UserStatus.DELETED);
   }
 
+  public List<String> getFollowers(String id) {
+    return connectionRepository.findByFollowed(
+        userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("id", id)))
+      .stream()
+      .map(entity -> entity.getFollower().getId())
+      .toList();
+  }
 }
