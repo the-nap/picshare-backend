@@ -62,11 +62,12 @@ public class PostService {
 
 
   @Transactional
-  public void confirm(String id){
+  public String confirm(String id){
     PostEntity entity = this.postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
     entity.setStatus(PostStatus.CONFIRMED);
     postRepository.save(entity);
+    return entity.getUserId();
   }
 
   @Transactional

@@ -17,6 +17,10 @@ spring:
       bindings:
         userDeleted-out-0:
           destination: user_deleted_topic
+        connectionCreated-out-0:
+          destination: connection_created_topic
+        connectionDeleted-out-0:
+          destination: connection_deleted_topic
 
   devtools:
     restart:

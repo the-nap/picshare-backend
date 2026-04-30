@@ -20,6 +20,8 @@ spring:
         postSavedSuccess-in-0:
           destination: post_saved_success_topic
           group: ${spring.application.name}-postSavedSuccess
+        postConfirmed-out-0:
+          destination: post_confirmed_topic
         userDeleted-in-0:
           destination: user_deleted_topic
           group: ${spring.application.name}-userDeleted

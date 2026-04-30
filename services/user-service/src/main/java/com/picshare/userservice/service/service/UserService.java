@@ -75,6 +75,7 @@ public class UserService {
       .orElseThrow(() -> new UserNotFoundException("id", toFollowId));
 
     connectionRepository.save(new ConnectionEntity(user, toFollow));
+    eventProducer.sendConnectionCreatedEvent(userId, toFollowId);
     return toFollow.getUsername();
   }
 
@@ -100,6 +101,7 @@ public class UserService {
 
     connection.setStatus(ConnectionStatus.DELETED);
     connectionRepository.save(connection);
+    eventProducer.sendConnectionDeletedEvent(userId, toUnfollowId);
 
     return toUnfollow.getUsername();
   }
