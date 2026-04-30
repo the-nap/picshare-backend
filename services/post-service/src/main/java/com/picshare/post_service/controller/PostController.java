@@ -67,7 +67,7 @@ public class PostController {
     return ResponseEntity.ok(service.getPosts(ids));
   }
 
-  @GetMapping("/feed/connection")
+  @PostMapping("/feed/connection")
   public ResponseEntity<Map<String,String>> getUpdates(@RequestBody UpdateRequest request){
     return ResponseEntity.ok(service.getPosts(request));
   }
