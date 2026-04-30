@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import org.springframework.context.annotation.Configuration;
 
+import com.picshare.feed_service.event.events.ConnectionCreatedEvent;
 import com.picshare.feed_service.event.events.PostDeletedEvent;
 import com.picshare.feed_service.event.events.UserDeletedEvent;
 import com.picshare.feed_service.service.service.FeedService;
@@ -22,5 +23,9 @@ public class FeedEventFunctions {
 
   public Consumer<PostDeletedEvent> postDeleted(){
     return event -> service.postDeleted(event.postId());
+  }
+
+  public Consumer<ConnectionCreatedEvent> connectionCreated(){
+    return event -> service.connectionCreated(event.idFollower(), event.idFollowed());
   }
 }
