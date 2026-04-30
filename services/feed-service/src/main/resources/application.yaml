@@ -79,6 +79,9 @@ management:
       zipkin:
         endpoint: http://zipkin:9411/api/v2/spans
 logging:
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
   level:
     org.springframework.web: INFO
     org.apache.kafka.clients.consumer.internals.OffsetFetcherUtils: ERROR
