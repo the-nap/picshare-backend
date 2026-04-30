@@ -9,7 +9,7 @@ spring:
 
   cloud:
     function:
-      definition: postDeleted, userDeleted
+      definition: postDeleted;userDeleted
     stream:
       kafka:
         binder:
