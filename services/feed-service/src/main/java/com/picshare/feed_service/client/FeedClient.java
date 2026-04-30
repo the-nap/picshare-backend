@@ -11,7 +11,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.picshare.feed_service.service.dto.FollowersRequest;
+import com.picshare.feed_service.service.dto.PostDto;
 import com.picshare.feed_service.service.dto.UpdateRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,21 @@ public class FeedClient {
 
   private final RestClient restClient;
   private final DiscoveryClient discoveryClient;
+
+  public List<PostDto> getPosts(List<String> ids){
+    ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
+
+    UriComponents uriComponents = UriComponentsBuilder
+      .fromUriString(String.format("%s/post/feed", serviceInstance.getUri()))
+      .build();
+
+    return this.restClient
+      .post()
+      .uri(uriComponents.expand().toUri())
+      .body(ids)
+      .retrieve()
+      .body(new ParameterizedTypeReference<List<PostDto>>() {});
+  }
 
   public Map<String, String> getPosts(UpdateRequest request){
 
@@ -39,12 +54,11 @@ public class FeedClient {
       .body(new ParameterizedTypeReference<Map<String, String>>() {});
   }
 
-  public List<String> getFollowers(FollowersRequest request){
+  public List<String> getFollowers(String posterId){
     ServiceInstance serviceInstance = discoveryClient.getInstances("user-service").get(0);
     return this.restClient
-      .post()
-      .uri(String.format("%s/followers", serviceInstance.getUri()))
-      .body(request)
+      .get()
+      .uri(String.format("%s/followers/%s", serviceInstance.getUri(), posterId))
       .retrieve()
       .body(new ParameterizedTypeReference<List<String>>() {});
   }

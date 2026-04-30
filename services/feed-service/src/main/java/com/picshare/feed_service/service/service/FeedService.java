@@ -2,7 +2,6 @@ package com.picshare.feed_service.service.service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.picshare.feed_service.client.FeedClient;
 import com.picshare.feed_service.service.dto.FeedDto;
-import com.picshare.feed_service.service.dto.FollowersRequest;
 import com.picshare.feed_service.service.dto.PostDto;
 import com.picshare.feed_service.service.dto.UpdateRequest;
 import com.picshare.feed_service.service.entity.FeedEntity;
@@ -55,13 +53,13 @@ public class FeedService {
 
   @Transactional
   public void userDeleted(String userId){
-    final int max = 100;
+    final int max = 999;
     int offset = 0;
     Streamable<FeedEntity> entities;
     do{
       entities = this.feedRepository.findByUserId(userId, PageRequest.of(offset, max));
       entities.stream()
-        .peek(entity -> markForDeletion(entity));
+        .forEach(this::markForDeletion);
 
       feedRepository.saveAll(entities);
       offset++;
@@ -71,17 +69,17 @@ public class FeedService {
   
   @Transactional
   public void postDeleted(String postId){
-    final int max = 100;
+    final int max = 999;
     int offset = 0;
     Streamable<FeedEntity> entities;
     do{
       entities = this.feedRepository.findByPostId(postId, PageRequest.of(offset,max));
       entities.stream()
-        .peek(entity -> markForDeletion(entity));
+        .forEach(this::markForDeletion);
 
       feedRepository.saveAll(entities);
-      offset++;
 
+      offset++;
     } while(!entities.isEmpty());
   }
 
@@ -96,61 +94,47 @@ public class FeedService {
     feedRepository.save(feedMapper.toEntity(feed));
   }
 
-  public void markForDeletion(FeedEntity entity){
+  private void markForDeletion(FeedEntity entity){
     entity.setStatus(FeedStatus.DELETED);
   }
 
   @Transactional
   public void connectionCreated(String followerId, String followedId){
-    LocalDate now = LocalDate.now();
-    Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    Set<FeedEntity> entities = new HashSet<>();
+    Date yesterday = getYesterday();
 
-    int offset = 0;
-    final int max = 100;
-    int size = 0;
-
-    do {
-    UpdateRequest request = new UpdateRequest(followedId, yesterday, offset, max);
+    UpdateRequest request = new UpdateRequest(followedId, yesterday);
     Map<String, String> posts = feedClient.getPosts(request);
-    size = posts.size();
 
-    posts.forEach((key,value) -> {
-      FeedEntity toAdd = new FeedEntity();
-      toAdd.setUserId(followerId);
-      toAdd.setPostId(key);
-      toAdd.setPosterId(value);
+    Set<FeedEntity> entities = posts.entrySet()
+      .stream()
+      .map(entry -> {
+        FeedEntity toAdd = new FeedEntity();
+        toAdd.setUserId(followerId);
+        toAdd.setPostId(entry.getKey());
+        toAdd.setPosterId(entry.getValue());
+        return toAdd;
+      })
+    .collect(Collectors.toSet());
 
-      entities.add(toAdd);
-      });
+    feedRepository.saveAll(entities);
+  }
 
-    } while (size == max);
+
+  @Transactional
+  public void connectionDeleted(String followerId, String followedId){
+    Streamable<FeedEntity> entities = feedRepository.findByUserIdAndPosterId(followerId, followedId);
+
+    entities.stream()
+      .forEach(this::markForDeletion);
 
     feedRepository.saveAll(entities);
   }
 
   @Transactional
-  public void connectionDeleted(String followerId, String followedId){
-    feedRepository.saveAll(
-        feedRepository.findByUserIdAndPosterId(followerId, followedId)
-        .stream()
-        .peek(entity -> entity.setStatus(FeedStatus.DELETED))
-        .toList()
-        );
-  }
-
-  @Transactional
   public void postConfirmed(String postId, String posterId){
-    final int max = 100;
-    int offset = 0;
-    int size = 0;
-
     Set<FeedEntity> entities = new HashSet<>();
 
-    do{
-      FollowersRequest request = new FollowersRequest(posterId, offset, max);
-      List<String> followersId = feedClient.getFollowers(request);
-      size = followersId.size();
+    List<String> followersId = feedClient.getFollowers(posterId);
 
     followersId.forEach(
       followerId -> {
@@ -160,7 +144,6 @@ public class FeedService {
         entity.setPosterId(posterId);
         entities.add(entity);
       });
-    } while (size == max);
 
     feedRepository.saveAll(entities);
   }
@@ -168,8 +151,7 @@ public class FeedService {
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
   @Transactional
   public void removeOld(){
-    LocalDate now = LocalDate.now();
-    Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    Date yesterday = getYesterday();
     feedRepository.deleteAllByTimestampBefore(yesterday);
   }
 
@@ -178,5 +160,11 @@ public class FeedService {
   public void removeSeenOrDeleted(){
     feedRepository.deleteAllByStatus(FeedStatus.DELETED);
     feedRepository.deleteAllByStatus(FeedStatus.SEEN);
+  }
+
+  private Date getYesterday() {
+    LocalDate now = LocalDate.now();
+    Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    return yesterday;
   }
 }

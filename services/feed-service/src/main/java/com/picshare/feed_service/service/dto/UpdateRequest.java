@@ -19,7 +19,4 @@ public class UpdateRequest {
 
   @NotNull
   Date dateFrom;
-
-  @NotNull
-  int offset, max;
 }
