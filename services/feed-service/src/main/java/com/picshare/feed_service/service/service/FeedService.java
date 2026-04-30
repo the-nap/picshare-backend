@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.picshare.feed_service.client.FeedClient;
 import com.picshare.feed_service.service.dto.FeedDto;
+import com.picshare.feed_service.service.dto.FollowersRequest;
 import com.picshare.feed_service.service.dto.PostDto;
 import com.picshare.feed_service.service.dto.UpdateRequest;
 import com.picshare.feed_service.service.entity.FeedEntity;
@@ -111,7 +112,7 @@ public class FeedService {
 
     do {
     UpdateRequest request = new UpdateRequest(followedId, yesterday, offset, max);
-    Map<String, String> posts = feedClient.getPosts(request).getPosts();
+    Map<String, String> posts = feedClient.getPosts(request);
     size = posts.size();
 
     posts.forEach((key,value) -> {
@@ -138,6 +139,32 @@ public class FeedService {
         );
   }
 
+  @Transactional
+  public void postConfirmed(String postId, String posterId){
+    final int max = 100;
+    int offset = 0;
+    int size = 0;
+
+    Set<FeedEntity> entities = new HashSet<>();
+
+    do{
+      FollowersRequest request = new FollowersRequest(posterId, offset, max);
+      List<String> followersId = feedClient.getFollowers(request);
+      size = followersId.size();
+
+    followersId.forEach(
+      followerId -> {
+        FeedEntity entity = new FeedEntity();
+        entity.setPostId(postId);
+        entity.setUserId(followerId);
+        entity.setPosterId(posterId);
+        entities.add(entity);
+      });
+    } while (size == max);
+
+    feedRepository.saveAll(entities);
+  }
+
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
   @Transactional
   public void removeOld(){
@@ -151,25 +178,5 @@ public class FeedService {
   public void removeSeenOrDeleted(){
     feedRepository.deleteAllByStatus(FeedStatus.DELETED);
     feedRepository.deleteAllByStatus(FeedStatus.SEEN);
-  }
-
-  @Transactional
-  private void handleInsertion(Map<String, List<String>> postsByUser) {
-    for ( Map.Entry<String,List<String>> entry : postsByUser.entrySet() ){
-      String posterId = entry.getKey();
-      List<String> postIds = entry.getValue();
-      List<String> followers = this.feedClient.getFollowers(posterId);
-
-      List<FeedDto> toSave = new ArrayList<>(followers.size() * postIds.size());
-      for( String follower : followers )
-        for( String postId : postIds) 
-          toSave.add(new FeedDto(follower, postId));
-
-      feedRepository.saveAll(toSave
-          .stream()
-          .map(dto -> feedMapper.toEntity(dto))
-          .collect(Collectors.toList())
-          );
-    }
   }
 }

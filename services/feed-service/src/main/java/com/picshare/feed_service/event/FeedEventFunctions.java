@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.picshare.feed_service.event.events.ConnectionCreatedEvent;
 import com.picshare.feed_service.event.events.ConnectionDeletedEvent;
+import com.picshare.feed_service.event.events.PostConfirmedEvent;
+import com.picshare.feed_service.event.events.PostCreatedEvent;
 import com.picshare.feed_service.event.events.PostDeletedEvent;
 import com.picshare.feed_service.event.events.UserDeletedEvent;
 import com.picshare.feed_service.service.service.FeedService;
@@ -32,5 +34,9 @@ public class FeedEventFunctions {
 
   public Consumer<ConnectionDeletedEvent> connectionDeleted(){
     return event -> service.connectionDeleted(event.idFollower(), event.idFollowed());
+  }
+
+  public Consumer<PostConfirmedEvent> postConfirmed(){
+    return event -> service.postCreated(event.postId(), event.userId());
   }
 }
