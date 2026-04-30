@@ -11,7 +11,7 @@ spring:
 
   cloud:
     function:
-      definition: userDeleted; postDeleted
+      definition: userDeleted;postDeleted;connectionCreated;connectionDeleted;postConfirmed
     stream:
       kafka:
         binder:
@@ -21,6 +21,12 @@ spring:
           destination: user_deleted_topic
         postDeleted-in-0:
           destination: post_deleted_topic
+        connectionCreated-in-0:
+          destination: connection_created_topic
+        connectionDeleted-in-0:
+          destination: connection_deleted_topic
+        postConfirmed-in-0:
+          destination: post_confirmed_topic
 
   devtools:
     restart:
