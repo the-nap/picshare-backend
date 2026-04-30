@@ -81,3 +81,4 @@ management:
 logging:
   level:
     org.springframework.web: INFO
+    org.apache.kafka.clients.consumer.internals.OffsetFetcherUtils: ERROR

@@ -81,3 +81,4 @@ logging:
     zipkin2.reporter: INFO
     zipkin2.reporter.internal: INFO
     org.springframework.boot.zipkin.autoconfigure: INFO
+    org.apache.kafka.clients.consumer.internals.OffsetFetcherUtils: ERROR
