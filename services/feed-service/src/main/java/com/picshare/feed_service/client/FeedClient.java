@@ -27,7 +27,7 @@ public class FeedClient {
     ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
 
     UriComponents uriComponents = UriComponentsBuilder
-      .fromUriString(String.format("%s/post/feed", serviceInstance.getUri()))
+      .fromUriString(String.format("%s/post/feed/posts", serviceInstance.getUri()))
       .build();
 
     return this.restClient
@@ -38,12 +38,12 @@ public class FeedClient {
       .body(new ParameterizedTypeReference<List<PostDto>>() {});
   }
 
-  public Map<String, String> getPosts(UpdateRequest request){
+  public Map<String, String> getPostsForNewConnection(UpdateRequest request){
 
     ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
 
     UriComponents uriComponents = UriComponentsBuilder
-      .fromUriString(String.format("%s/post/feed", serviceInstance.getUri()))
+      .fromUriString(String.format("%s/post/feed/connection", serviceInstance.getUri()))
       .build();
 
     return this.restClient

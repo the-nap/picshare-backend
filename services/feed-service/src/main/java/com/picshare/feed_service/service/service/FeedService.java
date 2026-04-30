@@ -103,7 +103,7 @@ public class FeedService {
     Date yesterday = getYesterday();
 
     UpdateRequest request = new UpdateRequest(followedId, yesterday);
-    Map<String, String> posts = feedClient.getPosts(request);
+    Map<String, String> posts = feedClient.getPostsForNewConnection(request);
 
     Set<FeedEntity> entities = posts.entrySet()
       .stream()
