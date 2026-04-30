@@ -10,8 +10,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.picshare.feed_service.service.dto.PostDto;
-import com.picshare.feed_service.service.dto.UpdateDto;
+import com.picshare.feed_service.service.dto.UpdateRequest;
+import com.picshare.feed_service.service.dto.UpdateResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,29 +22,20 @@ public class FeedClient {
   private final RestClient restClient;
   private final DiscoveryClient discoveryClient;
 
-  public List<UpdateDto> getUpdates(){
-    ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
-    return this.restClient
-      .get()
-      .uri(String.format("%s/updates", serviceInstance.getUri()))
-      .retrieve()
-      .body(new ParameterizedTypeReference<List<UpdateDto>>(){});
-  }
-
-  public List<PostDto> getPosts(List<String> ids){
+  public UpdateResponse getPosts(UpdateRequest request){
 
     ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
 
     UriComponents uriComponents = UriComponentsBuilder
       .fromUriString(String.format("%s/post/feed", serviceInstance.getUri()))
-      .queryParam("id", ids.toArray())
       .build();
 
     return this.restClient
-      .get()
+      .post()
       .uri(uriComponents.expand().toUri())
+      .body(request)
       .retrieve()
-      .body(new ParameterizedTypeReference<List<PostDto>>() {});
+      .body(new ParameterizedTypeReference<UpdateResponse>() {});
   }
 
   public List<String> getFollowers(String id){

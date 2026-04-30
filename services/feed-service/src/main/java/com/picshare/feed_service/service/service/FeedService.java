@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -19,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.picshare.feed_service.client.FeedClient;
 import com.picshare.feed_service.service.dto.FeedDto;
 import com.picshare.feed_service.service.dto.PostDto;
-import com.picshare.feed_service.service.dto.UpdateDto;
+import com.picshare.feed_service.service.dto.UpdateRequest;
 import com.picshare.feed_service.service.entity.FeedEntity;
 import com.picshare.feed_service.service.entity.FeedStatus;
 import com.picshare.feed_service.service.exceptions.FeedNotFoundException;
@@ -97,6 +99,35 @@ public class FeedService {
     entity.setStatus(FeedStatus.DELETED);
   }
 
+  @Transactional
+  public void connectionCreated(String followerId, String followedId){
+    LocalDate now = LocalDate.now();
+    Date yesterday = Date.from(now.minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    Set<FeedEntity> entities = new HashSet<>();
+
+    int offset = 0;
+    final int max = 100;
+    int size = 0;
+
+    do {
+    UpdateRequest request = new UpdateRequest(followedId, yesterday, offset, max);
+    Map<String, String> posts = feedClient.getPosts(request).getPosts();
+    size = posts.size();
+
+    posts.forEach((key,value) -> {
+      FeedEntity toAdd = new FeedEntity();
+      toAdd.setUserId(followerId);
+      toAdd.setPostId(key);
+      toAdd.setPosterId(value);
+
+      entities.add(toAdd);
+      });
+
+    } while (size == max);
+
+    feedRepository.saveAll(entities);
+  }
+
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
   @Transactional
   public void removeOld(){
@@ -110,20 +141,6 @@ public class FeedService {
   public void removeSeenOrDeleted(){
     feedRepository.deleteAllByStatus(FeedStatus.DELETED);
     feedRepository.deleteAllByStatus(FeedStatus.SEEN);
-  }
-
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
-  public void update(){
-    List<UpdateDto> updates = this.feedClient.getUpdates();
-    if(updates.isEmpty())
-      return;
-    Map<String,List<String>> postsByUser = updates.stream()
-      .collect(Collectors.groupingBy(
-            UpdateDto::getUserId,
-            Collectors.mapping(UpdateDto::getPostId, Collectors.toList())
-            )
-          );
-    handleInsertion(postsByUser);
   }
 
   @Transactional
