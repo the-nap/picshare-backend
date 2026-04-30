@@ -15,10 +15,9 @@ import com.picshare.post_service.client.PostClient;
 import com.picshare.post_service.event.PostEventProducer;
 import com.picshare.post_service.service.dto.PostRequest;
 import com.picshare.post_service.service.dto.PostResponse;
-import com.picshare.post_service.service.dto.UpdateDto;
+import com.picshare.post_service.service.dto.UpdateRequest;
 import com.picshare.post_service.service.entity.PostEntity;
 import com.picshare.post_service.service.entity.PostStatus;
-import com.picshare.post_service.service.entity.UpdateEntity.UpdateStatus;
 import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
@@ -33,8 +32,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostService {
 
-  private final UpdateRepository updateRepository;
-  private final UpdateMapper updateMapper;
   private final PostRepository postRepository;
   private final PostClient client;
   private final PostMapper postMapper;
@@ -54,12 +51,11 @@ public class PostService {
   }
 
   @Transactional
-  public UpdateDto confirm(String id){
+  public void confirm(String id){
     PostEntity entity = this.postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
     entity.setStatus(PostStatus.CONFIRMED);
     postRepository.save(entity);
-    return new UpdateDto(entity.getUserId(), entity.getId());
   }
 
   @Transactional
@@ -119,16 +115,6 @@ public class PostService {
         Sort.by("creationDate").descending()))
       .map(entity -> postMapper.toDto(entity))
       .toList();
-  }
-
-  public List<UpdateDto> serveUpdates(){
-    
-    return updateRepository.findTop100ByStatusOrderByIdUserId(UpdateStatus.PENDING)
-      .stream()
-      .peek(entity -> entity.setStatus(UpdateStatus.UPDATED))
-      .peek(entity -> updateRepository.save(entity))
-      .map(entity -> updateMapper.toDto(entity))
-      .collect(Collectors.toList());
   }
 
 }
