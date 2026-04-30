@@ -17,7 +17,7 @@ public class PostEventProducer {
   
   public boolean sendPostDeletedEvent(String postId) {
 
-    return streamBridge.send("postDeleted-out-0",
+    return this.streamBridge.send("postDeleted-out-0",
         new PostDeletedEvent(postId, Instant.now()));
 
   }

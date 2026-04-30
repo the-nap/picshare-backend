@@ -29,7 +29,7 @@ public class EventLogging {
 
   @AfterReturning(pointcut = "eventMethods()", returning = "result")
   public void logAfterReturning(JoinPoint joinPoint, Object result) {
-    log.info("Controller method {} returned: {}", joinPoint.getSignature().getName(), result);
+    log.info("Event method {} returned: {}", joinPoint.getSignature().getName(), result);
   }
   
   @AfterThrowing(pointcut = "eventMethods()", throwing = "exception")

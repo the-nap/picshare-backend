@@ -29,7 +29,7 @@ public class ServiceLogging {
 
   @AfterReturning(pointcut = "serviceMethods()", returning = "result")
   public void logAfterReturning(JoinPoint joinPoint, Object result) {
-    log.info("Controller method {} returned: {}", joinPoint.getSignature().getName(), result);
+    log.info("Service method {} returned: {}", joinPoint.getSignature().getName(), result);
   }
   
   @AfterThrowing(pointcut = "serviceMethods()", throwing = "exception")

@@ -11,7 +11,7 @@ spring:
 
   cloud:
     function:
-      definition: postSavedSuccess; userDeleted;
+      definition: postSavedSuccess;userDeleted
     stream:
       kafka:
         binder:
@@ -19,8 +19,10 @@ spring:
       bindings:
         postSavedSuccess-in-0:
           destination: post_saved_success_topic
+          group: ${spring.application.name}-postSavedSuccess
         userDeleted-in-0:
           destination: user_deleted_topic
+          group: ${spring.application.name}-userDeleted
         postDeleted-out-0:
           destination: post_deleted_topic
 
@@ -81,4 +83,4 @@ management:
 
 logging:
   level:
-    org.springframework.web: DEBUG
+    org.springframework.web: INFO

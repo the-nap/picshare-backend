@@ -17,8 +17,10 @@ spring:
       bindings:
         postDeleted-in-0:
           destination: post_deleted_topic
+          group: ${spring.application.name}-postDeleted
         userDeleted-in-0:
           destination: user_deleted_topic
+          group: ${spring.application.name}-userDeleted
         postSavedSuccess-out-0:
           destination: post_saved_success_topic
 
@@ -78,4 +80,4 @@ management:
         endpoint: http://zipkin:9411/api/v2/spans
 logging:
   level:
-    org.springframework.web: DEBUG
+    org.springframework.web: INFO 

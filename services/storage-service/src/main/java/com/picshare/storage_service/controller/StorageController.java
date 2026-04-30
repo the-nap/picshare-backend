@@ -44,11 +44,6 @@ public class StorageController {
     return ResponseEntity.ok(service.serveAvatar(id));
   }
 
-  @GetMapping("/avatar")
-  public ResponseEntity<Resource> serveDefault(){
-    return ResponseEntity.ok(service.serveAvatar("default"));
-  }
-
   @GetMapping("/{id}")
   public ResponseEntity<Resource> serveMedia(@PathVariable String id) {
       return ResponseEntity.ok()

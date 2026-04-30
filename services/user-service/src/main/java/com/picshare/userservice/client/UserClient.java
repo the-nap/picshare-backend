@@ -6,7 +6,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -23,7 +22,7 @@ public class UserClient {
   private final RestClient restClient;
   private final DiscoveryClient discoveryClient;
 
-  public boolean uploadAvatar(MultipartFile image, String id){
+  public void uploadAvatar(MultipartFile image, String id){
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
@@ -36,17 +35,13 @@ public class UserClient {
 
     ServiceInstance serviceInstance = discoveryClient.getInstances("storage-service").get(0);
 
-    ResponseEntity<String> response = this.restClient
+     this.restClient
       .post()
       .uri(String.format("%s/media/avatar/%s", serviceInstance.getUri(), id))
       .body(body)
       .contentType(MediaType.MULTIPART_FORM_DATA)
       .retrieve()
-      .toEntity(String.class);
-    
-    if(response.getStatusCode().is2xxSuccessful())
-      return true;
-    return false;
+      .toBodilessEntity();
   }
 
 }

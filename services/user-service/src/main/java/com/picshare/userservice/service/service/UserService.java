@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Streamable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import com.picshare.userservice.service.entity.ConnectionStatus;
 import com.picshare.userservice.service.entity.UserEntity;
 import com.picshare.userservice.service.entity.UserStatus;
 import com.picshare.userservice.service.exceptions.ConnectionNotFoundException;
-import com.picshare.userservice.service.exceptions.UploadException;
 import com.picshare.userservice.service.exceptions.UserNotFoundException;
 import com.picshare.userservice.service.mapper.UserMapper;
 import com.picshare.userservice.service.repository.ConnectionRepository;
@@ -43,8 +41,7 @@ public class UserService {
   }
 
   public void uploadAvatar(String id, MultipartFile media){
-    if(!this.userClient.uploadAvatar(media, id))
-      throw new UploadException("Error while uploading");
+    this.userClient.uploadAvatar(media, id);
   }
 
   public void updateBio(String id, String bio){
