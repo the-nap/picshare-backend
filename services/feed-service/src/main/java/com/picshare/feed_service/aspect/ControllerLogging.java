@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
-public class LoggingAspect {
+public class ControllerLogging {
   
   @Pointcut("execution(* com.picshare.feed_service.controller.*.*(..))")
   public void controllerMethods() {}
