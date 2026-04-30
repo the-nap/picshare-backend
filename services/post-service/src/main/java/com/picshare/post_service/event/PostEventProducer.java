@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Component;
 
+import com.picshare.post_service.event.events.PostConfirmedEvent;
 import com.picshare.post_service.event.events.PostDeletedEvent;
 
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,12 @@ public class PostEventProducer {
   private final StreamBridge streamBridge;
   
   public boolean sendPostDeletedEvent(String postId) {
-
     return this.streamBridge.send("postDeleted-out-0",
         new PostDeletedEvent(postId, Instant.now()));
+  }
 
+  public boolean sendPostConfirmedEvent(String userId, String postId){
+    return this.streamBridge.send("postConfirmed-out-0",
+        new PostConfirmedEvent(userId, postId, Instant.now()));
   }
 }

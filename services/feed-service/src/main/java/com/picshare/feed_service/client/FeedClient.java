@@ -58,7 +58,7 @@ public class FeedClient {
     ServiceInstance serviceInstance = discoveryClient.getInstances("user-service").get(0);
     return this.restClient
       .get()
-      .uri(String.format("%s/followers/%s", serviceInstance.getUri(), posterId))
+      .uri(String.format("%s/user/followers/%s", serviceInstance.getUri(), posterId))
       .retrieve()
       .body(new ParameterizedTypeReference<List<String>>() {});
   }
