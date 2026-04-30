@@ -31,7 +31,7 @@ public interface FeedRepository extends CrudRepository<FeedEntity, String>{
   }
 
   default Streamable<FeedEntity> findByPostId(String postId, Pageable pageable){
-    return this.findByUserId(postId, FeedStatus.REGULAR, pageable);
+    return this.findByPostId(postId, FeedStatus.REGULAR, pageable);
   }
 
   default Streamable<FeedEntity> findByUserIdAndPosterId(String userId, String posterId){
