@@ -61,6 +61,11 @@ public class PostController {
     return ResponseEntity.ok(service.getPostByTag(tag, offset, max));
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<PostResponse> getPost(@PathVariable String id){
+    return ResponseEntity.ok(this.service.getPosts(List.of(id)).getFirst());
+  }
+
   @PostMapping("/{id}/like")
   public ResponseEntity<Integer> addLike(JwtAuthenticationToken token, @PathVariable String id){
     String userId = token.getName().split(":")[2];
