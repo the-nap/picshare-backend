@@ -12,5 +12,5 @@ COPY services/storage-service/mvnw services/storage-service/pom.xml ./
 RUN ./mvnw -T 4 dependency:go-offline
 
 COPY services/storage-service/src ./src
-ENV MAVEN_OPTS="-Xmx384m -Xms256m"
+ENV _JAVA_OPTIONS="-XX:MaxRAMPercentage=50.0"
 CMD ["sh", "-lc", "find src pom.xml | entr -rn ./mvnw spring-boot:run"]
