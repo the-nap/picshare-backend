@@ -69,7 +69,11 @@ public class PostEntity {
   @Column(name = "userIds")
   private Set<String> likedBy = new HashSet<>();
 
-  public boolean addLike(String id){
-    return this.likedBy.add(id);
+  public void addLike(String id){
+    this.likedBy.add(id);
+  }
+
+  public void removeLike(String id){
+    this.likedBy.remove(id);
   }
 }

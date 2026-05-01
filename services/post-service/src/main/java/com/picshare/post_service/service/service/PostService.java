@@ -81,10 +81,15 @@ public class PostService {
   }
 
   @Transactional
-  public Integer addLike(String userId, String postId){
+  public Integer toggleLike(String userId, String postId){
     PostEntity entity = this.postRepository.findById(postId)
       .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", postId)));
-    entity.addLike(userId);
+
+    if(entity.getLikedBy().contains(userId))
+      entity.removeLike(userId);
+    else
+      entity.addLike(userId);
+      
     postRepository.save(entity);
     return entity.getLikedBy().size();
   }
