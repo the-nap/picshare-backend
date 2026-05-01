@@ -1,8 +1,8 @@
 package com.picshare.post_service.service.entity;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -17,14 +17,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Data
 @Table(name = "posts")
 @Entity
@@ -47,19 +51,25 @@ public class PostEntity {
   @NonNull
   private String description;
 
-  @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
-  @CollectionTable(name = "entity_tags", joinColumns = @JoinColumn(name = "entity_id"))
-  @Column(name = "tag")
-  private List<String> tags;
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  @ManyToMany
+  @JoinTable(
+    name = "post_tags",
+    joinColumns = @JoinColumn(name = "post_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  private Set<TagEntity> tags;
 
   @Column(name = "status")
   @Enumerated(EnumType.STRING)
   private PostStatus status = PostStatus.PENDING;
 
-  private List<String> likedBy = new ArrayList<>();
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "post_likes", joinColumns = @JoinColumn(name = "post_id"))
+  @Column(name = "userIds")
+  private Set<String> likedBy = new HashSet<>();
 
   public boolean addLike(String id){
     return this.likedBy.add(id);
   }
 }
-

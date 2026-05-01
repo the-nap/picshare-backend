@@ -1,9 +1,10 @@
 package com.picshare.post_service.service.service;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -20,11 +21,13 @@ import com.picshare.post_service.service.dto.PostResponse;
 import com.picshare.post_service.service.dto.UpdateRequest;
 import com.picshare.post_service.service.entity.PostEntity;
 import com.picshare.post_service.service.entity.PostStatus;
+import com.picshare.post_service.service.entity.TagEntity;
 import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
 import com.picshare.post_service.service.mapper.PostMapper;
 import com.picshare.post_service.service.repository.PostRepository;
+import com.picshare.post_service.service.repository.TagRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class PostService {
 
   private final PostRepository postRepository;
+  private final TagRepository tagRepository;
   private final PostClient client;
   private final PostMapper postMapper;
   private final PostEventProducer eventProducer;
@@ -41,6 +45,22 @@ public class PostService {
   public void store(MultipartFile image, PostRequest data, String userId) throws ExternalException, ClientErrorException, IOException{
 
     PostEntity entity = postMapper.toEntity(data);
+
+    Set<TagEntity> persistentTags = entity.getTags()
+      .stream()
+      .map(tag -> {
+        
+        TagEntity finalTag = tagRepository.findByTagName(tag.getTagName())
+
+          .orElseGet(() -> {
+            return new TagEntity(tag.getTagName());
+          });
+        finalTag.addPost(entity);
+        return tagRepository.save(finalTag);
+      })
+      .collect(Collectors.toSet());
+
+    entity.setTags(persistentTags);
     entity.setUserId(userId);
     entity.setStatus(PostStatus.PENDING);
     postRepository.save(entity);
@@ -77,7 +97,7 @@ public class PostService {
 
   @Transactional
   public void confirm(String id){
-    PostEntity entity = this.postRepository.findById(id)
+    PostEntity entity = this.postRepository.findByIdAndStatus(id, PostStatus.PENDING)
       .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
     entity.setStatus(PostStatus.CONFIRMED);
     postRepository.save(entity);
