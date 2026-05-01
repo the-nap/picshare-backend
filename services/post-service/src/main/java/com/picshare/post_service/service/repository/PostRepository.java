@@ -11,17 +11,30 @@ import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Repository;
 
 import com.picshare.post_service.service.entity.PostEntity;
+import com.picshare.post_service.service.entity.PostStatus;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, String> {
 
-  Optional<PostEntity> findById(String id);
+  Optional<PostEntity> findByIdAndStatus(String id, PostStatus status);
 
-  Streamable<PostEntity> findByUserIdAndCreationDateAfter(String userId, Date date);
+  Streamable<PostEntity> findByUserIdAndCreationDateAfterAndStatus(String userId, Date date, PostStatus status);
 
-  Streamable<PostEntity> findByUserId(String id, Pageable pageable);
+  Streamable<PostEntity> findByUserIdAndStatus(String id, Pageable pageable, PostStatus status);
 
-  @Query("SELECT pe FROM PostEntity pe JOIN pe.tags t WHERE t = :tag")
+  default Optional<PostEntity> findById(String id){
+    return this.findByIdAndStatus(id, PostStatus.CONFIRMED);
+  }
+
+  default Streamable<PostEntity> findByUserIdAndCreationDateAfter(String userId, Date date){
+    return this.findByUserIdAndCreationDateAfterAndStatus(userId, date, PostStatus.CONFIRMED);
+  }
+
+  default Streamable<PostEntity> findByUserId(String id, Pageable pageable){
+    return this.findByUserIdAndStatus(id, pageable, PostStatus.CONFIRMED);
+  }
+
+  @Query("SELECT pe FROM PostEntity pe JOIN pe.tags t WHERE t = :tag AND status = 'CONFIRMED'")
   Streamable<PostEntity> findByTag(@Param("tag") String tag, Pageable pageable);
 
 }
