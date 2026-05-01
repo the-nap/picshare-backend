@@ -1,5 +1,6 @@
 package com.picshare.post_service.service.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,5 +56,10 @@ public class PostEntity {
   @Enumerated(EnumType.STRING)
   private PostStatus status = PostStatus.PENDING;
 
+  private List<String> likedBy = new ArrayList<>();
+
+  public boolean addLike(String id){
+    return this.likedBy.add(id);
+  }
 }
 

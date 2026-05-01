@@ -60,6 +60,20 @@ public class PostService {
       );
   }
 
+  @Transactional
+  public Integer addLike(String userId, String postId){
+    PostEntity entity = this.postRepository.findById(postId)
+      .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", postId)));
+    entity.addLike(userId);
+    postRepository.save(entity);
+    return entity.getLikedBy().size();
+  }
+
+  public boolean likes(String userId, String postId){
+    PostEntity entity = this.postRepository.findById(postId)
+      .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", postId)));
+    return entity.getLikedBy().contains(userId);
+  }
 
   @Transactional
   public void confirm(String id){

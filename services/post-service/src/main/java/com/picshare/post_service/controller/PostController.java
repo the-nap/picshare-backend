@@ -61,6 +61,18 @@ public class PostController {
     return ResponseEntity.ok(service.getPostByTag(tag, offset, max));
   }
 
+  @PostMapping("/{id}/like")
+  public ResponseEntity<Integer> addLike(JwtAuthenticationToken token, @PathVariable String id){
+    String userId = token.getName().split(":")[2];
+    return ResponseEntity.ok(this.service.addLike(userId, id));
+  }
+
+  @GetMapping("/{id}/likes")
+  public ResponseEntity<Boolean> likes(JwtAuthenticationToken token, @PathVariable String id){
+    String userId = token.getName().split(":")[2];
+    return ResponseEntity.ok(this.service.likes(userId, id));
+  }
+
   // Feed Service Endpoints
   @PostMapping("/feed/posts")
   public ResponseEntity<List<PostResponse>> serveFeed(@RequestBody List<String> ids){
