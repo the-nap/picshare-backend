@@ -56,7 +56,7 @@ public class FeedService {
   @Transactional
   public void userDeleted(String userId){
     final int max = 999;
-    int offset = 0;
+    final int offset = 0;
     Streamable<FeedEntity> entities;
     do{
       entities = this.feedRepository.findByUserId(userId, PageRequest.of(offset, max));
@@ -64,15 +64,15 @@ public class FeedService {
         .forEach(this::markForDeletion);
 
       feedRepository.saveAll(entities);
-      offset++;
 
+      //offset not incremented because findByUserId only returns REGULAR status entities
     } while(!entities.isEmpty());
   }
   
   @Transactional
   public void postDeleted(String postId){
     final int max = 999;
-    int offset = 0;
+    final int offset = 0;
     Streamable<FeedEntity> entities;
     do{
       entities = this.feedRepository.findByPostId(postId, PageRequest.of(offset,max));
@@ -81,7 +81,7 @@ public class FeedService {
 
       feedRepository.saveAll(entities);
 
-      offset++;
+      //offset not incremented because findByUserId only returns REGULAR status entities
     } while(!entities.isEmpty());
   }
 
@@ -163,9 +163,7 @@ public class FeedService {
   }
 
   private Date getYesterday() {
-    System.out.println(Instant.now().minus(1, ChronoUnit.DAYS));
     Date result = Date.from(Instant.now().minus(1, ChronoUnit.DAYS));
-    System.out.println(result);
     return result;
   }
 }

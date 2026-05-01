@@ -48,14 +48,14 @@ public class UserAuthService {
   public List<AuthUserDTO> searchByEmail(String email, Integer first, Integer max){
     return repository.searchByEmail(email, first, max)
       .stream()
-      .map(entity -> mapper.toDto(entity))
+      .map(mapper::toDto)
       .toList();
   }
 
   public List<AuthUserDTO> searchByUsername(String username, Integer first, Integer max){
     return repository.searchByUsername(username, first, max)
       .stream()
-      .map(entity -> mapper.toDto(entity))
+      .map(mapper::toDto)
       .toList();
   }
 
@@ -70,7 +70,7 @@ public class UserAuthService {
   public List<AuthUserDTO> getAll(Integer first, Integer max){
     return repository.getAll(first, max)
       .stream()
-      .map(entity -> mapper.toDto(entity))
+      .map(mapper::toDto)
       .collect(Collectors.toList());
   }
 

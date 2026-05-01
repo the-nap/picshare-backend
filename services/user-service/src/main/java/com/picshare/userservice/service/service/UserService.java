@@ -63,7 +63,7 @@ public class UserService {
     return this.userRepository.searchByEmailOrUsername(toSearch, offset, max)
       .stream()
       .map((entity) -> userMapper.toDto(entity, connectionRepository))
-      .collect(Collectors.toList());
+      .toList();
   }
 
   @Transactional
@@ -128,7 +128,7 @@ public class UserService {
 
   @Transactional
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
-  private void removeDeleted() {
+  public void removeDeleted() {
     this.userRepository.deleteAllByStatus(UserStatus.DELETED);
   }
 

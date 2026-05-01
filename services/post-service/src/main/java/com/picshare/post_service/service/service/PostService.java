@@ -112,18 +112,19 @@ public class PostService {
   @Transactional
   public void deleteByUser(String userId){
     Streamable<PostEntity> toDelete;
-    int offset = 0;
+    final int offset = 0;
+    final int max = 999;
     do {
-      toDelete = this.postRepository.findByUserId(userId, PageRequest.of(offset, 999));
+      toDelete = this.postRepository.findByUserId(userId, PageRequest.of(offset, max));
       toDelete
         .stream()
         .forEach(entity -> deletePost(entity.getId()));
 
-      offset++;
-
-      postRepository.saveAll(toDelete);
+      //offset not incremented because findByUserId only returns CONFIRMED entities
 
     } while (!toDelete.isEmpty());
+
+      postRepository.saveAll(toDelete);
   }
 
   @Transactional
@@ -144,19 +145,15 @@ public class PostService {
   }
 
   public List<PostResponse> getPosts(List<String> ids){
-    return ids.stream()
-      .map(id -> this.serve(id))
-      .collect(Collectors.toList());
+    return this.postRepository.findAllById(ids)
+      .stream()
+      .map(postMapper::toDto)
+      .toList();
   }
 
   public List<PostResponse> getPostsByUser(String id, int offset, int max){
     return this.postRepository.findByUserId(id, PageRequest.of(offset, max, Sort.by("creationDate").descending()))
-      .map((entity) -> {
-
-        PostResponse result = this.postMapper.toDto(entity);
-        return result;
-
-      })
+      .map(this.postMapper::toDto)
       .toList();
   }
 
@@ -164,7 +161,7 @@ public class PostService {
     return this.postRepository.findByTag(tag, PageRequest.of(
         offset, max, 
         Sort.by("creationDate").descending()))
-      .map(entity -> postMapper.toDto(entity))
+      .map(postMapper::toDto)
       .toList();
   }
 

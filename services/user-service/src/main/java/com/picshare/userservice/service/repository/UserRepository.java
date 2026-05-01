@@ -49,7 +49,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
   List<UserEntity> searchByEmail(String email, Integer offset, Integer max);
 
   @Query(
-    value = "SELECT * FROM users u WHERE u.email LIKE %?1% OR u.username LIKE %?1% AND u.status = 'REGULAR' ORDER BY creation_date OFFSET ?2 LIMIT ?3",
+    value = "SELECT * FROM users u WHERE u.status = 'REGULAR' AND u.email LIKE %?1% OR u.username LIKE %?1% ORDER BY creation_date OFFSET ?2 LIMIT ?3",
     nativeQuery = true)
   List<UserEntity> searchByEmailOrUsername(String toSearch, Integer offset, Integer max);
 
@@ -64,7 +64,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
   Set<UserEntity> countByEmail(String email);
 
   @Query(
-    value = "SELECT * FROM users u AND u.status = 'REGULAR' ORDER BY creation_date OFFSET ?1 LIMIT ?2",
+    value = "SELECT * FROM users u WHERE u.status = 'REGULAR' ORDER BY creation_date OFFSET ?1 LIMIT ?2",
     nativeQuery = true)
   Set<UserEntity> getAll(Integer first, Integer max);
 

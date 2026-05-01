@@ -100,7 +100,7 @@ public class MinioService implements StorageService{
 
   @Override
   public void deleteAvatar(String id){
-    delete(String.format("media/%s", id));
+    delete(String.format("avatar/%s", id));
   }
 
   private void delete(String toDelete){
