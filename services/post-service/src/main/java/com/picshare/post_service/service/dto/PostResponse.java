@@ -26,4 +26,7 @@ public class PostResponse {
   @Size(max = 25, message = "Tags max length is 25 characters (spaces included)")
   String tags;
 
+  @NotBlank
+  int likesNumber;
+
 }

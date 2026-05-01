@@ -18,6 +18,7 @@ import com.picshare.post_service.service.entity.TagEntity;
 public interface PostMapper {
 
   @Mapping(source = "tags", target = "tags", qualifiedByName = "setToString")
+  @Mapping(source = "likedBy", target = "likesNumber", qualifiedByName = "likesMap")
   PostResponse toDto(PostEntity entity);
 
   @Mapping(source = "tags", target = "tags", qualifiedByName = "stringToSet")
@@ -46,6 +47,11 @@ public interface PostMapper {
     tokens.stream().forEach((token) -> 
         sb.append(token.getTagName() + " "));
     return sb.toString();
+  }
+
+  @Named("likesMap")
+  public static int likesMap(Set<String> likedBy){
+    return likedBy.size();
   }
   
 }
