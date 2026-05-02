@@ -15,10 +15,10 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.picshare.storage_service.event.StorageEventFunctions;
 import com.picshare.storage_service.event.StorageEventProducer;
 import com.picshare.storage_service.service.exceptions.NoAvatarException;
 import com.picshare.storage_service.service.exceptions.StorageException;
+import com.picshare.storage_service.service.exceptions.UploadException;
 import com.picshare.storage_service.service.util.WebpManager;
 
 import io.minio.BucketExistsArgs;
@@ -74,23 +74,56 @@ public class MinioService implements StorageService{
 
   @Override
   public void store(MultipartFile file, String id) {
-    List<Path> source = prepareMedia(file);
+    List<Path> source;
+    try {
+      source = prepareMedia(file);
+    } catch (IOException e) {
+      this.eventProducer.sendPostSaveFailureEvent(id);
+      return;
+    }
 
-    storeInBucket(
-        getMediaPath(id), source.get(MEDIA));
+    try{
+      storeInBucket(
+          getMediaPath(id), source.get(MEDIA));
+    } catch(Exception e){
+      this.eventProducer.sendPostSaveFailureEvent(id);
+      delete(getMediaPath(id));
+      throw new UploadException(String.format("Error while uploading media: %s", id));
+    }
 
-    storeInBucket(
-        getPreviewPath(id), source.get(PREVIEW));
+    try {
+      storeInBucket(
+          getPreviewPath(id), source.get(PREVIEW));
+    } catch(Exception e){
+      this.eventProducer.sendPostSaveFailureEvent(id);
+      delete(getMediaPath(id));
+      throw new UploadException(String.format("Error while uploading preview: %s", id));
+    }
 
-    this.eventProducer.sendPostSavedEvent(id);
+    this.eventProducer.sendPostSaveSuccessEvent(id);
   }
   
   @Override
   public void storeAvatar(MultipartFile input, String id){
-    Path source = prepareAvatar(input);
+    Path source = null;
+    try {
+      source = prepareAvatar(input);
+    } catch (IOException e) {
+      try {
+        Files.deleteIfExists(source);
+      } catch (IOException e1) {
+        throw new StorageException(String.format("Failed to delete temporary file"));
+      }
+      throw new UploadException(String.format("Error while uploading avatar for: %s", id));
+    }
 
-    storeInBucket(
-        getAvatarPath(id), source);
+    try{
+      storeInBucket(
+          getAvatarPath(id), source);
+    } catch(Exception e){
+      delete(getAvatarPath(id));
+      throw new UploadException(String.format("Error while uploading avatar: %s", id));
+    }
   }
 
   @Override
@@ -168,42 +201,37 @@ public class MinioService implements StorageService{
     return "images";
   }
 
-  private List<Path> prepareMedia(MultipartFile file) {
+  private List<Path> prepareMedia(MultipartFile file) throws IOException {
     List<Path> temps = new LinkedList<>();
-    try {
-      temps.add(Files.createTempFile("media-", ".webp"));
-      temps.add(Files.createTempFile("preview-", ".webp"));
-    } catch(IOException e){
-      throw new RuntimeException("Cannot create file: " + e.getMessage());
-    }
+
+    temps.add(Files.createTempFile("media-", ".webp"));
+    temps.add(Files.createTempFile("preview-", ".webp"));
 
     try(OutputStream outMedia = Files.newOutputStream(temps.get(MEDIA));
         OutputStream outPreview = Files.newOutputStream(temps.get(PREVIEW));
         InputStream input = file.getResource().getInputStream()){
 
       WebpManager.toWebp(input, outMedia, outPreview);
-    } catch(Exception e){
-      throw new StorageException("in prepareMedia: " + e);
+
     }
     return temps;
   }
 
-  private Path prepareAvatar(MultipartFile file) {
+  private Path prepareAvatar(MultipartFile file) throws IOException {
     Path temp;
-    try {
-      temp = Files.createTempFile("avatar-", ".webp");
-    } catch(IOException e){
-      throw new RuntimeException("Cannot create file: " + e.getMessage());
-    }
+
+    temp = Files.createTempFile("avatar-", ".webp");
+
     try(OutputStream out = Files.newOutputStream(temp);
         InputStream stream = file.getInputStream()){
+
       WebpManager.toWebp(stream, out, null);
       
-    } catch(IOException e) {}
+    }
     return temp;
   }
 
-  private void storeInBucket(String filename, Path temp) {
+  private void storeInBucket(String filename, Path temp) throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
     try(InputStream input = Files.newInputStream(temp)) {
       minioClient.putObject(
           PutObjectArgs.builder()
@@ -212,8 +240,6 @@ public class MinioService implements StorageService{
           .stream(input, Files.size(temp), -1)
           .contentType("image/webp")
           .build());
-    } catch(Exception e) {
-      e.printStackTrace();
     } finally {
       try {
         Files.deleteIfExists(temp);

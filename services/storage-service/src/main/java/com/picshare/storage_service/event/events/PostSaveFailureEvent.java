@@ -2,7 +2,7 @@ package com.picshare.storage_service.event.events;
 
 import java.time.Instant;
 
-public record PostSavedSuccessEvent(
+public record PostSaveFailureEvent(
     String postId,
     Instant timestamp
     )

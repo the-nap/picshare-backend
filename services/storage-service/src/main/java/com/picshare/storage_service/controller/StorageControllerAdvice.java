@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.picshare.storage_service.service.exceptions.NoAvatarException;
 import com.picshare.storage_service.service.exceptions.StorageException;
+import com.picshare.storage_service.service.exceptions.UploadException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,5 +28,11 @@ public class StorageControllerAdvice {
   String defaultHandler(NoAvatarException e){
     return e.getMessage();
   }
-  
+
+  @ExceptionHandler(UploadException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  String uploadFailHandler(UploadException e){
+    return e.getMessage();
+  }
+
 }

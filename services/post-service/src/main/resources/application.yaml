@@ -17,9 +17,11 @@ spring:
         binder:
           brokers: broker:29092
       bindings:
-        postSavedSuccess-in-0:
-          destination: post_saved_success_topic
+        postSaveSuccess-in-0:
+          destination: post_save_success_topic
           group: ${spring.application.name}-postSavedSuccess
+        postSaveFailure-in-0:
+          destination: post_save_failure_topic
         postConfirmed-out-0:
           destination: post_confirmed_topic
         userDeleted-in-0:

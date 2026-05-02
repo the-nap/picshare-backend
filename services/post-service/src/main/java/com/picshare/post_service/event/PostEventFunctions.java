@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.picshare.post_service.event.events.PostSavedSuccessEvent;
+import com.picshare.post_service.event.events.PostSaveSuccessEvent;
 import com.picshare.post_service.event.events.UserDeletedEvent;
 import com.picshare.post_service.service.service.PostService;
 
@@ -18,9 +18,16 @@ public class PostEventFunctions {
   private final PostService service;
 
   @Bean
-  public Consumer<PostSavedSuccessEvent> postSavedSuccess() {
+  public Consumer<PostSaveSuccessEvent> postSaveSuccess() {
     return event -> {
       this.service.confirm(event.postId());
+    };
+  }
+  
+  @Bean
+  public Consumer<PostSaveSuccessEvent> postSaveFailure() {
+    return event -> {
+      this.service.deletePost(event.postId());
     };
   }
 

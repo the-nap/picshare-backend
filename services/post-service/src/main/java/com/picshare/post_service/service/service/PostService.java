@@ -131,11 +131,13 @@ public class PostService {
   public void deletePost(String id){
     PostEntity entity = postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id));
+    PostStatus previous = entity.getStatus();
     entity.setStatus(PostStatus.DELETED);
 
     postRepository.save(entity);
 
-    this.eventProducer.sendPostDeletedEvent(id);
+    if(previous.equals(PostStatus.CONFIRMED))
+      this.eventProducer.sendPostDeletedEvent(id);
   }
 
   @Transactional(readOnly = true)
