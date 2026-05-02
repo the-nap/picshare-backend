@@ -19,16 +19,19 @@ spring:
       bindings:
         postSaveSuccess-in-0:
           destination: post_save_success_topic
-          group: ${spring.application.name}-postSavedSuccess
+          group: ${spring.application.name}
         postSaveFailure-in-0:
           destination: post_save_failure_topic
+          group: ${spring.application.name}
         postConfirmed-out-0:
           destination: post_confirmed_topic
+          group: ${spring.application.name}
         userDeleted-in-0:
           destination: user_deleted_topic
-          group: ${spring.application.name}-userDeleted
+          group: ${spring.application.name}
         postDeleted-out-0:
           destination: post_deleted_topic
+          group: ${spring.application.name}
 
   servlet:
     multipart:

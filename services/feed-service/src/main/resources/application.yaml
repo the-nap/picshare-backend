@@ -19,14 +19,19 @@ spring:
       bindings:
         userDeleted-in-0:
           destination: user_deleted_topic
+          group: ${spring.application.name}
         postDeleted-in-0:
           destination: post_deleted_topic
+          group: ${spring.application.name}
         connectionCreated-in-0:
           destination: connection_created_topic
+          group: ${spring.application.name}
         connectionDeleted-in-0:
           destination: connection_deleted_topic
+          group: ${spring.application.name}
         postConfirmed-in-0:
           destination: post_confirmed_topic
+          group: ${spring.application.name}
 
   devtools:
     restart:

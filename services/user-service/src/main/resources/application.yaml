@@ -17,10 +17,13 @@ spring:
       bindings:
         userDeleted-out-0:
           destination: user_deleted_topic
+          group: ${spring.application.name}
         connectionCreated-out-0:
           destination: connection_created_topic
+          group: ${spring.application.name}
         connectionDeleted-out-0:
           destination: connection_deleted_topic
+          group: ${spring.application.name}
 
   devtools:
     restart:

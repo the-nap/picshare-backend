@@ -17,14 +17,16 @@ spring:
       bindings:
         postDeleted-in-0:
           destination: post_deleted_topic
-          group: ${spring.application.name}-postDeleted
+          group: ${spring.application.name}
         userDeleted-in-0:
           destination: user_deleted_topic
-          group: ${spring.application.name}-userDeleted
+          group: ${spring.application.name}
         postSaveSuccess-out-0:
           destination: post_save_success_topic
+          group: ${spring.application.name}
         postSaveFailure-out-0:
           destination: post_save_failure_topic
+          group: ${spring.application.name}
 
   devtools:
     restart:
