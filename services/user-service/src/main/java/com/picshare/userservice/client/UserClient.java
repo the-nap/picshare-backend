@@ -11,7 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.picshare.userservice.service.exceptions.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +24,13 @@ public class UserClient {
 
   public void uploadAvatar(MultipartFile image, String id){
 
+    ServiceInstance serviceInstance;
+    try{
+      serviceInstance = discoveryClient.getInstances("storage-service").get(0);
+    } catch(IndexOutOfBoundsException ioe){
+      throw new ExternalServiceException( ioe.getMessage() );
+    }
+
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
     HttpHeaders partHeaders = new HttpHeaders();
@@ -33,7 +40,6 @@ public class UserClient {
 
     body.add("file", part);
 
-    ServiceInstance serviceInstance = discoveryClient.getInstances("storage-service").get(0);
 
      this.restClient
       .post()

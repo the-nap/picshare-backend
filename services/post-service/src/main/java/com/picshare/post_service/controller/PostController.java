@@ -1,6 +1,5 @@
 package com.picshare.post_service.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.picshare.post_service.service.dto.PostRequest;
 import com.picshare.post_service.service.dto.PostResponse;
 import com.picshare.post_service.service.dto.UpdateRequest;
-import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.service.PostService;
 
 import jakarta.validation.Valid;
@@ -41,11 +39,7 @@ public class PostController {
     PostRequest metadata = new ObjectMapper().readValue(metadataJson, PostRequest.class);
 
       String userId = token.getName();
-      try {
-        this.service.store(data, metadata, userId.split(":")[2]);
-      } catch(IOException e){
-        throw new ExternalException(e.getMessage());
-      }
+      this.service.store(data, metadata, userId.split(":")[2]);
 
       return ResponseEntity.status(HttpStatus.CREATED).build();
   }

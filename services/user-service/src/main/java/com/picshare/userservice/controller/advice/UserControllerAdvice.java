@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.picshare.userservice.service.exceptions.ExternalServiceException;
+import com.picshare.userservice.service.exceptions.UserNotFoundException;
+
 @RestControllerAdvice
 public class UserControllerAdvice {
 
@@ -23,6 +26,18 @@ public class UserControllerAdvice {
       errors.put(fieldName, errorMessage);
     });
     return errors;
+  }
+
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(UserNotFoundException.class)
+  public String handleUserNotFound(UserNotFoundException e){
+    return e.getMessage();
+  }
+
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(ExternalServiceException.class)
+  public String externalError(ExternalServiceException e){
+    return e.getMessage();
   }
 
   

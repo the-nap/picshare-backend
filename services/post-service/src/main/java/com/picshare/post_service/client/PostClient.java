@@ -1,7 +1,5 @@
 package com.picshare.post_service.client;
 
-import java.io.IOException;
-
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.io.Resource;
@@ -14,7 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.picshare.post_service.service.exceptions.ExternalException;
+import com.picshare.post_service.service.exceptions.ExternalServiceException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +23,14 @@ public class PostClient {
   private final RestClient restClient;
   private final DiscoveryClient discoveryClient;
 
-  public void upload(MultipartFile image, String id) throws ExternalException{
+  public void upload(MultipartFile image, String id){
+    
+    ServiceInstance serviceInstance;
+    try {
+      serviceInstance = discoveryClient.getInstances("storage-service").get(0);
+    } catch(IndexOutOfBoundsException e){
+      throw new ExternalServiceException(e.getMessage());
+    }
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
@@ -36,19 +41,12 @@ public class PostClient {
 
     body.add("file", part);
 
-    ServiceInstance serviceInstance = discoveryClient.getInstances("storage-service").get(0);
-
-    try{ 
-      this.restClient
-        .post()
-        .uri(String.format("%s/media/%s", serviceInstance.getUri(), id))
-        .contentType(MediaType.MULTIPART_FORM_DATA)
-        .body(body)
-        .retrieve()
-        .toBodilessEntity();
-    } catch (Exception e){
-      throw new ExternalException(e.getMessage());
-    }
-
+    this.restClient
+      .post()
+      .uri(String.format("%s/media/%s", serviceInstance.getUri(), id))
+      .contentType(MediaType.MULTIPART_FORM_DATA)
+      .body(body)
+      .retrieve()
+      .toBodilessEntity();
   }
 }

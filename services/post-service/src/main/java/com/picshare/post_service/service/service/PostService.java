@@ -22,7 +22,6 @@ import com.picshare.post_service.service.entity.PostEntity;
 import com.picshare.post_service.service.entity.PostStatus;
 import com.picshare.post_service.service.entity.TagEntity;
 import com.picshare.post_service.service.exceptions.ClientErrorException;
-import com.picshare.post_service.service.exceptions.ExternalException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
 import com.picshare.post_service.service.mapper.PostMapper;
 import com.picshare.post_service.service.repository.PostRepository;
@@ -41,7 +40,7 @@ public class PostService {
   private final PostEventProducer eventProducer;
 
   @Transactional
-  public void store(MultipartFile image, PostRequest data, String userId) throws ExternalException, ClientErrorException, IOException{
+  public void store(MultipartFile image, PostRequest data, String userId){
 
     PostEntity entity = postMapper.toEntity(data);
 
@@ -63,10 +62,8 @@ public class PostService {
     entity.setUserId(userId);
     entity.setStatus(PostStatus.PENDING);
     postRepository.save(entity);
-    try{
-      client.upload(image, entity.getId());
-    } catch(ExternalException e){
-    }
+
+    client.upload(image, entity.getId());
   }
   
   @Transactional(readOnly = true)
@@ -137,7 +134,7 @@ public class PostService {
     postRepository.save(entity);
 
     if(previous.equals(PostStatus.CONFIRMED))
-      this.eventProducer.sendPostDeletedEvent(id);
+    this.eventProducer.sendPostDeletedEvent(id);
   }
 
   @Transactional(readOnly = true)

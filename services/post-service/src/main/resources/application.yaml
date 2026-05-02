@@ -11,7 +11,7 @@ spring:
 
   cloud:
     function:
-      definition: postSavedSuccess;userDeleted
+      definition: postSaveSuccess;userDeleted
     stream:
       kafka:
         binder:
