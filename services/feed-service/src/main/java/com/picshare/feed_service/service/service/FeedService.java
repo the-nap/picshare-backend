@@ -1,8 +1,6 @@
 package com.picshare.feed_service.service.service;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,6 +37,7 @@ public class FeedService {
   private final FeedMapper feedMapper;
   private final FeedClient feedClient;
 
+  @Transactional(readOnly = true)
   public List<PostDto> getFeed(String id, int offset, int max){
     List<String> ids = feedRepository.findByUserId(id, PageRequest.of
       (offset, max, Sort.by("timestamp").descending()))
@@ -48,6 +47,7 @@ public class FeedService {
     return feedClient.getPosts(ids);
   }
   
+  @Transactional(readOnly = true)
   public void postSeen(String userId, String postId){
     postSeen(feedRepository.findByUserIdAndPostId(userId, postId)
         .orElseThrow(() -> new FeedNotFoundException(String.format("user with id: %s does not have post with id: %s in its feed", userId, postId))));
@@ -96,6 +96,7 @@ public class FeedService {
     feedRepository.save(feedMapper.toEntity(feed));
   }
 
+  @Transactional
   private void markForDeletion(FeedEntity entity){
     entity.setStatus(FeedStatus.DELETED);
   }

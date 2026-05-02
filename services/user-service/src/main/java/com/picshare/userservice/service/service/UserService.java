@@ -2,10 +2,7 @@ package com.picshare.userservice.service.service;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import org.springframework.data.util.Streamable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +32,7 @@ public class UserService {
   private final UserClient userClient;
   private final UserEventProducer eventProducer;
 
+  @Transactional(readOnly = true)
   public UserDTO getUser(String id){
     return userMapper.toDto(userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException("id", id)),
@@ -45,6 +43,7 @@ public class UserService {
     this.userClient.uploadAvatar(media, id);
   }
 
+  @Transactional
   public void updateBio(String id, String bio){
     UserEntity entity = this.userRepository.findById(id)
       .orElseThrow(() -> new UserNotFoundException("id", id));
@@ -53,12 +52,24 @@ public class UserService {
     userRepository.save(entity);
   }
 
+  @Transactional(readOnly = true)
   public UserDTO getByUsername(String username){
     return userMapper.toDto(userRepository.findByUsername(username)
         .orElseThrow(() -> new UserNotFoundException("username", username)),
         connectionRepository);
   }
 
+  @Transactional(readOnly = true)
+  public List<String> getFollowers(String id) {
+    return connectionRepository.findByFollowed(
+        userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("id", id)))
+      .stream()
+      .map(entity -> entity.getFollower().getId())
+      .toList();
+  }
+
+  @Transactional(readOnly = true)
   public List<UserDTO> search(String toSearch, int offset, int max){
     return this.userRepository.searchByEmailOrUsername(toSearch, offset, max)
       .stream()
@@ -79,6 +90,7 @@ public class UserService {
     return toFollow.getUsername();
   }
 
+  @Transactional(readOnly = true)
   public boolean follows(String userId, String followedId){
     UserEntity follower = userRepository.findById(userId)
       .orElseThrow(() -> new UserNotFoundException("id", userId));
@@ -130,14 +142,5 @@ public class UserService {
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
   public void removeDeleted() {
     this.userRepository.deleteAllByStatus(UserStatus.DELETED);
-  }
-
-  public List<String> getFollowers(String id) {
-    return connectionRepository.findByFollowed(
-        userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("id", id)))
-      .stream()
-      .map(entity -> entity.getFollower().getId())
-      .toList();
   }
 }

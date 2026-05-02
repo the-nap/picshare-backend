@@ -27,24 +27,28 @@ public class UserAuthService {
   private final UserRepository repository;
   private final AuthMapper mapper;
 
+  @Transactional(readOnly = true)
   public AuthUserDTO getById(String id){
     return repository.findAlwaysById(id)
       .map(mapper::toDto)
       .orElse(null);
   }
 
+  @Transactional(readOnly = true)
   public AuthUserDTO getByUsername(String username){
     return repository.findAlwaysByUsername(username)
       .map(mapper::toDto)
       .orElse(null);
   }
 
+  @Transactional(readOnly = true)
   public AuthUserDTO getByEmail(String email){
     return repository.findAlwaysByEmail(email)
       .map(mapper::toDto)
       .orElse(null);
   }
 
+  @Transactional(readOnly = true)
   public List<AuthUserDTO> searchByEmail(String email, Integer first, Integer max){
     return repository.searchByEmail(email, first, max)
       .stream()
@@ -52,6 +56,7 @@ public class UserAuthService {
       .toList();
   }
 
+  @Transactional(readOnly = true)
   public List<AuthUserDTO> searchByUsername(String username, Integer first, Integer max){
     return repository.searchByUsername(username, first, max)
       .stream()
@@ -59,6 +64,7 @@ public class UserAuthService {
       .toList();
   }
 
+  @Transactional(readOnly = true)
   public boolean checkPassword(String id, String password){
     return passwordEncoder.matches(password,
         repository.findById(id)
@@ -67,6 +73,7 @@ public class UserAuthService {
 
   }
 
+  @Transactional(readOnly = true)
   public List<AuthUserDTO> getAll(Integer first, Integer max){
     return repository.getAll(first, max)
       .stream()
@@ -74,6 +81,7 @@ public class UserAuthService {
       .collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
   public Integer count(String toSearch){
     if (toSearch != null && !toSearch.isEmpty()){
       Set<UserEntity> result = repository.countByUsername(toSearch);
@@ -105,7 +113,6 @@ public class UserAuthService {
     user.setUsername(username);
     user.setEmail(String.format("%s@default.com",username));
     return mapper.toDto(repository.save(mapper.toEntity(user)));
-
   }
 
   @Transactional

@@ -1,7 +1,6 @@
 package com.picshare.post_service.service.service;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,6 +93,7 @@ public class PostService {
     return entity.getLikedBy().size();
   }
 
+  @Transactional(readOnly = true)
   public boolean likes(String userId, String postId){
     PostEntity entity = this.postRepository.findById(postId)
       .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", postId)));
@@ -138,12 +138,14 @@ public class PostService {
     this.eventProducer.sendPostDeletedEvent(id);
   }
 
+  @Transactional(readOnly = true)
   public PostResponse serve(String id){
     return this.postMapper.toDto(
       this.postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id)));
   }
 
+  @Transactional(readOnly = true)
   public List<PostResponse> getPosts(List<String> ids){
     return this.postRepository.findAllById(ids)
       .stream()
@@ -151,12 +153,14 @@ public class PostService {
       .toList();
   }
 
+  @Transactional(readOnly = true)
   public List<PostResponse> getPostsByUser(String id, int offset, int max){
     return this.postRepository.findByUserId(id, PageRequest.of(offset, max, Sort.by("creationDate").descending()))
       .map(this.postMapper::toDto)
       .toList();
   }
 
+  @Transactional(readOnly = true)
   public List<PostResponse> getPostByTag(String tag, int offset, int max){
     return this.postRepository.findByTag(tag, PageRequest.of(
         offset, max, 
