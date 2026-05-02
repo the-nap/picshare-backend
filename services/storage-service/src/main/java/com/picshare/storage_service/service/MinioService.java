@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.picshare.storage_service.event.StorageEventProducer;
-import com.picshare.storage_service.service.exceptions.NoAvatarException;
+import com.picshare.storage_service.service.exceptions.NoMediaException;
 import com.picshare.storage_service.service.exceptions.StorageException;
 import com.picshare.storage_service.service.exceptions.UploadException;
 import com.picshare.storage_service.service.util.WebpManager;
@@ -169,7 +169,6 @@ public class MinioService implements StorageService{
   }
 
   private InputStreamResource search(String toLook){
-    log.info(toLook);
     try{ 
       InputStream stream = minioClient.getObject(
           GetObjectArgs.builder()
@@ -178,7 +177,7 @@ public class MinioService implements StorageService{
           .build());
       return new InputStreamResource(stream);
     }catch(ErrorResponseException e){
-      throw new NoAvatarException("Avatar not found, defaulting...");
+      throw new NoMediaException("Media not found, defaulting...");
     }
     catch(Exception e){
       throw new StorageException("Storage exception: " + e);
@@ -231,7 +230,7 @@ public class MinioService implements StorageService{
     return temp;
   }
 
-  private void storeInBucket(String filename, Path temp) throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
+  private void storeInBucket(String filename, Path temp) throws Exception {
     try(InputStream input = Files.newInputStream(temp)) {
       minioClient.putObject(
           PutObjectArgs.builder()

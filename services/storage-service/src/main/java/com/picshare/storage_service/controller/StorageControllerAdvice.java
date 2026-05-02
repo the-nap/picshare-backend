@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.picshare.storage_service.service.exceptions.NoAvatarException;
+import com.picshare.storage_service.service.exceptions.NoMediaException;
 import com.picshare.storage_service.service.exceptions.StorageException;
 import com.picshare.storage_service.service.exceptions.UploadException;
 
@@ -23,9 +23,9 @@ public class StorageControllerAdvice {
     return se.getMessage();
   }
 
-  @ExceptionHandler(NoAvatarException.class)
+  @ExceptionHandler(NoMediaException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  String defaultHandler(NoAvatarException e){
+  String defaultHandler(NoMediaException e){
     return e.getMessage();
   }
 
