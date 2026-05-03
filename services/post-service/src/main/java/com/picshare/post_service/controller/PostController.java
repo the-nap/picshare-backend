@@ -79,7 +79,6 @@ public class PostController {
     String userId = token.getName().split(":")[2];
     this.service.deletePost(id, userId);
     return ResponseEntity.status(HttpStatus.CREATED).build();
-
   }
 
   // Feed Service Endpoints
