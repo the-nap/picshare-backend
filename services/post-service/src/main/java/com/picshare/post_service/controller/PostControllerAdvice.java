@@ -33,7 +33,7 @@ public class PostControllerAdvice {
     return pe.getMessage();
   }
 
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
   @ExceptionHandler(ExternalServiceException.class)
   public String externalError(ExternalServiceException e){
     return e.getMessage();
