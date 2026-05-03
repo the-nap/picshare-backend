@@ -35,16 +35,22 @@ public class ApiClient {
 
   public PicshareUser getUserById(String id){
     List<PicshareUser> users = searchUsers("id", id, 0, 1, true);
+    if(users == null)
+      throw new ServiceNotAvailableException(id);
     return users.isEmpty() ? null : users.getFirst();
   }
 
   public PicshareUser getUserByUsername(String username){
     List<PicshareUser> users = searchUsers("username", username, 0, 1, true);
+    if(users == null)
+      throw new ServiceNotAvailableException(username);
     return users.isEmpty() ? null : users.getFirst();
   }
 
   public PicshareUser getUserByEmail(String email){
     List<PicshareUser> users = searchUsers("email", email, 0, 1, true);
+    if(users == null)
+      throw new ServiceNotAvailableException(email);
     return users.isEmpty() ? null : users.getFirst();
   }
 
