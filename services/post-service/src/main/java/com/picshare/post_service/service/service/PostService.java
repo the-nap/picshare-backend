@@ -143,6 +143,8 @@ public class PostService {
     if(!entity.getUserId().equals(userId))
       throw new OperationNotAllowedException(String.format("Operation not allowed for user: %s", userId));
 
+    entity.setStatus(PostStatus.DELETED);
+
     postRepository.save(entity);
 
     this.eventProducer.sendPostDeletedEvent(id);
@@ -172,7 +174,7 @@ public class PostService {
 
   @Transactional(readOnly = true)
   public List<PostResponse> getPostByTag(String tag, int offset, int max){
-    return this.postRepository.findByTag(tag, PageRequest.of(
+    return this.postRepository.findByTagContaining(tag, PageRequest.of(
         offset, max, 
         Sort.by("creationDate").descending()))
       .map(postMapper::toDto)
