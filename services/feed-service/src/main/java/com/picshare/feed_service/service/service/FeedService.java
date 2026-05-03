@@ -156,11 +156,10 @@ public class FeedService {
     feedRepository.deleteAllByTimestampBefore(yesterday);
   }
 
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
   @Transactional
   public void removeSeenOrDeleted(){
     feedRepository.deleteAllByStatus(FeedStatus.DELETED);
-    feedRepository.deleteAllByStatus(FeedStatus.SEEN);
   }
 
   private Date getYesterday() {
