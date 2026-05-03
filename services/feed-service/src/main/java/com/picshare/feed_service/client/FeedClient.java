@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.picshare.feed_service.service.dto.PostDto;
 import com.picshare.feed_service.service.dto.UpdateRequest;
+import com.picshare.feed_service.service.exceptions.ExternalServiceException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +25,13 @@ public class FeedClient {
   private final DiscoveryClient discoveryClient;
 
   public List<PostDto> getPosts(List<String> ids){
-    ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
+
+    ServiceInstance serviceInstance;
+    try{
+      serviceInstance = discoveryClient.getInstances("post-service").get(0);
+    } catch(IndexOutOfBoundsException e){
+      throw new ExternalServiceException(e.getMessage());
+    }
 
     UriComponents uriComponents = UriComponentsBuilder
       .fromUriString(String.format("%s/post/feed/posts", serviceInstance.getUri()))
@@ -40,7 +47,12 @@ public class FeedClient {
 
   public Map<String, String> getPostsForNewConnection(UpdateRequest request){
 
-    ServiceInstance serviceInstance = discoveryClient.getInstances("post-service").get(0);
+    ServiceInstance serviceInstance;
+    try{
+      serviceInstance = discoveryClient.getInstances("post-service").get(0);
+    } catch(IndexOutOfBoundsException e){
+      throw new ExternalServiceException(e.getMessage());
+    }
 
     UriComponents uriComponents = UriComponentsBuilder
       .fromUriString(String.format("%s/post/feed/connection", serviceInstance.getUri()))
@@ -55,7 +67,14 @@ public class FeedClient {
   }
 
   public List<String> getFollowers(String posterId){
-    ServiceInstance serviceInstance = discoveryClient.getInstances("user-service").get(0);
+
+    ServiceInstance serviceInstance;
+    try{
+      serviceInstance = discoveryClient.getInstances("user-service").get(0);
+    } catch(IndexOutOfBoundsException e){
+      throw new ExternalServiceException(e.getMessage());
+    }
+
     return this.restClient
       .get()
       .uri(String.format("%s/user/followers/%s", serviceInstance.getUri(), posterId))
