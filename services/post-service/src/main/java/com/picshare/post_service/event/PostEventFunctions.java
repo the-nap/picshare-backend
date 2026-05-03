@@ -27,7 +27,7 @@ public class PostEventFunctions {
   @Bean
   public Consumer<PostSaveSuccessEvent> postSaveFailure() {
     return event -> {
-      this.service.deletePost(event.postId());
+      this.service.deleteByEvent(event.postId());
     };
   }
 
