@@ -128,12 +128,13 @@ public class MinioService implements StorageService{
 
   @Override
   public void deleteMedia(String id){
-    delete(String.format("media/%s/", id));
+    delete(getMediaPath(id));
+    delete(getPreviewPath(id));
   }
 
   @Override
   public void deleteAvatar(String id){
-    delete(String.format("avatar/%s", id));
+    delete(getAvatarPath(id));
   }
 
   private void delete(String toDelete){

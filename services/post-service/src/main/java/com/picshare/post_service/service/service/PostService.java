@@ -1,6 +1,5 @@
 package com.picshare.post_service.service.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +20,6 @@ import com.picshare.post_service.service.dto.UpdateRequest;
 import com.picshare.post_service.service.entity.PostEntity;
 import com.picshare.post_service.service.entity.PostStatus;
 import com.picshare.post_service.service.entity.TagEntity;
-import com.picshare.post_service.service.exceptions.ClientErrorException;
 import com.picshare.post_service.service.exceptions.OperationNotAllowedException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
 import com.picshare.post_service.service.mapper.PostMapper;
@@ -124,9 +122,10 @@ public class PostService {
 
       postRepository.saveAll(toDelete);
   }
+  
   @Transactional
   public void deleteByEvent(String id){
-    PostEntity entity = postRepository.findById(id)
+    PostEntity entity = postRepository.findByIdAndStatus(id, PostStatus.PENDING)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id));
 
     entity.setStatus(PostStatus.DELETED);
