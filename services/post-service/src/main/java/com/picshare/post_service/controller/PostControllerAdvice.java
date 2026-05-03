@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.picshare.post_service.service.exceptions.ExternalServiceException;
+import com.picshare.post_service.service.exceptions.OperationNotAllowedException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
 
 @RestControllerAdvice
@@ -37,4 +38,8 @@ public class PostControllerAdvice {
   public String externalError(ExternalServiceException e){
     return e.getMessage();
   }
+
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ExceptionHandler(OperationNotAllowedException.class)
+  public void notAllowedHandler(OperationNotAllowedException e){}
 }

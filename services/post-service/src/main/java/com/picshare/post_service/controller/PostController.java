@@ -3,10 +3,12 @@ package com.picshare.post_service.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,6 +72,14 @@ public class PostController {
   public ResponseEntity<Boolean> likes(JwtAuthenticationToken token, @PathVariable String id){
     String userId = token.getName().split(":")[2];
     return ResponseEntity.ok(this.service.likes(userId, id));
+  }
+  
+  @DeleteMapping("/{id}/delete")
+  public ResponseEntity<Void> delete(JwtAuthenticationToken token, @PathVariable String id){
+    String userId = token.getName().split(":")[2];
+    this.service.deletePost(id, userId);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+
   }
 
   // Feed Service Endpoints

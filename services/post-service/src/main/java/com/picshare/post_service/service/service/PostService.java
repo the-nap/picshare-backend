@@ -22,6 +22,7 @@ import com.picshare.post_service.service.entity.PostEntity;
 import com.picshare.post_service.service.entity.PostStatus;
 import com.picshare.post_service.service.entity.TagEntity;
 import com.picshare.post_service.service.exceptions.ClientErrorException;
+import com.picshare.post_service.service.exceptions.OperationNotAllowedException;
 import com.picshare.post_service.service.exceptions.PostNotFoundException;
 import com.picshare.post_service.service.mapper.PostMapper;
 import com.picshare.post_service.service.repository.PostRepository;
@@ -115,7 +116,7 @@ public class PostService {
       toDelete = this.postRepository.findByUserId(userId, PageRequest.of(offset, max));
       toDelete
         .stream()
-        .forEach(entity -> deletePost(entity.getId()));
+        .forEach(entity -> deletePost(entity.getId(), userId));
 
       //offset not incremented because findByUserId only returns CONFIRMED entities
 
@@ -123,17 +124,27 @@ public class PostService {
 
       postRepository.saveAll(toDelete);
   }
-
   @Transactional
-  public void deletePost(String id){
+  public void deleteByEvent(String id){
     PostEntity entity = postRepository.findById(id)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id));
-    PostStatus previous = entity.getStatus();
+
     entity.setStatus(PostStatus.DELETED);
+    
+     postRepository.save(entity);
+  }
+
+  @Transactional
+  public void deletePost(String id, String userId){
+
+    PostEntity entity = postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id));
+
+    if(!entity.getUserId().equals(userId))
+      throw new OperationNotAllowedException(String.format("Operation not allowed for user: %s", userId));
 
     postRepository.save(entity);
 
-    if(previous.equals(PostStatus.CONFIRMED))
     this.eventProducer.sendPostDeletedEvent(id);
   }
 
