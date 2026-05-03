@@ -14,7 +14,6 @@ services:
         limits:
           memory: 1024M
           cpus: '0.50'
-          pids: 512
 
   gateway:
     container_name: gateway-prod
@@ -33,9 +32,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
+          memory: 256M
           cpus: '0.50'
-          pids: 512
 
   discovery-server:
     build: 
@@ -45,9 +43,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
+          memory: 256M
           cpus: '0.50'
-          pids: 512
 
   keycloak:
     build:
@@ -69,9 +66,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1024M
+          memory: 256M
           cpus: '0.50'
-          pids: 512
 
   keycloak-db:
     image: postgres:latest
@@ -90,9 +86,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
-          cpus: '0.50'
-          pids: 512
+          memory: 64M
+          cpus: '0.25'
 
   user-service:
     container_name: user-prod
@@ -110,7 +105,7 @@ services:
       resources:
         limits:
           memory: 256M
-          pids: 512
+          cpus: '0.50'
 
   user-db:
     image: postgres:latest
@@ -131,7 +126,6 @@ services:
         limits:
           memory: 128M
           cpus: '0.25'
-          pids: 512
 
   feed-service:
     container_name: feed-prod
@@ -148,7 +142,7 @@ services:
       resources:
         limits:
           memory: 256M
-          pids: 512
+          cpus: '0.50'
 
   feed-db:
     image: postgres:latest
@@ -167,10 +161,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
+          memory: 64M
           cpus: '0.25'
-          pids: 512
-        
 
   post-service:
     container_name: post-prod
@@ -186,8 +178,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
-          pids: 512
+          memory: 256M
+          cpus: '0.50'
 
   post-db:
     image: postgres:latest
@@ -206,14 +198,15 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
+          memory: 64M
           cpus: '0.25'
-          pids: 512
 
   storage-service:
     container_name: storage-prod
     build:
       context: ./services/storage-service/
+    environment:
+      - _JAVA_OPTIONS=-XX:MaxRAMPercentage='70.0'
     depends_on:
     - discovery-server
     - minio
@@ -223,8 +216,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
-          pids: 512
+          memory: 768M
+          cpus: '0.50'
 
   minio:
     image: minio/minio
@@ -245,7 +238,6 @@ services:
         limits:
           memory: 128M
           cpus: '0.25'
-          pids: 512
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -257,6 +249,40 @@ services:
       resources:
         limits:
           memory: 256M
+          cpus: '0.50'
+
+  broker:
+    image: apache/kafka:4.2.0
+    container_name: broker
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: |
+        CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: |
+        PLAINTEXT://broker:29092,PLAINTEXT_HOST://broker:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29093'
+      KAFKA_LISTENERS: |
+        PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qj'
+    ports:
+    - 9092:9092
+    - 9101:9101
+    networks:
+    - picshare-internal
+    deploy:
+      resources:
+        limits:
+          memory: 512M
           cpus: '0.50'
           pids: 512
 
