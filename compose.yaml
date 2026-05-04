@@ -1,7 +1,7 @@
 services:
 
   angular:
-    container_name: angular-dev
+    container_name: angular
     build:
       context: ./picshare-frontend/
       dockerfile: Dockerfile.dev
@@ -42,6 +42,7 @@ services:
           cpus: '0.50'
 
   discovery-server:
+    container_name: discovery-server
     build: 
       context: ./services/discovery-server/
     networks: 
@@ -53,6 +54,7 @@ services:
           cpus: '0.50'
 
   keycloak:
+    container-name: keycloak
     build:
       context: ./services/keycloak/
     env_file: ./env/keycloak.env
@@ -80,6 +82,7 @@ services:
 
   keycloak-db:
     image: postgres:latest
+    container_name: keycloak-db
     env_file: ./env/keycloak.env
     volumes:
     - keycloak-service-data:/var/lib/postgresql
@@ -124,6 +127,7 @@ services:
 
   user-db:
     image: postgres:latest
+    container_name: user-db
     env_file: ./env/user.env
     volumes: 
     - user-service-data:/var/lib/postgresql
@@ -167,6 +171,7 @@ services:
 
   feed-db:
     image: postgres:latest
+    container_name: feed-db
     env_file: ./env/feed.env
     volumes: 
     - feed-service-data:/var/lib/postgresql
@@ -210,6 +215,7 @@ services:
 
   post-db:
     image: postgres:latest
+    container_name: post-db
     env_file: ./env/post.env
     volumes: 
     - post-service-data:/var/lib/postgresql
@@ -277,6 +283,7 @@ services:
 
   zipkin:
     image: openzipkin/zipkin:latest
+    container_name: zipkin
     ports:
     - 9411:9411
     networks:
