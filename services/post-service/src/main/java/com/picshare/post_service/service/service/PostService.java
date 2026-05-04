@@ -208,5 +208,4 @@ public class PostService {
   public void deleteDeleted(){
     this.postRepository.deleteAllByStatus(PostStatus.DELETED);
   }
-
 }
