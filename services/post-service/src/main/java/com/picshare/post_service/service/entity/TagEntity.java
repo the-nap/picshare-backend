@@ -43,4 +43,8 @@ public class TagEntity {
   public void addPost(PostEntity post){
     this.posts.add(post);
   }
+
+  public void removePost(PostEntity post){
+    this.posts.remove(post);
+  }
 }

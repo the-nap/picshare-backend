@@ -35,11 +35,13 @@ public interface PostRepository extends JpaRepository<PostEntity, String> {
     return this.findByUserIdAndStatus(id, pageable, PostStatus.CONFIRMED);
   }
 
-  @Query("SELECT p FROM PostEntity p JOIN p.tags t WHERE t.tagName = :tag")
+  @Query("SELECT p FROM PostEntity p JOIN p.tags t WHERE t.tagName LIKE :tag AND p.status='CONFIRMED'")
   Page<PostEntity> findByTag(@Param("tag") String tag, Pageable pageable);
 
   default Page<PostEntity> findByTagContaining(String tag, Pageable pageable){
     return this.findByTag('%'+tag+'%', pageable);
   }
+
+  void deleteAllByStatus(PostStatus status);
 
 }

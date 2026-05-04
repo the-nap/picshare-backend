@@ -3,11 +3,13 @@ package com.picshare.post_service.service.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Streamable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -128,9 +130,26 @@ public class PostService {
     PostEntity entity = postRepository.findByIdAndStatus(id, PostStatus.PENDING)
       .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + id));
 
-    entity.setStatus(PostStatus.DELETED);
+    delete(entity);
     
-     postRepository.save(entity);
+    postRepository.save(entity);
+  }
+
+  @Transactional
+  private void delete(PostEntity entity){
+    entity.getTags().stream()
+      .forEach(tag -> {
+        tag.removePost(entity);
+        if(tag.getPosts().size() == 0){
+          this.tagRepository.delete(tag);
+        } else {
+        this.tagRepository.save(tag);
+        }
+      });
+
+    entity.setTags(Set.of());
+
+    this.postRepository.save(entity);
   }
 
   @Transactional
@@ -142,9 +161,7 @@ public class PostService {
     if(!entity.getUserId().equals(userId))
       throw new OperationNotAllowedException(String.format("Operation not allowed for user: %s", userId));
 
-    entity.setStatus(PostStatus.DELETED);
-
-    postRepository.save(entity);
+    delete(entity);
 
     this.eventProducer.sendPostDeletedEvent(id);
   }
@@ -178,6 +195,18 @@ public class PostService {
         Sort.by("creationDate").descending()))
       .map(postMapper::toDto)
       .toList();
+  }
+
+  @Scheduled(fixedRate = 5, timeUnit = TimeUnit.MINUTES)
+  @Transactional
+  public void deletePending(){
+    this.postRepository.deleteAllByStatus(PostStatus.PENDING);
+  }
+
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  @Transactional
+  public void deleteDeleted(){
+    this.postRepository.deleteAllByStatus(PostStatus.DELETED);
   }
 
 }
