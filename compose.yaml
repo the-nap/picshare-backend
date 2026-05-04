@@ -14,6 +14,9 @@ services:
         limits:
           memory: 1024M
           cpus: '0.50'
+        reservations:
+          memory: 1024M
+          cpus: '0.50'
 
   gateway:
     container_name: gateway-prod
@@ -32,6 +35,9 @@ services:
     deploy:
       resources:
         limits:
+          memory: 256M
+          cpus: '0.50'
+        reservations:
           memory: 256M
           cpus: '0.50'
 
@@ -68,6 +74,9 @@ services:
         limits:
           memory: 256M
           cpus: '0.50'
+        reservations:
+          memory: 256M
+          cpus: '0.50'
 
   keycloak-db:
     image: postgres:latest
@@ -88,6 +97,9 @@ services:
         limits:
           memory: 64M
           cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.25'
 
   user-service:
     container_name: user-prod
@@ -104,6 +116,9 @@ services:
     deploy:
       resources:
         limits:
+          memory: 256M
+          cpus: '0.50'
+        reservations:
           memory: 256M
           cpus: '0.50'
 
@@ -124,7 +139,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M
+          memory: 64M
+          cpus: '0.25'
+        reservations:
+          memory: 64M
           cpus: '0.25'
 
   feed-service:
@@ -141,6 +159,9 @@ services:
     deploy:
       resources:
         limits:
+          memory: 256M
+          cpus: '0.50'
+        reservations:
           memory: 256M
           cpus: '0.50'
 
@@ -163,6 +184,9 @@ services:
         limits:
           memory: 64M
           cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.25'
 
   post-service:
     container_name: post-prod
@@ -178,6 +202,9 @@ services:
     deploy:
       resources:
         limits:
+          memory: 256M
+          cpus: '0.50'
+        reservations:
           memory: 256M
           cpus: '0.50'
 
@@ -200,6 +227,9 @@ services:
         limits:
           memory: 64M
           cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.25'
 
   storage-service:
     container_name: storage-prod
@@ -217,6 +247,9 @@ services:
       resources:
         limits:
           memory: 768M
+          cpus: '0.50'
+        reservations:
+          memory: 700M
           cpus: '0.50'
 
   minio:
@@ -238,6 +271,9 @@ services:
         limits:
           memory: 128M
           cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -248,6 +284,9 @@ services:
     deploy:
       resources:
         limits:
+          memory: 256M
+          cpus: '0.50'
+        reservations:
           memory: 256M
           cpus: '0.50'
 
@@ -284,7 +323,9 @@ services:
         limits:
           memory: 512M
           cpus: '0.50'
-          pids: 512
+        reservations:
+          memory: 512M
+          cpus: '0.50'
 
 volumes:
   keycloak-service-data:
