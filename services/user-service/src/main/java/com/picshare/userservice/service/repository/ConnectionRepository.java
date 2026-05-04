@@ -28,6 +28,8 @@ public interface ConnectionRepository extends JpaRepository<ConnectionEntity, Co
 
   void deleteByFollowerAndFollowedAndStatus(UserEntity follower, UserEntity followed, ConnectionStatus status);
 
+  void deleteAllByStatus(ConnectionStatus status);
+
   // Convenience methods for REGULAR status
   default Streamable<ConnectionEntity> findByFollower(UserEntity user) {
     return findByFollowerAndStatus(user, ConnectionStatus.REGULAR);

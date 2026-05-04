@@ -118,7 +118,6 @@ public class UserService {
     return toUnfollow.getUsername();
   }
 
-  @Transactional
   private void removeUserConnections(UserEntity user){
     Streamable<ConnectionEntity> entities = this.connectionRepository.findByFollowed(user).and(this.connectionRepository.findByFollower(user));
     entities.stream()
@@ -139,8 +138,9 @@ public class UserService {
   }
 
   @Transactional
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+  @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
   public void removeDeleted() {
+    this.connectionRepository.deleteAllByStatus(ConnectionStatus.DELETED);
     this.userRepository.deleteAllByStatus(UserStatus.DELETED);
   }
 }

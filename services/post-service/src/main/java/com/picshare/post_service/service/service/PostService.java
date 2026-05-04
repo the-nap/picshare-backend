@@ -135,7 +135,6 @@ public class PostService {
     postRepository.save(entity);
   }
 
-  @Transactional
   private void delete(PostEntity entity){
     entity.getTags().stream()
       .forEach(tag -> {
