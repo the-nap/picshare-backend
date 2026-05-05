@@ -199,15 +199,13 @@ public class PostService {
       .toList();
   }
 
-  @Scheduled(fixedRate = 5, timeUnit = TimeUnit.MINUTES)
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
   @Transactional
-  public void deletePending(){
-    this.postRepository.deleteAllByStatus(PostStatus.PENDING);
-  }
-
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
-  @Transactional
-  public void deleteDeleted(){
+  public void changeStatus(){
     this.postRepository.deleteAllByStatus(PostStatus.DELETED);
+    Streamable<PostEntity> entities = this.postRepository.findAllByStatus(PostStatus.PENDING);
+    entities.stream()
+      .forEach(entity -> entity.setStatus(PostStatus.DELETED));
+    this.postRepository.saveAll(entities);
   }
 }

@@ -23,6 +23,8 @@ public interface PostRepository extends JpaRepository<PostEntity, String> {
 
   Streamable<PostEntity> findByUserIdAndStatus(String id, Pageable pageable, PostStatus status);
 
+  Streamable<PostEntity> findAllByStatus(PostStatus status);
+
   default Optional<PostEntity> findById(String id){
     return this.findByIdAndStatus(id, PostStatus.CONFIRMED);
   }
