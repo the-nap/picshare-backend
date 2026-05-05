@@ -3,7 +3,6 @@ package com.picshare.post_service.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

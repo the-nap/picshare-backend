@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LoggingAspect {
 
-    @Pointcut("within(* com.picshare.post_service..*)")
+    @Pointcut("within(com.picshare.post_service..*)")
     public void loggedMethods() {}
 
 

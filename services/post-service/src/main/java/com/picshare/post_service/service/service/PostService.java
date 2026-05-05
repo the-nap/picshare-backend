@@ -136,7 +136,8 @@ public class PostService {
   }
 
   private void delete(PostEntity entity){
-    entity.getTags().stream()
+    Set<TagEntity> tags = entity.getTags();
+    tags.stream()
       .forEach(tag -> {
         tag.removePost(entity);
         if(tag.getPosts().size() == 0){
@@ -146,7 +147,9 @@ public class PostService {
         }
       });
 
-    entity.setTags(Set.of());
+    entity.getTags().clear();
+    
+    entity.setStatus(PostStatus.DELETED);
 
     this.postRepository.save(entity);
   }
