@@ -54,7 +54,7 @@ services:
           cpus: '0.50'
 
   keycloak:
-    container-name: keycloak
+    container_name: keycloak
     build:
       context: ./services/keycloak/
     env_file: ./env/keycloak.env

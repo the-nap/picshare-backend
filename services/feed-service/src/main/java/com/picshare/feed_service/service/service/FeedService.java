@@ -63,7 +63,7 @@ public class FeedService {
       entities.stream()
         .forEach(this::markForDeletion);
 
-      feedRepository.saveAll(entities);
+      feedRepository.saveAllAndFlush(entities);
 
       //offset not incremented because findByUserId only returns REGULAR status entities
     } while(!entities.isEmpty());
@@ -79,7 +79,7 @@ public class FeedService {
       entities.stream()
         .forEach(this::markForDeletion);
 
-      feedRepository.saveAll(entities);
+      feedRepository.saveAllAndFlush(entities);
 
       //offset not incremented because findByUserId only returns REGULAR status entities
     } while(!entities.isEmpty());
