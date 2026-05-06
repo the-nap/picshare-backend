@@ -45,5 +45,5 @@ docker compose -f compose-development.yaml up --watch
 per entrare in modalitá sviluppo
 
 
-Gran parte delle soluzioni implementate sono prese da [Stack Overflow](https://stackoverflow.com) o [Medium](https://medium.com). Maggiori info saranno nei Readme dei singoli servizi.
+Gran parte delle soluzioni implementate sono prese da [Stack Overflow](https://stackoverflow.com) o [Medium](https://medium.com).
 
