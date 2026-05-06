@@ -5,8 +5,6 @@ services:
     build:
       context: ./picshare-frontend/
       dockerfile: Dockerfile.dev
-    ports:
-    - "4200:4200"
     networks:
     - frontend
     deploy:

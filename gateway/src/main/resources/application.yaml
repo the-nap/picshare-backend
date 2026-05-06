@@ -65,7 +65,7 @@ spring:
             uri: lb://storage-service
             predicates:
             - Path=/media/**
-            filters:
+            - Method=GET
 
   application:
     name: gateway
