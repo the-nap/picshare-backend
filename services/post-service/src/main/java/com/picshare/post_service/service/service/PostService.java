@@ -101,7 +101,8 @@ public class PostService {
   @Transactional
   public void confirm(String id){
     PostEntity entity = this.postRepository.findByIdAndStatus(id, PostStatus.PENDING)
-      .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id)));
+      .orElse(this.postRepository.findByIdAndStatus(id, PostStatus.DELETED)
+          .orElseThrow(() -> new PostNotFoundException(String.format("Post not found with id: %s", id))));
     entity.setStatus(PostStatus.CONFIRMED);
     postRepository.save(entity);
     this.eventProducer.sendPostConfirmedEvent(entity.getUserId(), entity.getId());
