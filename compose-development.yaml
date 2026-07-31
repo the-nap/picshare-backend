@@ -1,26 +1,5 @@
 services:
 
-  angular:
-    container_name: angular-dev
-    build:
-      context: ./picshare-frontend/
-      dockerfile: Dockerfile.dev
-    networks:
-    - frontend
-    develop:
-      watch:
-      - action: sync
-        path: ./picshare-frontend/src
-        target: /app/src
-    deploy:
-      resources:
-        limits:
-          memory: 1024M
-          cpus: '0.50'
-        reservations:
-          memory: 1024M
-          cpus: '0.50'
-
   gateway:
     container_name: gateway-dev
     build:
