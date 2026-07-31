@@ -318,10 +318,20 @@ services:
 
 volumes:
   keycloak-service-data:
+    external: true
+    name: picshare_keycloak-service-data
   user-service-data:
+    external: true
+    name: picshare_user-service-data
   post-service-data:
+    external: true
+    name: picshare_post-service-data
   feed-service-data:
+    external: true
+    name: picshare_feed-service-data
   minio-data:
+    external: true
+    name: picshare_minio-data
 
 networks:
   user-network:
@@ -331,3 +341,4 @@ networks:
   storage-network:
   picshare-internal:
   frontend:
+    name: frontend
